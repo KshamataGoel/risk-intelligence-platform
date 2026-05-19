@@ -1,0 +1,2853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Risk Intelligence Platform</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<style>
+/* ── Reset & Variables ────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary:        #8B1C1C;
+  --primary-dark:   #6B1515;
+  --primary-hover:  #9e2020;
+  --primary-light:  rgba(139,28,28,0.08);
+  --sidebar-bg:     #0F172A;
+  --sidebar-border: rgba(255,255,255,0.07);
+  --sidebar-text:   #94A3B8;
+  --sidebar-hover:  rgba(255,255,255,0.07);
+  --bg:             #F1F5F9;
+  --surface:        #FFFFFF;
+  --border:         #E2E8F0;
+  --text:           #0F172A;
+  --text-2:         #475569;
+  --text-3:         #94A3B8;
+  --success-bg:     #ECFDF5;
+  --success-text:   #065F46;
+  --warning-bg:     #FFFBEB;
+  --warning-text:   #92400E;
+  --danger-bg:      #FEF2F2;
+  --danger-text:    #991B1B;
+  --radius:         10px;
+  --radius-sm:      6px;
+  --shadow:         0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:      0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg:      0 10px 25px rgba(0,0,0,0.1);
+}
+
+html, body, #root { height: 100%; }
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── App Shell ────────────────────────────────────────────────────── */
+.app  { display: flex; height: 100vh; overflow: hidden; }
+.main { flex: 1; overflow-y: auto; background: var(--bg); }
+
+/* ── Sidebar ──────────────────────────────────────────────────────── */
+.sidebar {
+  width: 248px;
+  min-width: 248px;
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--sidebar-border);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 22px 20px;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+.sidebar-brand-icon {
+  width: 34px; height: 34px;
+  background: var(--primary);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 16px;
+  flex-shrink: 0;
+}
+.sidebar-brand-text { line-height: 1.2; }
+.sidebar-brand-title { color: #fff; font-size: 14px; font-weight: 700; letter-spacing: -0.2px; }
+.sidebar-brand-sub   { color: var(--sidebar-text); font-size: 11px; }
+
+.sidebar-section-label {
+  color: rgba(255,255,255,0.28);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 18px 20px 6px;
+}
+
+.sidebar-nav { flex: 1; padding: 6px 10px; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  background: none;
+  color: var(--sidebar-text);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all 0.15s;
+  text-align: left;
+  margin-bottom: 1px;
+  font-family: inherit;
+}
+.nav-item i { width: 17px; font-size: 14px; text-align: center; }
+.nav-item:hover  { background: var(--sidebar-hover); color: #fff; }
+.nav-item.active { background: var(--primary); color: #fff; }
+.nav-item.active i { color: #fff; }
+
+.nav-item .nav-badge {
+  margin-left: auto;
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7);
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.sidebar-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--sidebar-border);
+}
+.sidebar-footer-label { color: rgba(255,255,255,0.35); font-size: 11px; }
+
+/* ── Page Wrapper ─────────────────────────────────────────────────── */
+.page { padding: 32px 36px; max-width: 1200px; }
+
+.page-header { margin-bottom: 28px; }
+.page-title  { font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
+.page-sub    { color: var(--text-2); font-size: 14px; margin-top: 4px; max-width: 580px; }
+
+/* ── Cards ────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  box-shadow: var(--shadow);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.card-title { font-size: 15px; font-weight: 600; color: var(--text); }
+
+/* ── Home Page ────────────────────────────────────────────────────── */
+.home-hero {
+  background: linear-gradient(135deg, var(--sidebar-bg) 0%, #1e293b 100%);
+  border-radius: 14px;
+  padding: 36px 40px;
+  margin-bottom: 28px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.home-hero::after {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 200px; height: 200px;
+  background: var(--primary);
+  border-radius: 50%;
+  opacity: 0.12;
+}
+.home-hero-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+.home-hero-title { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+.home-hero-sub   { color: rgba(255,255,255,0.65); font-size: 14px; max-width: 480px; }
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.module-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  cursor: pointer;
+  transition: all 0.18s;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.module-card:hover  { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: #cbd5e1; }
+.module-card-arrow {
+  margin-top: auto;
+  padding-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.module-card-open {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.module-card:hover .module-card-open { opacity: 1; }
+
+.module-card-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  margin-bottom: 14px;
+}
+.module-card-icon.red    { background: var(--primary-light); color: var(--primary); }
+.module-card-icon.blue   { background: #EFF6FF; color: #1D4ED8; }
+.module-card-icon.green  { background: #F0FDF4; color: #15803D; }
+.module-card-icon.purple { background: #F5F3FF; color: #6D28D9; }
+
+.module-card-title { font-size: 15px; font-weight: 600; margin-bottom: 5px; color: var(--text); }
+.module-card-desc  { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+.module-card-footer { margin-top: 14px; display: flex; align-items: center; gap: 8px; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-active  { background: var(--primary-light); color: var(--primary); }
+.badge-soon    { background: #F1F5F9; color: var(--text-3); }
+
+/* ── Insights Page ────────────────────────────────────────────────── */
+.catalogue-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.catalogue-label { font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px; }
+.ds-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #F8FAFC;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 12px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+.ds-chip i { color: var(--primary); font-size: 11px; }
+
+.questions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  box-shadow: var(--shadow);
+  text-align: left;
+  font-family: inherit;
+  width: 100%;
+}
+.q-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.q-card-icon {
+  width: 30px; height: 30px; min-width: 30px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+.q-card-text   { font-size: 13px; color: var(--text); font-weight: 500; line-height: 1.4; }
+.q-card-badge  { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+
+.input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.input-box {
+  flex: 1;
+  padding: 11px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-shadow: var(--shadow);
+}
+.input-box:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+.input-box::placeholder { color: var(--text-3); }
+
+.btn-primary {
+  padding: 11px 22px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.btn-primary:hover    { background: var(--primary-hover); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Spinner */
+.spinner-wrap { display: flex; align-items: center; gap: 12px; padding: 24px; color: var(--text-2); }
+.spinner {
+  width: 20px; height: 20px;
+  border: 2.5px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Error / not-found */
+.alert {
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+.alert-error  { background: var(--danger-bg);  color: var(--danger-text);  border: 1px solid #FCA5A5; }
+.alert-info   { background: var(--warning-bg); color: var(--warning-text); border: 1px solid #FCD34D; }
+.alert-icon   { margin-right: 8px; }
+
+/* Summary card */
+.summary-card {
+  background: linear-gradient(135deg, #fafbfc 0%, #f8f9fa 100%);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+.summary-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.summary-icon   { color: var(--primary); font-size: 16px; }
+.summary-label  { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--primary); }
+.summary-text   { font-size: 14px; color: var(--text); line-height: 1.7; white-space: pre-line; }
+
+/* Metrics row */
+.metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+}
+.metric-label { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.metric-value { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+
+/* Chart card */
+.chart-card { margin-bottom: 20px; }
+.chart-container { position: relative; height: 380px; margin-top: 8px; }
+
+/* Dataset info row */
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 10px 16px;
+  background: #F8FAFC;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-2);
+}
+.info-row span { display: flex; align-items: center; gap: 5px; }
+.info-row i    { color: var(--primary); }
+
+/* Data preview */
+.preview-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 7px 14px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.preview-toggle:hover { background: var(--bg); color: var(--text); }
+
+.table-wrap { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  background: #F8FAFC;
+  padding: 9px 14px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+tbody td {
+  padding: 9px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: var(--text);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+tbody tr:hover td { background: #F8FAFC; }
+tbody tr:last-child td { border-bottom: none; }
+
+/* Follow-ups */
+.followup-section { margin-top: 20px; }
+.followup-label   { font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.followup-list    { display: flex; flex-wrap: wrap; gap: 8px; }
+.followup-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.followup-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+/* Placeholder page */
+.placeholder-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  text-align: center;
+}
+.placeholder-icon { font-size: 52px; color: var(--border); margin-bottom: 20px; }
+.placeholder-title { font-size: 20px; font-weight: 600; color: var(--text-2); margin-bottom: 8px; }
+.placeholder-sub   { font-size: 14px; color: var(--text-3); max-width: 340px; }
+.placeholder-badge { margin-top: 18px; background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 6px 18px; font-size: 12px; color: var(--text-3); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; display: inline-block; }
+
+/* Source note */
+.source-note {
+  font-size: 11.5px;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+}
+.source-note i { color: var(--primary); }
+
+/* ── Analysis Page ─────────────────────────────────────────────────── */
+.analysis-kpi-row { display: grid; grid-template-columns: repeat(6,1fr); gap: 10px; margin-bottom: 20px; }
+.akpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
+.akpi.accent { border-top: 3px solid #D97706; }
+.akpi.danger { border-top: 3px solid var(--primary); }
+.akpi-label { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.akpi-value { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
+.akpi-icon  { font-size: 14px; color: var(--text-3); margin-bottom: 6px; }
+
+.selected-features-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  min-height: 54px;
+  box-shadow: var(--shadow);
+}
+.sfp-label { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.sfp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.sfp-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--primary-light); border: 1px solid rgba(139,28,28,0.2);
+  color: var(--primary); border-radius: 20px;
+  padding: 4px 10px; font-size: 12px; font-weight: 500;
+}
+.sfp-chip button { background: none; border: none; cursor: pointer; color: var(--primary); font-size: 11px; padding: 0; line-height: 1; }
+.sfp-empty { color: var(--text-3); font-size: 13px; font-style: italic; }
+
+.analysis-layout { display: grid; grid-template-columns: 270px 1fr; gap: 16px; align-items: start; }
+.analysis-left  { position: sticky; top: 20px; }
+.analysis-right { min-width: 0; }
+
+.analysis-select {
+  width: 100%; padding: 7px 10px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 13px; color: var(--text);
+  background: var(--surface); font-family: inherit; outline: none;
+  cursor: pointer;
+}
+.analysis-select:focus { border-color: var(--primary); }
+
+.feature-list { max-height: 520px; overflow-y: auto; margin-top: 4px; }
+.feature-list::-webkit-scrollbar { width: 4px; }
+.feature-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.feat-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.14s;
+  background: var(--surface);
+}
+.feat-card:hover  { border-color: var(--primary); background: var(--primary-light); }
+.feat-card.sel    { border-color: var(--primary); background: var(--primary-light); }
+.feat-card-name   { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; display: flex; justify-content: space-between; }
+.feat-card-desc   { font-size: 11.5px; color: var(--text-2); margin-bottom: 5px; line-height: 1.4; }
+.feat-tags        { display: flex; flex-wrap: wrap; gap: 4px; }
+.feat-tag         { background: #F1F5F9; border: 1px solid var(--border); color: var(--text-3); border-radius: 4px; padding: 1px 6px; font-size: 10.5px; font-weight: 500; }
+.feat-risk        { font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 20px; white-space: nowrap; }
+.feat-risk.high   { background: #FEF2F2; color: #991B1B; border: 1px solid #FCA5A5; }
+.feat-risk.medium { background: #FFFBEB; color: #92400E; border: 1px solid #FCD34D; }
+.feat-risk.low    { background: #F0FDF4; color: #166534; border: 1px solid #86EFAC; }
+
+.scatter-filters { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+.scatter-filters .analysis-select { width: auto; min-width: 140px; }
+
+.cluster-desc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 12px; margin-top: 4px; }
+.cluster-desc-card { background: #F8FAFC; border: 1px solid var(--border); border-left: 4px solid; border-radius: var(--radius-sm); padding: 14px 16px; }
+.cluster-desc-label { font-size: 12px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+.cluster-desc-text  { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.cluster-stat-row   { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.cluster-stat       { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; font-size: 11px; color: var(--text-2); }
+
+.anomaly-kpi-row { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 16px; }
+
+.anomaly-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.anomaly-filters .analysis-select { width: auto; min-width: 140px; }
+
+.anomaly-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.anomaly-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.anomaly-table thead th { background: #F8FAFC; padding: 9px 12px; text-align: left; font-weight: 600; color: var(--text-2); border-bottom: 1px solid var(--border); white-space: nowrap; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.3px; }
+.anomaly-table tbody td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text); max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.anomaly-table tbody tr { cursor: pointer; transition: background 0.12s; }
+.anomaly-table tbody tr:hover td { background: #F8FAFC; }
+.anomaly-table tbody tr:last-child td { border-bottom: none; }
+.anomaly-table .expand-row td { white-space: normal; background: #FAFBFC; padding: 14px 16px; max-width: none; cursor: default; }
+.anomaly-table .expand-row td:hover { background: #FAFBFC; }
+
+.risk-pill { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.risk-pill.high   { background: #FEF2F2; color: #991B1B; }
+.risk-pill.medium { background: #FFFBEB; color: #92400E; }
+.risk-pill.low    { background: #F0FDF4; color: #166534; }
+.risk-pill.critical { background: #4C0519; color: #fff; }
+
+.status-pill { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; background: #F1F5F9; color: var(--text-2); }
+.status-pill.escalated  { background: #FEF2F2; color: #991B1B; }
+.status-pill.invest     { background: #FFFBEB; color: #92400E; }
+.status-pill.monitor    { background: #EFF6FF; color: #1D4ED8; }
+
+.expand-icon { transition: transform 0.15s; display: inline-block; }
+.expand-icon.open { transform: rotate(90deg); }
+
+.narrative-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 8px; }
+.narrative-label { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.narrative-text  { font-size: 13px; color: var(--text); line-height: 1.65; }
+
+/* ── Vault ────────────────────────────────────────────────────────── */
+.vault-tabs {
+  display: flex; gap: 4px; margin-bottom: 22px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 5px; width: fit-content;
+  box-shadow: var(--shadow);
+}
+.vault-tab {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 18px; border: none; background: none;
+  border-radius: 7px; cursor: pointer; font-size: 13.5px;
+  font-weight: 500; color: var(--text-2); font-family: inherit;
+  transition: all 0.15s; white-space: nowrap;
+}
+.vault-tab:hover { background: var(--bg); color: var(--text); }
+.vault-tab.active { background: var(--primary); color: #fff; box-shadow: var(--shadow); }
+.vault-tab-count {
+  background: rgba(255,255,255,0.25); color: inherit;
+  font-size: 11px; font-weight: 700; padding: 1px 7px;
+  border-radius: 20px; min-width: 22px; text-align: center;
+}
+.vault-tab:not(.active) .vault-tab-count { background: var(--bg); color: var(--text-3); }
+
+.vault-layout { display: grid; grid-template-columns: 1fr; gap: 16px; }
+
+.vault-search {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+}
+.vault-search .input-box { max-width: 340px; }
+
+.vault-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px,1fr)); gap: 14px; }
+
+.vault-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 0; overflow: hidden;
+  cursor: default; box-shadow: var(--shadow); transition: box-shadow 0.15s;
+}
+.vault-card:hover { box-shadow: var(--shadow-md); }
+.vault-card.selected { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(139,28,28,0.15); }
+
+.vault-card-top {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 18px 20px 14px;
+}
+.vault-card-icon {
+  width: 42px; height: 42px; border-radius: 9px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.vault-card-icon.risk  { background: #FEF2F2; color: var(--primary); }
+.vault-card-icon.regulatory { background: #EFF6FF; color: #1D4ED8; }
+.vault-card-icon.emails { background: #F5F3FF; color: #6D28D9; }
+
+.vault-card-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.35; }
+
+.vault-meta-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.vault-meta-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; padding: 2px 8px; border-radius: 4px;
+  font-weight: 500; white-space: nowrap;
+  background: var(--bg); color: var(--text-2); border: 1px solid var(--border);
+}
+.vault-meta-tag i { font-size: 10px; opacity: 0.7; }
+.vault-meta-tag.classif-confidential { background: #FEF2F2; color: #991B1B; border-color: #FECACA; }
+.vault-meta-tag.classif-internal     { background: #FFFBEB; color: #92400E; border-color: #FCD34D; }
+.vault-meta-tag.classif-restricted   { background: #FFF7ED; color: #9A3412; border-color: #FDBA74; }
+.vault-meta-tag.classif-public       { background: #F0FDF4; color: #166534; border-color: #86EFAC; }
+.vault-meta-tag.status-active        { background: #F0FDF4; color: #166534; border-color: #86EFAC; }
+.vault-meta-tag.status-review        { background: #FFFBEB; color: #92400E; border-color: #FCD34D; }
+
+.vault-card-preview {
+  font-size: 12.5px; color: var(--text-2); line-height: 1.6;
+  padding: 0 20px; margin-bottom: 14px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.vault-card-footer {
+  border-top: 1px solid var(--border); padding: 10px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: #FAFBFC;
+}
+.vault-card-footer-info { font-size: 11px; color: var(--text-3); }
+
+/* Summary Modal (child window) */
+.vault-summary-overlay {
+  position: fixed; inset: 0; z-index: 1100;
+  background: rgba(0,0,0,0.45); backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  animation: fadeInOverlay 0.15s ease;
+}
+@keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+
+.vault-summary-window {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; box-shadow: 0 24px 64px rgba(0,0,0,0.45), 0 4px 16px rgba(0,0,0,0.25);
+  display: flex; flex-direction: column;
+  width: 680px; max-width: 100%; max-height: 82vh;
+  overflow: hidden;
+  animation: slideUpWindow 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes slideUpWindow {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Window title bar */
+.vault-summary-titlebar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 16px; height: 42px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--sidebar-bg) 0%, #1e293b 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  user-select: none;
+}
+.vault-summary-titlebar-icon {
+  width: 22px; height: 22px; border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0;
+}
+.vault-summary-titlebar-text {
+  flex: 1; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.9);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.vault-summary-titlebar-actions { display: flex; align-items: center; gap: 6px; }
+.vault-summary-win-btn {
+  width: 26px; height: 26px; border-radius: 6px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 11px;
+  transition: all 0.15s;
+}
+.vault-summary-win-btn.close-btn {
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.65);
+}
+.vault-summary-win-btn.close-btn:hover { background: #e74c3c; color: #fff; }
+
+/* Window header (doc info) */
+.vault-summary-header {
+  padding: 14px 20px 12px; border-bottom: 1px solid var(--border);
+  background: var(--bg); flex-shrink: 0;
+}
+.vault-summary-header-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.35; }
+.vault-summary-header-sub { font-size: 11.5px; color: var(--text-3); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.vault-summary-header-sub i { color: var(--text-3); }
+
+.vault-summary-body { flex: 1; overflow-y: auto; padding: 18px 22px; }
+.vault-summary-body::-webkit-scrollbar { width: 4px; }
+.vault-summary-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.vault-summary-section { margin-bottom: 18px; }
+.vault-summary-label {
+  font-size: 10.5px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.7px; color: var(--primary); margin-bottom: 5px;
+  display: flex; align-items: center; gap: 6px;
+}
+.vault-summary-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.vault-summary-text {
+  font-size: 13px; color: var(--text); line-height: 1.7;
+  white-space: pre-wrap;
+}
+.vault-summary-source {
+  margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 6px;
+}
+
+/* Window footer */
+.vault-summary-footer {
+  padding: 10px 20px; border-top: 1px solid var(--border);
+  background: var(--bg); display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.vault-summary-footer-left { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+.vault-summary-footer-close {
+  padding: 6px 16px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-2); font-size: 12px;
+  font-weight: 600; cursor: pointer; transition: all 0.15s;
+}
+.vault-summary-footer-close:hover { background: var(--bg); border-color: var(--primary); color: var(--primary); }
+
+.vault-empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 60px 24px; text-align: center;
+  color: var(--text-3);
+}
+.vault-empty-icon { font-size: 48px; margin-bottom: 18px; opacity: 0.2; }
+.vault-empty-title { font-size: 16px; font-weight: 600; color: var(--text-2); margin-bottom: 8px; }
+.vault-empty-sub { font-size: 13.5px; max-width: 360px; line-height: 1.6; }
+
+.analysis-instruction {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 80px 32px; color: var(--text-3); text-align: center;
+  background: var(--surface); border: 2px dashed var(--border);
+  border-radius: var(--radius); min-height: 340px;
+}
+.analysis-instruction-icon { font-size: 52px; margin-bottom: 22px; opacity: 0.25; color: var(--primary); }
+.analysis-instruction-title { font-size: 17px; font-weight: 600; color: var(--text-2); margin-bottom: 10px; }
+.analysis-instruction-sub { font-size: 14px; max-width: 360px; line-height: 1.7; }
+
+.axis-selectors {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px; flex-wrap: wrap;
+  padding: 10px 14px; background: #F8FAFC;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+}
+.axis-label { font-size: 12px; font-weight: 700; color: var(--text-2); white-space: nowrap; min-width: 50px; }
+.axis-selectors .analysis-select { width: auto; min-width: 180px; flex: 1; }
+
+/* ── Reports Module ─────────────────────────────────────────────────────────── */
+.report-page-header { text-align: center; padding: 32px 0 28px; }
+.report-page-title  { font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 8px; letter-spacing: -0.3px; }
+.report-page-sub    { font-size: 14px; color: var(--text-3); max-width: 480px; margin: 0 auto; line-height: 1.6; }
+
+.report-sources-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: 14px; margin: 4px 0 0; }
+
+.report-source-card {
+  background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius);
+  padding: 18px 18px 16px; cursor: pointer; transition: all 0.18s; position: relative; user-select: none;
+}
+.report-source-card:hover:not(.unavailable) { border-color: var(--primary); box-shadow: var(--shadow); }
+.report-source-card.selected { border-color: var(--primary); background: rgba(59,130,246,0.04); }
+.report-source-card.unavailable { opacity: 0.45; cursor: not-allowed; }
+
+.report-source-check {
+  position: absolute; top: 14px; right: 14px; width: 22px; height: 22px; border-radius: 6px;
+  border: 2px solid var(--border); background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; font-size: 11px; color: transparent;
+}
+.report-source-card.selected .report-source-check { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+.report-source-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px; }
+.report-source-icon.risk       { background: rgba(239,68,68,0.1);  color: #ef4444; }
+.report-source-icon.regulatory { background: rgba(217,119,6,0.1);  color: #d97706; }
+.report-source-icon.emails     { background: rgba(59,130,246,0.1); color: #3b82f6; }
+.report-source-icon.insights   { background: rgba(16,185,129,0.1); color: #10b981; }
+
+.report-source-name  { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 3px; padding-right: 28px; }
+.report-source-count { font-size: 11.5px; color: var(--primary); font-weight: 600; margin-bottom: 6px; }
+.report-source-desc  { font-size: 12px; color: var(--text-3); line-height: 1.55; }
+
+.report-date-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 22px; margin-top: 18px; }
+.report-date-title   { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-3); margin-bottom: 14px; }
+.report-date-row     { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.report-date-field   { display: flex; flex-direction: column; gap: 5px; }
+.report-date-label   { font-size: 11.5px; font-weight: 600; color: var(--text-2); }
+.report-date-input   { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); font-size: 13px; font-family: inherit; outline: none; transition: border 0.15s; }
+.report-date-input:focus { border-color: var(--primary); }
+.report-date-arrow   { color: var(--text-3); font-size: 14px; padding-bottom: 8px; }
+.report-undated-row  { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.report-undated-row label { font-size: 12.5px; color: var(--text-2); cursor: pointer; }
+
+.report-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+.report-action-btn {
+  padding: 11px 22px; border-radius: var(--radius); font-size: 13.5px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.18s; border: none;
+}
+.report-action-btn.primary   { background: var(--primary); color: #fff; }
+.report-action-btn.primary:hover:not(:disabled) { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(59,130,246,0.4); }
+.report-action-btn.secondary { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); }
+.report-action-btn.secondary:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+.report-action-btn:disabled  { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+.report-output { margin-top: 32px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.report-output-header { padding: 16px 22px; background: linear-gradient(135deg, var(--sidebar-bg) 0%, #1e293b 100%); color: #fff; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.report-output-title  { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+.report-output-meta   { font-size: 11.5px; color: rgba(255,255,255,0.5); }
+.report-print-btn     { padding: 7px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.85); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0; }
+.report-print-btn:hover { background: rgba(255,255,255,0.22); }
+
+.report-body { padding: 24px 28px; }
+.report-section { margin-bottom: 30px; }
+.report-section-title {
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px;
+  color: var(--primary); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+.report-section-content { font-size: 13.5px; color: var(--text); line-height: 1.8; white-space: pre-wrap; }
+
+.report-charts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 18px; margin-top: 16px; }
+.report-chart-card  { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+.report-chart-title { font-size: 11.5px; font-weight: 700; color: var(--text-2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.4px; }
+.report-chart-kpis  { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.report-chart-kpi   { font-size: 11px; color: var(--text-3); }
+.report-chart-kpi strong { font-weight: 700; color: var(--text-2); }
+
+/* Email preview reuses vault-summary-window */
+.email-body-line-heading { font-weight: 700; color: var(--text); margin-top: 14px; margin-bottom: 4px; font-size: 13.5px; }
+.email-body-line-bullet  { padding-left: 16px; margin-bottom: 4px; color: var(--text); font-size: 13.5px; line-height: 1.65; }
+.email-body-line-text    { color: var(--text); font-size: 13.5px; line-height: 1.65; }
+
+@media print {
+  .sidebar, .topbar, .report-actions, .report-page-header, .report-sources-grid,
+  .report-date-section, .report-print-btn, .vault-tabs, .page-header { display: none !important; }
+  body { background: #fff !important; }
+  .report-output { border: none; margin: 0; box-shadow: none; }
+  .report-output-header { background: #1e293b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { padding: 0 !important; max-width: none !important; }
+  .report-body { padding: 16px !important; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ── Chart Config ─────────────────────────────────────────────────────────────
+const CHART_PALETTE = [
+  '#8B1C1C','#B91C1C','#DC2626','#EF4444',
+  '#1E3A5F','#1E40AF','#2563EB','#3B82F6',
+  '#7C3AED','#059669'
+];
+
+function buildChartConfig(type, data, title, highlightIndex, highlightType) {
+  const fmt = v => typeof v === 'number' && v > 1000 ? `£${v.toLocaleString()}` : String(v);
+
+  const baseOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { font: { family: 'Inter', size: 12 }, padding: 16 } },
+      title: {
+        display: true, text: title,
+        font: { family: 'Inter', size: 15, weight: '600' },
+        color: '#0F172A', padding: { bottom: 16 }
+      }
+    }
+  };
+
+  if (type === 'bar') {
+    const maxIdx  = data.values.indexOf(Math.max(...data.values));
+    const hlIdx   = highlightIndex != null ? highlightIndex : maxIdx;
+    const isMin   = highlightType === 'min';
+    const bgColors  = data.values.map((_, i) => i === hlIdx ? '#8B1C1C' : 'rgba(148,163,184,0.35)');
+    const hvrColors = data.values.map((_, i) => i === hlIdx ? '#B91C1C' : 'rgba(148,163,184,0.55)');
+    return {
+      type: 'bar',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Count',
+          data: data.values,
+          backgroundColor: bgColors,
+          hoverBackgroundColor: hvrColors,
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        ...baseOpts,
+        plugins: {
+          ...baseOpts.plugins,
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const val = ctx.parsed.y;
+                const suffix = ctx.dataIndex === hlIdx ? (isMin ? '  ★ Smallest' : '  ★ Largest') : '';
+                return ` ${val.toLocaleString()}${suffix}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 12 } } },
+          y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { family: 'Inter', size: 12 } }, beginAtZero: true }
+        }
+      }
+    };
+  }
+
+  if (type === 'doughnut') {
+    const hlIdx = highlightIndex != null ? highlightIndex : data.values.indexOf(Math.max(...data.values));
+    const isMin = highlightType === 'min';
+    const bgColors = CHART_PALETTE.map((c, i) => i === hlIdx ? '#8B1C1C' : c);
+    return {
+      type: 'doughnut',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          data: data.values,
+          backgroundColor: bgColors,
+          hoverOffset: 8,
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      },
+      options: {
+        ...baseOpts,
+        plugins: {
+          ...baseOpts.plugins,
+          legend: { position: 'right', labels: { font: { family: 'Inter', size: 12 }, padding: 14 } },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const val = ctx.parsed;
+                const suffix = ctx.dataIndex === hlIdx ? (isMin ? '  ★ Smallest' : '  ★ Highlighted') : '';
+                return ` ${val.toLocaleString()}${suffix}`;
+              }
+            }
+          }
+        },
+        cutout: '62%'
+      }
+    };
+  }
+
+  if (type === 'horizontalBar') {
+    const maxIdx  = data.values.indexOf(Math.max(...data.values));
+    const hlIdx   = highlightIndex != null ? highlightIndex : maxIdx;
+    const isMin   = highlightType === 'min';
+    const bgColors  = data.values.map((_, i) => i === hlIdx ? '#8B1C1C' : 'rgba(148,163,184,0.35)');
+    const hvrColors = data.values.map((_, i) => i === hlIdx ? '#B91C1C' : 'rgba(148,163,184,0.55)');
+    const isGBP = data.values.some(v => v > 10000);
+    return {
+      type: 'bar',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Value',
+          data: data.values,
+          backgroundColor: bgColors,
+          hoverBackgroundColor: hvrColors,
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        ...baseOpts,
+        indexAxis: 'y',
+        plugins: {
+          ...baseOpts.plugins,
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const val = ctx.raw;
+                const suffix = ctx.dataIndex === hlIdx ? (isMin ? '  ★ Lowest' : '  ★ Highest') : '';
+                return isGBP ? `  £${val.toLocaleString()}${suffix}` : `  ${val.toLocaleString()}${suffix}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { font: { family: 'Inter', size: 12 }, callback: v => isGBP ? `£${Number(v).toLocaleString()}` : Number(v).toLocaleString() },
+            beginAtZero: true
+          },
+          y: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 12 } } }
+        }
+      }
+    };
+  }
+
+  if (type === 'line') {
+    return {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Transaction Volume',
+          data: data.values,
+          borderColor: '#8B1C1C',
+          backgroundColor: 'rgba(139,28,28,0.08)',
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#8B1C1C',
+          pointRadius: 5,
+          pointHoverRadius: 7
+        }]
+      },
+      options: {
+        ...baseOpts,
+        plugins: {
+          ...baseOpts.plugins,
+          tooltip: { callbacks: { label: ctx => `  £${ctx.raw.toLocaleString()}` } }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 12 } } },
+          y: {
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { font: { family: 'Inter', size: 12 }, callback: v => `£${Number(v).toLocaleString()}` },
+            beginAtZero: true
+          }
+        }
+      }
+    };
+  }
+
+  return null;
+}
+
+// ── Components ───────────────────────────────────────────────────────────────
+
+function ChartComponent({ type, data, title, highlightIndex, highlightType }) {
+  const canvasRef = useRef(null);
+  const chartRef  = useRef(null);
+
+  useEffect(() => {
+    if (!canvasRef.current || !data) return;
+    if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; }
+
+    const cfg = buildChartConfig(type, data, title, highlightIndex, highlightType);
+    if (!cfg) return;
+    chartRef.current = new Chart(canvasRef.current.getContext('2d'), cfg);
+    return () => { if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; } };
+  }, [type, title, JSON.stringify(data), highlightIndex, highlightType]);
+
+  return (
+    <div className="chart-container">
+      <canvas ref={canvasRef}></canvas>
+    </div>
+  );
+}
+
+function MetricsRow({ metrics }) {
+  if (!metrics) return null;
+  const entries = Object.entries(metrics);
+  return (
+    <div className="metrics-row">
+      {entries.map(([k, v]) => (
+        <div key={k} className="metric-card">
+          <div className="metric-label">{k}</div>
+          <div className="metric-value">{typeof v === 'number' ? v.toLocaleString() : v}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DataTable({ columns, preview }) {
+  if (!preview || !preview.length) return null;
+  return (
+    <div className="table-wrap">
+      <table>
+        <thead>
+          <tr>{columns.map(c => <th key={c}>{c.replace(/_/g, ' ')}</th>)}</tr>
+        </thead>
+        <tbody>
+          {preview.map((row, i) => (
+            <tr key={i}>
+              {columns.map(c => (
+                <td key={c} title={row[c] !== null && row[c] !== undefined ? String(row[c]) : ''}>
+                  {row[c] !== null && row[c] !== undefined ? String(row[c]) : '—'}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+const NAV = [
+  { id: 'home',     label: 'Home',     icon: 'fa-house' },
+  { id: 'insights', label: 'Insights', icon: 'fa-chart-bar' },
+  { id: 'reports',  label: 'Reports',  icon: 'fa-file-lines' },
+  { id: 'vault',    label: 'Vault',    icon: 'fa-vault' },
+  { id: 'analysis', label: 'Analysis', icon: 'fa-magnifying-glass-chart' }
+];
+
+function Sidebar({ page, setPage }) {
+  return (
+    <div className="sidebar">
+      <div className="sidebar-brand">
+        <div className="sidebar-brand-icon"><i className="fa-solid fa-shield-halved"></i></div>
+        <div className="sidebar-brand-text">
+          <div className="sidebar-brand-title">Risk Intelligence</div>
+        </div>
+      </div>
+
+      <nav className="sidebar-nav">
+        <div className="sidebar-section-label">Navigation</div>
+        {NAV.map(item => (
+          <button
+            key={item.id}
+            className={`nav-item ${page === item.id ? 'active' : ''}`}
+            onClick={() => setPage(item.id)}
+          >
+            <i className={`fa-solid ${item.icon}`}></i>
+            <span>{item.label}</span>
+            {item.id === 'insights' && <span className="nav-badge">Live</span>}
+          </button>
+        ))}
+      </nav>
+
+      <div className="sidebar-footer">
+        <div className="sidebar-footer-label">v1.0 · Insights Module</div>
+      </div>
+    </div>
+  );
+}
+
+// ── Home Page ─────────────────────────────────────────────────────────────────
+const MODULES = [
+  {
+    id: 'insights', label: 'Insights', icon: 'fa-chart-bar', iconClass: 'red',
+    desc: 'Ask natural language questions across approved Risk & Compliance datasets. Get instant charts and executive summaries.',
+    active: true
+  },
+  {
+    id: 'reports', label: 'Reports', icon: 'fa-file-lines', iconClass: 'blue',
+    desc: 'Generate leadership ready board packs and committee reports from structured risk data.',
+    active: true
+  },
+  {
+    id: 'vault', label: 'Vault', icon: 'fa-vault', iconClass: 'green',
+    desc: 'Search and retrieve approved policy documents, regulatory guidance, and knowledge assets.',
+    active: true
+  },
+  {
+    id: 'analysis', label: 'Analysis', icon: 'fa-magnifying-glass-chart', iconClass: 'purple',
+    desc: 'Perform deeper model assisted analysis, clustering, and regulatory impact assessment.',
+    active: true
+  }
+];
+
+function HomePage({ setPage }) {
+  return (
+    <div className="page">
+      <div className="home-hero">
+        <div className="home-hero-title">Risk Intelligence Platform</div>
+        <div className="home-hero-sub">
+          A unified platform for risk insights, reporting, document management, and advanced analysis.
+        </div>
+      </div>
+
+      <div className="page-header">
+        <div className="page-title">Platform Modules</div>
+        <div className="page-sub">Select a module to get started.</div>
+      </div>
+
+      <div className="modules-grid">
+        {MODULES.map(m => (
+          <div
+            key={m.id}
+            className="module-card"
+            onClick={() => setPage(m.id)}
+          >
+            <div className={`module-card-icon ${m.iconClass}`}>
+              <i className={`fa-solid ${m.icon}`}></i>
+            </div>
+            <div className="module-card-title">{m.label}</div>
+            <div className="module-card-desc">{m.desc}</div>
+            <div className="module-card-arrow">
+              <span className={`badge ${m.active ? 'badge-active' : 'badge-soon'}`}>
+                {m.active
+                  ? <><i className="fa-solid fa-circle-check" style={{fontSize:10}}></i> Live</>
+                  : <><i className="fa-solid fa-clock" style={{fontSize:10}}></i> Coming Soon</>}
+              </span>
+              <span className="module-card-open">
+                Open <i className="fa-solid fa-arrow-right"></i>
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Placeholder Pages ─────────────────────────────────────────────────────────
+function PlaceholderPage({ label, icon, desc }) {
+  return (
+    <div className="page">
+      <div className="page-header">
+        <div className="page-title">{label}</div>
+      </div>
+      <div className="card">
+        <div className="placeholder-wrap">
+          <div className="placeholder-icon"><i className={`fa-regular ${icon}`}></i></div>
+          <div className="placeholder-title">{label} module is coming soon</div>
+          <div className="placeholder-sub">{desc}</div>
+          <div className="placeholder-badge">Reserved · Next Build Phase</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Insights Page ─────────────────────────────────────────────────────────────
+const SUGGESTED = [
+  { text: 'How many parties are in the database broken down by type?',  icon: 'fa-users',             tag: 'Parties' },
+  { text: 'Show me the risk rating distribution across all customers',   icon: 'fa-shield-halved',     tag: 'Risk Ratings' },
+  { text: 'What are the top 10 accounts by total transaction volume?',  icon: 'fa-chart-bar',         tag: 'Accounts' },
+  { text: 'Show monthly transaction trends over time',                   icon: 'fa-chart-line',        tag: 'Monthly Trends' },
+  { text: 'What are my top 10 counterparty exposures?',                  icon: 'fa-building-columns',  tag: 'Exposures' }
+];
+
+const FOLLOWUPS = {
+  Parties:                      ['Show party type breakdown as a pie chart', 'Which party types carry the highest risk?', 'How is the party portfolio distributed?'],
+  Risk_Ratings:                 ['Show risk rating distribution', 'How many customers are High Risk?', 'What percentage of customers are in each risk tier?'],
+  Top10_Accounts_Volume:        ['Show monthly transaction trends over time', 'What are my top 10 counterparty exposures?', 'Show the risk rating distribution'],
+  Monthly_TXN_Trends:           ['What are the top 10 accounts by volume?', 'Show counterparty exposures', 'How many parties are in the database?'],
+  Top10_Counterparty_Exposures: ['Show the risk rating distribution', 'What are the top 10 accounts by volume?', 'Show monthly transaction trends']
+};
+
+function InsightsPage() {
+  const [question,    setQuestion]    = useState('');
+  const [loading,     setLoading]     = useState(false);
+  const [result,      setResult]      = useState(null);
+  const [error,       setError]       = useState(null);
+  const [catalogue,   setCatalogue]   = useState([]);
+  const [showPreview, setShowPreview] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/catalogue')
+      .then(r => r.json())
+      .then(d => setCatalogue(d.datasets || []))
+      .catch(() => {});
+  }, []);
+
+  const ask = useCallback(async (q) => {
+    const text = (q || question).trim();
+    if (!text) return;
+    setLoading(true); setResult(null); setError(null); setShowPreview(false);
+    try {
+      const res  = await fetch('/api/insights', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: text })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Server error');
+      setResult(data);
+    } catch (err) {
+      setError(err.message || 'Failed to connect to server.');
+    } finally {
+      setLoading(false);
+    }
+  }, [question]);
+
+  const handleSuggested = (text) => { setQuestion(text); ask(text); };
+
+  const handleKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(); } };
+
+  return (
+    <div className="page">
+      {/* Header */}
+      <div className="page-header">
+        <div className="page-title">Insights</div>
+        <div className="page-sub">
+          Ask questions across approved Risk &amp; Compliance datasets.
+          
+        </div>
+      </div>
+
+
+      {/* Suggested questions */}
+      <div className="questions-grid">
+        {SUGGESTED.map((s, i) => (
+          <button key={i} className="q-card" onClick={() => handleSuggested(s.text)}>
+            <div className="q-card-icon"><i className={`fa-solid ${s.icon}`}></i></div>
+            <div>
+              <div className="q-card-text">{s.text}</div>
+              <div className="q-card-badge">{s.tag}</div>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Input */}
+      <div className="input-row">
+        <input
+          className="input-box"
+          type="text"
+          placeholder="Ask a question about your risk data…"
+          value={question}
+          onChange={e => setQuestion(e.target.value)}
+          onKeyDown={handleKey}
+        />
+        <button className="btn-primary" onClick={() => ask()} disabled={loading || !question.trim()}>
+          {loading
+            ? <><div className="spinner" style={{width:16,height:16,borderWidth:2}}></div> Analysing…</>
+            : <><i className="fa-solid fa-paper-plane"></i> Ask</>}
+        </button>
+      </div>
+
+      {/* Loading */}
+      {loading && (
+        <div className="spinner-wrap">
+          <div className="spinner"></div>
+          <span>Analysing data and generating insight…</span>
+        </div>
+      )}
+
+      {/* Error */}
+      {error && (
+        <div className="alert alert-error">
+          <i className="fa-solid fa-circle-exclamation alert-icon"></i>
+          {error}
+        </div>
+      )}
+
+      {/* Not found */}
+      {result && !result.answer_available && (
+        <div className="alert alert-info">
+          <i className="fa-solid fa-triangle-exclamation alert-icon"></i>
+          {result.message}
+        </div>
+      )}
+
+      {/* Results */}
+      {result && result.answer_available && (
+        <div>
+          {/* Summary */}
+          <div className="summary-card">
+            <div className="summary-header">
+              <i className="fa-solid fa-brain summary-icon"></i>
+              <span className="summary-label">Executive Summary</span>
+            </div>
+            <div className="summary-text">{result.summary}</div>
+          </div>
+
+          {/* Metrics */}
+          <MetricsRow metrics={result.key_metrics} />
+
+          {/* Chart */}
+          <div className="card chart-card">
+            <div className="card-header">
+              <span className="card-title">{result.title}</span>
+              <span className="ds-chip">
+                <i className="fa-solid fa-table"></i>
+                {result.dataset_used.replace(/_/g, ' ')}
+              </span>
+            </div>
+            <ChartComponent
+              type={result.chart_type}
+              data={result.chart_data}
+              title=""
+              highlightIndex={result.highlight_index}
+              highlightType={result.highlight_type}
+            />
+          </div>
+
+          {/* Source + preview */}
+          <div className="info-row">
+            <span><i className="fa-solid fa-database"></i> Dataset: <strong>{result.dataset_used.replace(/_/g, ' ')}</strong></span>
+            <span><i className="fa-solid fa-lock"></i> Source: Approved Excel datasets only — no external data used</span>
+          </div>
+
+          {/* Preview toggle */}
+          <button className="preview-toggle" onClick={() => setShowPreview(p => !p)}>
+            <i className={`fa-solid fa-chevron-${showPreview ? 'up' : 'down'}`}></i>
+            {showPreview ? 'Hide' : 'Show'} data preview (first 10 rows)
+          </button>
+          {showPreview && <DataTable columns={result.columns} preview={result.preview} />}
+
+          {/* Follow-up suggestions */}
+          {FOLLOWUPS[result.dataset_used] && (
+            <div className="followup-section">
+              <div className="followup-label">Suggested follow-up questions</div>
+              <div className="followup-list">
+                {FOLLOWUPS[result.dataset_used].map((q, i) => (
+                  <button key={i} className="followup-btn" onClick={() => handleSuggested(q)}>{q}</button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── App Root ──────────────────────────────────────────────────────────────────
+function App() {
+  const [page, setPage] = useState('home');
+
+  const renderPage = () => {
+    switch (page) {
+      case 'home':     return <HomePage setPage={setPage} />;
+      case 'insights': return <InsightsPage />;
+      case 'reports':
+        return <ReportsPage />;
+      case 'vault':
+        return <VaultPage />;
+      case 'analysis':
+        return <AnalysisPage />;
+      default: return <HomePage setPage={setPage} />;
+    }
+  };
+
+  return (
+    <div className="app">
+      <Sidebar page={page} setPage={setPage} />
+      <div className="main">
+        {renderPage()}
+      </div>
+    </div>
+  );
+}
+
+// ── Analysis Helpers ─────────────────────────────────────────────────────────
+
+const SCATTER_COLORS = ['#8B1C1C','#1E3A5F','#059669','#D97706','#7C3AED','#DB2777','#0284C7','#0F766E'];
+const CLUSTER_BORDER_COLORS = ['#6B1515','#162D4A','#047857','#B45309','#6D28D9','#BE185D','#0369A1','#0F5C55'];
+
+function getPctKey(row) {
+  return Object.keys(row).find(k => k.toLowerCase().includes('pct') && k.toLowerCase().includes('100')) || '';
+}
+
+function riskPillClass(r) {
+  const s = String(r).toLowerCase();
+  if (s.includes('critical')) return 'critical';
+  if (s.includes('high'))     return 'high';
+  if (s.includes('medium') || s.includes('med')) return 'medium';
+  if (s.includes('low'))      return 'low';
+  return '';
+}
+
+function statusPillClass(s) {
+  const v = String(s).toLowerCase();
+  if (v.includes('escal') || v.includes('mlro')) return 'escalated';
+  if (v.includes('invest'))   return 'invest';
+  if (v.includes('monitor'))  return 'monitor';
+  return '';
+}
+
+function riskCardClass(s) {
+  const v = String(s).toLowerCase();
+  if (v.includes('high') || v.includes('critical')) return 'high';
+  if (v.includes('medium')) return 'medium';
+  return 'low';
+}
+
+// ── Analysis Sub-Components ───────────────────────────────────────────────────
+
+function AnalysisKPI({ label, value, icon, accent, danger }) {
+  return (
+    <div className={`akpi${accent ? ' accent' : ''}${danger ? ' danger' : ''}`}>
+      <div className="akpi-icon"><i className={`fa-solid ${icon}`}></i></div>
+      <div className="akpi-label">{label}</div>
+      <div className="akpi-value">{typeof value === 'number' ? value.toLocaleString() : (value || 0)}</div>
+    </div>
+  );
+}
+
+function SelectedFeaturesPanel({ features, onRemove }) {
+  return (
+    <div className="selected-features-panel">
+      <div className="sfp-label">
+        <i className="fa-solid fa-check-circle"></i>
+        Selected Features <span style={{color:'var(--primary)', fontWeight:700}}>{features.length > 0 ? `(${features.length})` : ''}</span>
+      </div>
+      <div className="sfp-chips">
+        {features.length === 0
+          ? <span className="sfp-empty">Click features in the catalogue to add them here</span>
+          : features.map(f => (
+              <span key={f} className="sfp-chip">
+                {f}
+                <button onClick={() => onRemove(f)} title="Remove"><i className="fa-solid fa-xmark"></i></button>
+              </span>
+            ))
+        }
+      </div>
+    </div>
+  );
+}
+
+function FeatureCard({ feature, selected, onClick }) {
+  const name = feature['Feature Name'] || '';
+  const desc = feature['Description'] || '';
+  const tags = String(feature['Tags'] || '').split(',').map(t => t.trim()).filter(Boolean);
+  const risk = feature['Risk Relevance'] || '';
+  return (
+    <div className={`feat-card${selected ? ' sel' : ''}`} onClick={onClick}>
+      <div className="feat-card-name">
+        <span>{name}</span>
+        {risk && <span className={`feat-risk ${riskCardClass(risk)}`}>{risk}</span>}
+      </div>
+      {desc && <div className="feat-card-desc">{desc}</div>}
+      {tags.length > 0 && (
+        <div className="feat-tags">
+          {tags.slice(0, 4).map((t, i) => <span key={i} className="feat-tag">{t}</span>)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ScatterPlotChart({ data, xCol, yCol }) {
+  const canvasRef = useRef(null);
+  const chartRef  = useRef(null);
+
+  const isCurrency = col => col && (col.toLowerCase().includes('gbp') || col.toLowerCase().includes('amount'));
+  const formatVal  = (col, v) => isCurrency(col) ? `£${Number(v).toLocaleString()}` : Number(v).toLocaleString();
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; }
+    if (!data || !data.length || !xCol || !yCol) return;
+
+    const clusters = {};
+    data.forEach(row => {
+      const label = String(row['Cluster Label'] || row['Cluster'] || 'Unknown');
+      if (!clusters[label]) clusters[label] = [];
+      clusters[label].push(row);
+    });
+
+    const clusterList = Object.keys(clusters);
+
+    const config = {
+      type: 'scatter',
+      data: {
+        datasets: clusterList.map((label, idx) => ({
+          label,
+          data: clusters[label].map(r => {
+            const pctKey = getPctKey(r);
+            return {
+              x: parseFloat(r[xCol]) || 0,
+              y: parseFloat(r[yCol]) || 0,
+              partyId:     r['Party ID'],
+              riskRating:  r['Risk Rating'],
+              crossBorder: r['Cross-Border TXN Count'],
+              pctAbove:    pctKey ? r[pctKey] : null,
+              distance:    r['Distance from Centroid'],
+              flag:        r['Flag / Note'] || r['Flag  Note'] || ''
+            };
+          }),
+          backgroundColor: SCATTER_COLORS[idx % SCATTER_COLORS.length] + 'BB',
+          borderColor:     SCATTER_COLORS[idx % SCATTER_COLORS.length],
+          pointRadius: 7, pointHoverRadius: 11, borderWidth: 1.5
+        }))
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { font: { family: 'Inter', size: 12 }, padding: 14 } },
+          title: { display: false },
+          tooltip: {
+            callbacks: {
+              title: items => items.length ? `Party: ${items[0].raw.partyId || 'N/A'}` : '',
+              label: ctx => {
+                const p = ctx.raw;
+                const pct = p.pctAbove !== null && p.pctAbove !== undefined
+                  ? (parseFloat(p.pctAbove) <= 1 ? (parseFloat(p.pctAbove)*100).toFixed(1)+'%' : parseFloat(p.pctAbove).toFixed(1)+'%')
+                  : 'N/A';
+                return [
+                  `Cluster: ${ctx.dataset.label}`,
+                  `Risk Rating: ${p.riskRating || 'N/A'}`,
+                  `${xCol}: ${formatVal(xCol, p.x)}`,
+                  `${yCol}: ${formatVal(yCol, p.y)}`,
+                  `Cross-Border TXN: ${p.crossBorder ?? 'N/A'}`,
+                  `>£100K: ${pct}`,
+                  `Distance from Centroid: ${typeof p.distance === 'number' ? p.distance.toFixed(2) : (p.distance ?? 'N/A')}`,
+                  ...(p.flag ? [`Flag: ${p.flag}`] : [])
+                ];
+              }
+            },
+            backgroundColor: 'rgba(15,23,42,0.93)',
+            titleColor: '#fff', bodyColor: 'rgba(255,255,255,0.82)',
+            padding: 12, cornerRadius: 8, displayColors: true
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: xCol, font: { family: 'Inter', size: 12 }, color: '#475569' },
+            ticks: { callback: v => formatVal(xCol, v), font: { family: 'Inter', size: 11 } },
+            grid: { color: 'rgba(0,0,0,0.05)' }
+          },
+          y: {
+            title: { display: true, text: yCol, font: { family: 'Inter', size: 12 }, color: '#475569' },
+            ticks: { callback: v => formatVal(yCol, v), font: { family: 'Inter', size: 11 } },
+            grid: { color: 'rgba(0,0,0,0.05)' }
+          }
+        }
+      }
+    };
+    chartRef.current = new Chart(canvasRef.current.getContext('2d'), config);
+    return () => { if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; } };
+  }, [JSON.stringify(data), xCol, yCol]);
+
+  if (!data || !data.length || !xCol || !yCol) return <div style={{padding:30,color:'var(--text-3)',textAlign:'center'}}>No scatter data to display.</div>;
+  return <div style={{position:'relative',height:420}}><canvas ref={canvasRef}></canvas></div>;
+}
+
+function ClusterDescriptions({ descriptions, scatter }) {
+  if (!descriptions) {
+    const clusters = [...new Set((scatter||[]).map(r => r['Cluster Label'] || r['Cluster']).filter(Boolean))];
+    return (
+      <div style={{color:'var(--text-3)', fontSize:13, textAlign:'center', padding:'20px 0'}}>
+        {clusters.length > 0
+          ? `${clusters.length} cluster${clusters.length > 1 ? 's' : ''} detected. Click "Generate with AI" to get LLM-powered descriptions.`
+          : 'Load scatter data to see cluster descriptions.'}
+      </div>
+    );
+  }
+
+  const borderColors = SCATTER_COLORS;
+  return (
+    <div className="cluster-desc-grid">
+      {descriptions.map((d, i) => (
+        <div key={i} className="cluster-desc-card" style={{borderLeftColor: borderColors[i % borderColors.length]}}>
+          <div className="cluster-desc-label" style={{color: borderColors[i % borderColors.length]}}>{d.label}</div>
+          <div className="cluster-desc-text">{d.description}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AnomalySection({ anomalies, allAnomalies, highRiskCount, escalatedCount, investigatingCount, monitoringCount, maxDistance, selectedFeatures, filters, filterOptions, onFilter }) {
+  const [expandedRow, setExpandedRow] = useState(null);
+  const { aCluster, aRisk, aStatus, aType } = filters;
+  const { aClusters, aRisks, aStatuses, aTypes } = filterOptions;
+
+  const ANOMALY_COLS = ['Rank','Party ID','Cluster Label','Risk Rating','Anomaly Type','Investigation Status','Distance from Centroid','Top Features'];
+
+  return (
+    <div className="card">
+      <div className="card-header">
+        <span className="card-title">Anomaly Detection</span>
+        <span className="ds-chip"><i className="fa-solid fa-table"></i> Anomaly_Detection</span>
+      </div>
+
+
+      {/* Filters */}
+      <div className="anomaly-filters">
+        <select className="analysis-select" value={aCluster} onChange={e => onFilter('cluster', e.target.value)}>
+          {aClusters.map(c => <option key={c}>{c}</option>)}
+        </select>
+        <select className="analysis-select" value={aRisk} onChange={e => onFilter('risk', e.target.value)}>
+          {aRisks.map(r => <option key={r}>{r}</option>)}
+        </select>
+        <select className="analysis-select" value={aStatus} onChange={e => onFilter('status', e.target.value)}>
+          {aStatuses.map(s => <option key={s}>{s}</option>)}
+        </select>
+        <select className="analysis-select" value={aType} onChange={e => onFilter('type', e.target.value)}>
+          {aTypes.map(t => <option key={t}>{t}</option>)}
+        </select>
+        <span style={{fontSize:12,color:'var(--text-3)',alignSelf:'center'}}>{anomalies.length} of {allAnomalies.length} shown</span>
+      </div>
+
+      {/* Table */}
+      <div className="anomaly-table-wrap">
+        <table className="anomaly-table">
+          <thead>
+            <tr>
+              <th></th>
+              {ANOMALY_COLS.map(c => <th key={c}>{c}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {anomalies.map((a, i) => {
+              const isOpen = expandedRow === i;
+              const distVal = parseFloat(a['Distance from Centroid']);
+              const narrative = a['Notes / AML Narrative'] || a['Notes  AML Narrative'] || '';
+              const topFeats = a['Top Features'] || '';
+              return (
+                <React.Fragment key={i}>
+                  <tr onClick={() => setExpandedRow(isOpen ? null : i)}>
+                    <td style={{width:28,textAlign:'center'}}>
+                      <i className={`fa-solid fa-chevron-right expand-icon${isOpen ? ' open' : ''}`} style={{fontSize:10,color:'var(--text-3)'}}></i>
+                    </td>
+                    <td>{a['Rank'] ?? i+1}</td>
+                    <td style={{fontWeight:600}}>{a['Party ID'] || '—'}</td>
+                    <td>{a['Cluster Label'] || a['Cluster'] || '—'}</td>
+                    <td><span className={`risk-pill ${riskPillClass(a['Risk Rating'] || '')}`}>{a['Risk Rating'] || '—'}</span></td>
+                    <td>{a['Anomaly Type'] || '—'}</td>
+                    <td><span className={`status-pill ${statusPillClass(a['Investigation Status'] || '')}`}>{a['Investigation Status'] || '—'}</span></td>
+                    <td>{isNaN(distVal) ? (a['Distance from Centroid'] || '—') : distVal.toFixed(2)}</td>
+                    <td title={topFeats}>{topFeats ? topFeats.substring(0,40)+(topFeats.length>40?'…':'') : '—'}</td>
+                  </tr>
+                  {isOpen && (
+                    <tr className="expand-row">
+                      <td colSpan={ANOMALY_COLS.length + 1}>
+                        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+                          {topFeats && (
+                            <div className="narrative-box">
+                              <div className="narrative-label"><i className="fa-solid fa-list-check" style={{marginRight:5}}></i>Top Features</div>
+                              <div className="narrative-text">{topFeats}</div>
+                            </div>
+                          )}
+                          {narrative && (
+                            <div className="narrative-box">
+                              <div className="narrative-label"><i className="fa-solid fa-file-lines" style={{marginRight:5}}></i>AML Narrative</div>
+                              <div className="narrative-text">{narrative}</div>
+                            </div>
+                          )}
+                          {!topFeats && !narrative && (
+                            <div style={{color:'var(--text-3)',fontSize:13}}>No additional details available.</div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              );
+            })}
+            {!anomalies.length && (
+              <tr>
+                <td colSpan={ANOMALY_COLS.length + 1} style={{textAlign:'center',padding:30,color:'var(--text-3)'}}>
+                  No anomalies match the selected filters. Try adjusting the dropdowns above.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ── Vault Page ────────────────────────────────────────────────────────────────
+
+const VAULT_TABS = [
+  { key: 'risk',       label: 'Risk Analysis', icon: 'fa-shield-halved' },
+  { key: 'regulatory', label: 'Regulatory',    icon: 'fa-gavel' },
+  { key: 'emails',     label: 'Emails',        icon: 'fa-envelope' },
+];
+
+const VAULT_DOC_ICONS = {
+  risk:       { icon: 'fa-shield-halved', cls: 'risk' },
+  regulatory: { icon: 'fa-gavel',         cls: 'regulatory' },
+  emails:     { icon: 'fa-envelope',      cls: 'emails' },
+};
+
+function classifClass(c) {
+  if (!c) return '';
+  const v = c.toLowerCase();
+  if (v.includes('confidential')) return 'classif-confidential';
+  if (v.includes('restrict'))     return 'classif-restricted';
+  if (v.includes('internal'))     return 'classif-internal';
+  if (v.includes('public'))       return 'classif-public';
+  return '';
+}
+function statusClass(s) {
+  if (!s) return '';
+  const v = s.toLowerCase();
+  if (v.includes('active') || v.includes('live')) return 'status-active';
+  if (v.includes('review') || v.includes('draft')) return 'status-review';
+  return '';
+}
+
+function parseSummaryText(text) {
+  if (!text) return [];
+  const sections = [];
+  let cur = null;
+  for (const line of text.split('\n')) {
+    const m = line.match(/^\*\*([^*]+?):?\*\*\s*(.*)/);
+    if (m) {
+      if (cur) sections.push(cur);
+      cur = { label: m[1].replace(/:$/, '').trim(), content: m[2].trim() };
+    } else if (cur && line.trim()) {
+      cur.content += (cur.content ? '\n' : '') + line.trim();
+    }
+  }
+  if (cur) sections.push(cur);
+  return sections;
+}
+
+function VaultSummaryPanel({ doc, summary, loading, source, onClose }) {
+  if (!doc) return null;
+  const sections = parseSummaryText(summary);
+  const { icon, cls } = VAULT_DOC_ICONS[doc.section] || VAULT_DOC_ICONS.risk;
+  const sectionLabel = VAULT_TABS.find(t => t.key === doc.section)?.label || 'Document';
+
+  // Close on backdrop click
+  const handleBackdrop = (e) => { if (e.target === e.currentTarget) onClose(); };
+
+  return (
+    <div className="vault-summary-overlay" onClick={handleBackdrop}>
+      <div className="vault-summary-window">
+
+        {/* Title bar */}
+        <div className="vault-summary-titlebar">
+          <div className={`vault-summary-titlebar-icon vault-card-icon ${cls}`}>
+            <i className={`fa-solid ${icon}`}></i>
+          </div>
+          <span className="vault-summary-titlebar-text">
+            AI Summary — {sectionLabel}
+          </span>
+          <div className="vault-summary-titlebar-actions">
+            <button className="vault-summary-win-btn close-btn" onClick={onClose} title="Close window">
+              <i className="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        {/* Doc header */}
+        <div className="vault-summary-header">
+          <div className="vault-summary-header-title">{doc.title}</div>
+          <div className="vault-summary-header-sub">
+            {doc.meta?.date && (
+              <span><i className="fa-regular fa-calendar"></i> {doc.meta.date}</span>
+            )}
+            {doc.meta?.author && (
+              <span><i className="fa-regular fa-user"></i> {doc.meta.author}</span>
+            )}
+            {doc.meta?.classification && (
+              <span className={`vault-meta-tag ${classifClass(doc.meta.classification)}`} style={{fontSize:10.5}}>
+                {doc.meta.classification}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="vault-summary-body">
+          {loading ? (
+            <div style={{display:'flex',flexDirection:'column',alignItems:'center',padding:'50px 0',gap:14,color:'var(--text-3)'}}>
+              <div className="spinner"></div>
+              <span style={{fontSize:13}}>Generating AI summary from document content…</span>
+            </div>
+          ) : sections.length > 0 ? (
+            <>
+              {sections.map((s, i) => (
+                <div key={i} className="vault-summary-section">
+                  <div className="vault-summary-label">{s.label}</div>
+                  <div className="vault-summary-text">{s.content || 'Not available in source document.'}</div>
+                </div>
+              ))}
+              <div className="vault-summary-source">
+                <i className="fa-solid fa-database"></i>
+                Source: {source || 'Vault+Report_Page_Data.docx'} | Internal Knowledge Vault
+              </div>
+            </>
+          ) : (
+            <div style={{color:'var(--text-3)',fontSize:13,padding:20}}>
+              {summary || 'Click "Generate Summary" on any document card to create an AI summary.'}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="vault-summary-footer">
+          <span className="vault-summary-footer-left">
+            <i className="fa-solid fa-robot"></i>
+            Generated by Groq AI · llama-3.1-8b-instant
+          </span>
+          <button className="vault-summary-footer-close" onClick={onClose}>
+            Close
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+function VaultDocCard({ doc, selected, onGenerate }) {
+  const { icon, cls } = VAULT_DOC_ICONS[doc.section] || VAULT_DOC_ICONS.risk;
+  const tabLabel = VAULT_TABS.find(t => t.key === doc.section)?.label;
+
+  return (
+    <div className={`vault-card${selected ? ' selected' : ''}`}>
+      <div className="vault-card-top">
+        <div className={`vault-card-icon ${cls}`}>
+          <i className={`fa-solid ${icon}`}></i>
+        </div>
+        <div style={{flex:1,minWidth:0}}>
+          <div className="vault-card-title">{doc.title}</div>
+          <div className="vault-meta-row">
+            <span className="vault-meta-tag"><i className="fa-solid fa-tag"></i>{tabLabel}</span>
+            {doc.meta.date && <span className="vault-meta-tag"><i className="fa-regular fa-calendar"></i>{doc.meta.date}</span>}
+            {doc.meta.classification && (
+              <span className={`vault-meta-tag ${classifClass(doc.meta.classification)}`}>
+                <i className="fa-solid fa-lock"></i>{doc.meta.classification}
+              </span>
+            )}
+            {doc.meta.status && (
+              <span className={`vault-meta-tag ${statusClass(doc.meta.status)}`}>
+                <i className="fa-solid fa-circle" style={{fontSize:8}}></i>{doc.meta.status}
+              </span>
+            )}
+            {doc.meta.author && !doc.isEmail && (
+              <span className="vault-meta-tag"><i className="fa-regular fa-user"></i>{doc.meta.author}</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {doc.preview && <div className="vault-card-preview">{doc.preview}</div>}
+
+      <div className="vault-card-footer">
+        <span className="vault-card-footer-info">
+          {doc.isEmail
+            ? <><i className="fa-solid fa-at" style={{marginRight:4}}></i>Email Intelligence</>
+            : <><i className="fa-solid fa-file-lines" style={{marginRight:4}}></i>Intelligence Document</>}
+        </span>
+        <button className="btn-primary" style={{fontSize:12,padding:'6px 14px'}} onClick={() => onGenerate(doc)}>
+          <i className="fa-solid fa-brain"></i> Generate Summary
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function VaultPage() {
+  const [activeTab,      setActiveTab]     = useState('risk');
+  const [docs,           setDocs]          = useState(null);
+  const [loading,        setLoading]       = useState(true);
+  const [error,          setError]         = useState(null);
+  const [selectedDoc,    setSelectedDoc]   = useState(null);
+  const [summary,        setSummary]       = useState(null);
+  const [summaryLoading, setSummaryLoading]= useState(false);
+  const [summarySource,  setSummarySource] = useState('');
+  const [search,         setSearch]        = useState('');
+
+  useEffect(() => {
+    fetch('/api/vault/documents')
+      .then(r => r.json())
+      .then(d => { if (d.available) setDocs(d.documents); else setError(d.message); setLoading(false); })
+      .catch(() => { setError('Failed to connect to server.'); setLoading(false); });
+  }, []);
+
+  const generateSummary = async (doc) => {
+    setSelectedDoc(doc); setSummary(null); setSummaryLoading(true);
+    try {
+      const res = await fetch('/api/vault/summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: doc.section, index: doc.index })
+      });
+      const data = await res.json();
+      setSummary(data.summary || 'No summary generated.');
+      setSummarySource(data.source || '');
+    } catch { setSummary('Failed to generate summary. Please try again.'); }
+    setSummaryLoading(false);
+  };
+
+  const closePanel = () => { setSelectedDoc(null); setSummary(null); };
+
+  const totalDocs = docs
+    ? Object.values(docs).reduce((s, arr) => s + (arr?.length || 0), 0)
+    : 0;
+
+  if (loading) return (
+    <div className="page">
+      <div className="page-header"><div className="page-title">Vault</div></div>
+      <div className="spinner-wrap"><div className="spinner"></div><span>Loading knowledge vault…</span></div>
+    </div>
+  );
+
+  return (
+    <div className="page" style={{maxWidth:1300}}>
+      <div className="page-header">
+        <div className="page-title">Vault</div>
+        <div className="page-sub">Internal knowledge base Risk, Regulatory, and Email intelligence documents. Summaries generated on-demand from source documents only.</div>
+      </div>
+
+      {error ? (
+        <div className="alert alert-info" style={{maxWidth:600}}>
+          <i className="fa-solid fa-folder-open alert-icon"></i>
+          <div>
+            <div style={{fontWeight:600,marginBottom:4}}>Vault data not loaded</div>
+            <div>{error}</div>
+            <div style={{marginTop:8,fontSize:12,color:'var(--text-3)'}}>
+              Place <strong>Vault+Report_Page_Data.docx</strong> in the <code>data/vault/</code> folder, then restart the server.
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Tabs */}
+          <div className="vault-tabs">
+            {VAULT_TABS.map(t => {
+              const count = docs?.[t.key]?.length || 0;
+              return (
+                <button key={t.key} className={`vault-tab${activeTab === t.key ? ' active' : ''}`}
+                  onClick={() => { setActiveTab(t.key); setSearch(''); }}>
+                  <i className={`fa-solid ${t.icon}`}></i>
+                  {t.label}
+                  <span className="vault-tab-count">{count}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Search */}
+          <div className="vault-search">
+            <input className="input-box" style={{maxWidth:320,fontSize:13,padding:'8px 12px'}}
+              placeholder={`Search ${VAULT_TABS.find(t=>t.key===activeTab)?.label}…`}
+              value={search} onChange={e => setSearch(e.target.value)} />
+            {search && (
+              <button onClick={() => setSearch('')} style={{background:'none',border:'none',cursor:'pointer',color:'var(--text-3)',fontSize:14}}>
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            )}
+          </div>
+
+          {/* Document grid */}
+          <div className="vault-layout">
+            <div>
+              {(() => {
+                const tabDocs = (docs?.[activeTab] || []).filter(d =>
+                  !search || d.title.toLowerCase().includes(search.toLowerCase()) ||
+                  d.preview.toLowerCase().includes(search.toLowerCase())
+                );
+                if (!tabDocs.length) {
+                  return (
+                    <div className="vault-empty-state">
+                      <div className="vault-empty-icon"><i className="fa-solid fa-folder-open"></i></div>
+                      <div className="vault-empty-title">{search ? 'No results found' : 'No documents in this section'}</div>
+                      <div className="vault-empty-sub">
+                        {search ? `No documents match "${search}".` : 'Place the vault Word document in data/vault/ and restart the server.'}
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <div className="vault-grid">
+                    {tabDocs.map((doc, i) => (
+                      <VaultDocCard key={i} doc={doc}
+                        selected={false}
+                        onGenerate={generateSummary} />
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+
+          {/* Summary child window (modal overlay) */}
+          {selectedDoc && (
+            <VaultSummaryPanel
+              doc={selectedDoc} summary={summary}
+              loading={summaryLoading} source={summarySource}
+              onClose={closePanel} />
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+// ── Reports Page ──────────────────────────────────────────────────────────────
+
+const REPORT_SOURCES = [
+  { key: 'risk',       label: 'Risk Analysis & Discovery', icon: 'fa-shield-halved', cls: 'risk',       desc: 'Internal risk assessments: sanctions, crypto exposure, and trade finance reviews.' },
+  { key: 'regulatory', label: 'Regulatory Sources',        icon: 'fa-gavel',         cls: 'regulatory', desc: 'Regulatory frameworks: UK NRA 2025, PRA Basel 3.1, FCA guidance summaries.' },
+  { key: 'emails',     label: 'Email Intelligence',        icon: 'fa-envelope',      cls: 'emails',     desc: 'Internal email intelligence: FATF updates, CPI changes, policy notices.' },
+  { key: 'insights',   label: 'Insights Data',             icon: 'fa-database',      cls: 'insights',   desc: 'AML database analysis: risk ratings, transaction trends, party distributions.' },
+];
+
+const REPORT_SECTION_ICONS = {
+  'executive summary':             'fa-star',
+  'key risk themes':               'fa-triangle-exclamation',
+  'regulatory developments':       'fa-gavel',
+  'customer & transaction insights': 'fa-chart-bar',
+  'email intelligence':            'fa-envelope',
+  'required actions':              'fa-circle-check',
+  'deadlines':                     'fa-clock',
+  'ownership & teams mentioned':   'fa-users',
+  'leadership attention required': 'fa-bell',
+  'supporting evidence':           'fa-folder-open',
+};
+
+function ReportChart({ chartData, chartType, title, metrics }) {
+  const canvasRef = React.useRef(null);
+  React.useEffect(() => {
+    if (!canvasRef.current || !chartData) return;
+    if (canvasRef.current._chartInst) canvasRef.current._chartInst.destroy();
+    const isHBar = chartType === 'horizontalBar';
+    const isDoughnut = chartType === 'doughnut';
+    const colors = ['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#06b6d4','#ec4899','#14b8a6','#f97316','#84cc16'];
+    canvasRef.current._chartInst = new Chart(canvasRef.current, {
+      type: isDoughnut ? 'doughnut' : 'bar',
+      data: {
+        labels: chartData.labels,
+        datasets: [{
+          label: title,
+          data: chartData.values,
+          backgroundColor: isDoughnut ? colors.slice(0, chartData.labels.length) : '#3b82f6',
+          borderColor: isDoughnut ? '#fff' : '#3b82f6',
+          borderWidth: isDoughnut ? 2 : 0,
+          borderRadius: isDoughnut ? 0 : 4,
+        }]
+      },
+      options: {
+        indexAxis: isHBar ? 'y' : 'x',
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: isDoughnut, position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+          tooltip: { callbacks: { label: ctx => { const v = ctx.parsed[isHBar ? 'x' : 'y']; return (title.includes('Volume') || title.includes('Exposure')) ? ` £${Number(v).toLocaleString()}` : ` ${Number(v).toLocaleString()}`; } } }
+        },
+        scales: isDoughnut ? {} : {
+          x: { grid: { color: 'rgba(148,163,184,0.08)' }, ticks: { font: { size: 10.5 } } },
+          y: { grid: { color: 'rgba(148,163,184,0.08)' }, ticks: { font: { size: 10.5 } } }
+        }
+      }
+    });
+    return () => { if (canvasRef.current?._chartInst) canvasRef.current._chartInst.destroy(); };
+  }, []);
+  return (
+    <div className="report-chart-card">
+      <div className="report-chart-title">{title}</div>
+      {metrics && (
+        <div className="report-chart-kpis">
+          {Object.entries(metrics).map(([k,v]) => (
+            <div key={k} className="report-chart-kpi"><strong>{k}:</strong> {v}</div>
+          ))}
+        </div>
+      )}
+      <div style={{position:'relative', height: chartType === 'doughnut' ? 200 : 210}}>
+        <canvas ref={canvasRef}></canvas>
+      </div>
+    </div>
+  );
+}
+
+function ReportCharts({ insightsData, fromDate, toDate }) {
+  if (!insightsData) return null;
+  const entries = Object.entries(insightsData).filter(([,d]) => d?.chart_data);
+  if (!entries.length) return null;
+
+  const hasDateRange = fromDate || toDate;
+  const fmtDate = s => s ? new Date(s + 'T00:00:00').toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : null;
+
+  return (
+    <div className="report-section">
+      <div className="report-section-title"><i className="fa-solid fa-chart-bar"></i>Charts & Data Tables</div>
+
+      {/* Snapshot notice */}
+      <div style={{display:'flex',alignItems:'flex-start',gap:10,padding:'10px 14px',background:'rgba(59,130,246,0.06)',border:'1px solid rgba(59,130,246,0.18)',borderRadius:8,marginBottom:16,fontSize:12.5,color:'var(--text-2)',lineHeight:1.55}}>
+        <i className="fa-solid fa-circle-info" style={{color:'var(--primary)',marginTop:1,flexShrink:0}}></i>
+        <span>
+          <strong>Snapshot data</strong> — Party count, risk rating distribution, and top-account charts reflect the <strong>full database</strong> (aggregate totals, not date-filterable).
+          {hasDateRange && (
+            <> The <strong>Monthly Transaction Trends</strong> chart is filtered to {fmtDate(fromDate) || 'all dates'}{toDate ? ` → ${fmtDate(toDate)}` : ''}.</>
+          )}
+          {!hasDateRange && <> Select a date range to filter the Monthly Transaction Trends chart.</>}
+        </span>
+      </div>
+
+      <div className="report-charts-grid">
+        {entries.map(([key, d]) => {
+          const isEmpty = d.chart_data.labels.length === 0;
+          const wasFiltered = d.dateFiltered;
+          return isEmpty ? (
+            <div key={key} className="report-chart-card">
+              <div className="report-chart-title">{d.title}</div>
+              <div style={{padding:'32px 0',textAlign:'center',color:'var(--text-3)',fontSize:12.5}}>
+                <i className="fa-regular fa-calendar-xmark" style={{fontSize:24,marginBottom:8,display:'block',opacity:0.4}}></i>
+                No data within the selected date range<br/>
+                <span style={{fontSize:11.5}}>({fmtDate(fromDate) || 'all'} → {fmtDate(toDate) || 'present'})</span>
+              </div>
+            </div>
+          ) : (
+            <div key={key} style={{position:'relative'}}>
+              {wasFiltered && (
+                <div style={{position:'absolute',top:10,right:10,zIndex:2,background:'rgba(59,130,246,0.12)',color:'var(--primary)',fontSize:10,fontWeight:700,padding:'2px 7px',borderRadius:4,letterSpacing:0.4}}>
+                  DATE FILTERED
+                </div>
+              )}
+              <ReportChart chartData={d.chart_data} chartType={d.chart_type} title={d.title} metrics={d.key_metrics} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function EmailPreviewWindow({ emailText, onClose }) {
+  if (!emailText) return null;
+  const subjectMatch = emailText.match(/\*\*SUBJECT:\*\*\s*(.+)/);
+  const subject = subjectMatch ? subjectMatch[1].trim() : 'Risk Intelligence Summary';
+  const handleBackdrop = e => { if (e.target === e.currentTarget) onClose(); };
+  const copyEmail = () => navigator.clipboard.writeText(emailText).then(() => alert('Copied to clipboard!'));
+  const formatLine = (line, i) => {
+    const t = line.replace(/\*\*/g, '');
+    if (/^\*\*.*\*\*$/.test(line)) return <div key={i} className="email-body-line-heading">{t}</div>;
+    if (line.trim().startsWith('•')) return <div key={i} className="email-body-line-bullet">{line}</div>;
+    if (!line.trim()) return <div key={i} style={{height:7}}></div>;
+    return <div key={i} className="email-body-line-text">{line}</div>;
+  };
+  return (
+    <div className="vault-summary-overlay" onClick={handleBackdrop}>
+      <div className="vault-summary-window" style={{width:660}}>
+        <div className="vault-summary-titlebar">
+          <div className="vault-summary-titlebar-icon vault-card-icon emails"><i className="fa-solid fa-envelope"></i></div>
+          <span className="vault-summary-titlebar-text">Generated Email Preview</span>
+          <div className="vault-summary-titlebar-actions">
+            <button className="vault-summary-win-btn close-btn" onClick={onClose}><i className="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+        <div style={{padding:'10px 20px',background:'var(--bg)',borderBottom:'1px solid var(--border)',flexShrink:0}}>
+          <div style={{fontSize:10.5,fontWeight:700,textTransform:'uppercase',letterSpacing:0.5,color:'var(--text-3)',marginBottom:3}}>Subject</div>
+          <div style={{fontSize:14,fontWeight:700,color:'var(--text)'}}>{subject}</div>
+        </div>
+        <div className="vault-summary-body">
+          {emailText.split('\n').map((line, i) => formatLine(line, i))}
+        </div>
+        <div className="vault-summary-footer">
+          <span className="vault-summary-footer-left"><i className="fa-solid fa-robot"></i>Generated by Groq AI · llama-3.1-8b-instant</span>
+          <div style={{display:'flex',gap:8}}>
+            <button className="vault-summary-footer-close" style={{borderColor:'var(--primary)',color:'var(--primary)'}} onClick={copyEmail}>
+              <i className="fa-regular fa-copy" style={{marginRight:5}}></i>Copy
+            </button>
+            <button className="vault-summary-footer-close" onClick={onClose}>Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReportsPage() {
+  const [sources,        setSources]       = useState(null);
+  const [selected,       setSelected]      = useState({ risk: true, regulatory: true, emails: true, insights: true });
+  const [fromDate,       setFromDate]      = useState('');
+  const [toDate,         setToDate]        = useState('');
+  const [includeUndated, setIncludeUndated]= useState(true);
+  const [generating,     setGenerating]    = useState(false);
+  const [genEmail,       setGenEmail]      = useState(false);
+  const [report,         setReport]        = useState(null);
+  const [insightsData,   setInsightsData]  = useState(null);
+  const [emailText,      setEmailText]     = useState(null);
+  const [error,          setError]         = useState(null);
+  const reportRef = React.useRef(null);
+
+  useEffect(() => {
+    fetch('/api/reports/sources').then(r => r.json()).then(setSources).catch(() => setSources({}));
+  }, []);
+
+  const toggle = key => {
+    if (sources?.[key]?.available === false) return;
+    setSelected(s => ({ ...s, [key]: !s[key] }));
+  };
+  const anySelected = Object.values(selected).some(Boolean);
+
+  const doGenerate = async () => {
+    setGenerating(true); setReport(null); setInsightsData(null); setError(null);
+    try {
+      const res = await fetch('/api/reports/generate', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ selectedSources: selected, fromDate, toDate, includeUndated })
+      });
+      const data = await res.json();
+      setReport(data.report); setInsightsData(data.insightsData);
+      setTimeout(() => reportRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    } catch { setError('Failed to generate report. Please check the server is running and try again.'); }
+    setGenerating(false);
+  };
+
+  const doEmail = async () => {
+    setGenEmail(true); setEmailText(null); setError(null);
+    try {
+      const res = await fetch('/api/reports/email', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ selectedSources: selected, fromDate, toDate, includeUndated })
+      });
+      const data = await res.json();
+      setEmailText(data.email);
+    } catch { setError('Failed to generate email.'); }
+    setGenEmail(false);
+  };
+
+  return (
+    <div className="page" style={{maxWidth:1080}}>
+
+      {/* Centred header */}
+      <div className="report-page-header">
+        <div className="report-page-title">Intelligence Summary</div>
+        <div className="report-page-sub">Select sources and a date range, then generate an executive intelligence brief.</div>
+      </div>
+
+      {/* Source cards */}
+      <div className="report-sources-grid">
+        {REPORT_SOURCES.map(src => {
+          const avail = sources?.[src.key];
+          const isSel = selected[src.key] && avail?.available !== false;
+          const unavail = avail?.available === false;
+          return (
+            <div key={src.key} className={`report-source-card${isSel ? ' selected' : ''}${unavail ? ' unavailable' : ''}`} onClick={() => toggle(src.key)}>
+              <div className="report-source-check">{isSel && <i className="fa-solid fa-check"></i>}</div>
+              <div className={`report-source-icon ${src.cls}`}><i className={`fa-solid ${src.icon}`}></i></div>
+              <div className="report-source-name">{src.label}</div>
+              <div className="report-source-count">
+                {avail == null ? '…' : unavail ? 'Not available' : `${avail.count} ${src.key === 'insights' ? 'datasets' : 'documents'} available`}
+              </div>
+              <div className="report-source-desc">{src.desc}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Date range */}
+      <div className="report-date-section">
+        <div className="report-date-title"><i className="fa-regular fa-calendar" style={{marginRight:6}}></i>Date Range</div>
+        <div className="report-date-row">
+          <div className="report-date-field">
+            <label className="report-date-label">From Date</label>
+            <input type="date" className="report-date-input" value={fromDate} onChange={e => setFromDate(e.target.value)} />
+          </div>
+          <div className="report-date-arrow"><i className="fa-solid fa-arrow-right"></i></div>
+          <div className="report-date-field">
+            <label className="report-date-label">To Date</label>
+            <input type="date" className="report-date-input" value={toDate} onChange={e => setToDate(e.target.value)} />
+          </div>
+        </div>
+        <div className="report-undated-row">
+          <input type="checkbox" id="includeUndated" checked={includeUndated} onChange={e => setIncludeUndated(e.target.checked)} />
+          <label htmlFor="includeUndated">Include records with no date</label>
+        </div>
+      </div>
+
+      {/* Action buttons */}
+      <div className="report-actions">
+        <button className="report-action-btn primary" onClick={doGenerate} disabled={!anySelected || generating}>
+          {generating
+            ? <><div className="spinner" style={{width:14,height:14,borderWidth:2,borderTopColor:'#fff'}}></div>Generating Report…</>
+            : <><i className="fa-solid fa-file-lines"></i>Generate Report</>}
+        </button>
+        <button className="report-action-btn secondary" onClick={doEmail} disabled={!anySelected || genEmail}>
+          {genEmail
+            ? <><div className="spinner" style={{width:14,height:14,borderWidth:2}}></div>Generating Email…</>
+            : <><i className="fa-solid fa-envelope"></i>Generate Email</>}
+        </button>
+      </div>
+
+      {error && (
+        <div className="alert alert-warning" style={{marginTop:16}}>
+          <i className="fa-solid fa-triangle-exclamation alert-icon"></i>
+          <div>{error}</div>
+        </div>
+      )}
+
+      {/* Report output */}
+      {report && (
+        <div className="report-output" ref={reportRef}>
+          <div className="report-output-header">
+            <div>
+              <div className="report-output-title"><i className="fa-solid fa-file-shield" style={{marginRight:8}}></i>Executive Intelligence Report</div>
+              <div className="report-output-meta">
+                {report.metadata?.docsIncluded} source{report.metadata?.docsIncluded !== 1 ? 's' : ''} included
+                {' · '}Generated {new Date(report.metadata?.generatedAt).toLocaleString('en-GB', { dateStyle:'medium', timeStyle:'short' })}
+                {(fromDate || toDate) && ` · ${fromDate || 'All'} → ${toDate || 'Present'}`}
+              </div>
+            </div>
+            <button className="report-print-btn" onClick={() => window.print()}>
+              <i className="fa-solid fa-print"></i>Export PDF
+            </button>
+          </div>
+          <div className="report-body">
+            {report.sections.map((sec, i) => {
+              const icon = REPORT_SECTION_ICONS[sec.title.toLowerCase()] || 'fa-circle-dot';
+              return (
+                <div key={i} className="report-section">
+                  <div className="report-section-title">
+                    <i className={`fa-solid ${icon}`}></i>{sec.title}
+                  </div>
+                  <div className="report-section-content">{sec.content}</div>
+                </div>
+              );
+            })}
+            {insightsData && <ReportCharts insightsData={insightsData} fromDate={report.metadata?.fromDate} toDate={report.metadata?.toDate} />}
+          </div>
+        </div>
+      )}
+
+      {emailText && <EmailPreviewWindow emailText={emailText} onClose={() => setEmailText(null)} />}
+    </div>
+  );
+}
+
+// ── Analysis Page ─────────────────────────────────────────────────────────────
+function AnalysisPage() {
+  const [data,             setData]            = useState(null);
+  const [loading,          setLoading]         = useState(true);
+  const [error,            setError]           = useState(null);
+  const [selectedFeatures, setSelectedFeatures]= useState([]);
+  const [clusterDescs,     setClusterDescs]    = useState(null);
+  const [descLoading,      setDescLoading]     = useState(false);
+  const [xCol,             setXCol]            = useState('');
+  const [yCol,             setYCol]            = useState('');
+
+  const [catSearch,  setCatSearch]  = useState('');
+  const [catFilter,  setCatFilter]  = useState('All');
+  const [riskFilter, setRiskFilter] = useState('All');
+
+  const [scatterCluster, setScatterCluster] = useState('All');
+  const [scatterRisk,    setScatterRisk]    = useState('All');
+
+  const [aCluster, setACluster] = useState('All');
+  const [aRisk,    setARisk]    = useState('All');
+  const [aStatus,  setAStatus]  = useState('All');
+  const [aType,    setAType]    = useState('All');
+
+  const [refreshing,      setRefreshing]      = useState(false);
+  const [insightsSummary, setInsightsSummary] = useState(null);
+  const [summaryLoading,  setSummaryLoading]  = useState(false);
+  const [modelRun,        setModelRun]        = useState(false);
+  const [modelRunning,    setModelRunning]    = useState(false);
+
+  const loadData = (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true); else setLoading(true);
+    setError(null);
+    fetch('/api/analysis/data').then(r => r.json()).then(d => {
+      if (d.available) { setData(d); setClusterDescs(null); setSelectedFeatures([]); }
+      else setError(d.message);
+    }).catch(() => setError('Failed to load analysis data.'))
+      .finally(() => { setLoading(false); setRefreshing(false); });
+  };
+
+  useEffect(() => { loadData(); }, []);
+
+  const toggleFeature = name => setSelectedFeatures(prev =>
+    prev.includes(name) ? prev.filter(f => f !== name) : [...prev, name]
+  );
+
+  const scatterNumericCols = data ? (data.scatter_numeric_cols || []) : [];
+
+  // Reset model when features change
+  useEffect(() => {
+    setModelRun(false);
+    setClusterDescs(null);
+    setInsightsSummary(null);
+    if (selectedFeatures.length < 2) { setXCol(''); setYCol(''); return; }
+    setXCol(prev => scatterNumericCols.includes(prev) ? prev : (scatterNumericCols[0] || ''));
+    setYCol(prev => {
+      if (scatterNumericCols.includes(prev) && prev !== scatterNumericCols[0]) return prev;
+      return scatterNumericCols[1] || scatterNumericCols[0] || '';
+    });
+  }, [selectedFeatures.join(',')]);
+
+  const loadClusterDescs = async () => {
+    setDescLoading(true);
+    setInsightsSummary(null);
+    try {
+      const res = await fetch('/api/analysis/cluster-descriptions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ selectedCols: scatterNumericCols })
+      });
+      const json = await res.json();
+      setClusterDescs(json.descriptions);
+    } catch {}
+    setDescLoading(false);
+  };
+
+  const runModel = async () => {
+    setModelRunning(true);
+    setModelRun(true);
+    await loadClusterDescs();
+    setModelRunning(false);
+  };
+
+  // Auto-generate insights summary after cluster descriptions load
+  useEffect(() => {
+    if (!clusterDescs || !data) return;
+    setSummaryLoading(true);
+    const anomalyRows = data.anomaly_data || [];
+    const anomalySummary = {
+      total:     anomalyRows.length,
+      highRisk:  anomalyRows.filter(a => String(a['Risk Rating']||'').toLowerCase().includes('high')).length,
+      escalated: anomalyRows.filter(a => { const s = String(a['Investigation Status']||'').toLowerCase(); return s.includes('mlro')||s.includes('escal'); }).length,
+    };
+    fetch('/api/analysis/insights-summary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clusterDescriptions: clusterDescs, anomalySummary })
+    }).then(r => r.json()).then(j => setInsightsSummary(j.summary)).catch(() => {}).finally(() => setSummaryLoading(false));
+  }, [clusterDescs]);
+
+  if (loading) return (
+    <div className="page">
+      <div className="page-header"><div className="page-title">Analysis</div></div>
+      <div className="spinner-wrap"><div className="spinner"></div><span>Loading analysis data…</span></div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="page">
+      <div className="page-header"><div className="page-title">Analysis</div></div>
+      <div className="alert alert-info"><i className="fa-solid fa-folder-open alert-icon"></i>{error}</div>
+    </div>
+  );
+
+  const catalogue  = data.feature_catalogue || [];
+  const scatter    = data.scatter_data       || [];
+  const anomalies  = data.anomaly_data       || [];
+  const loadedAt   = data.loaded_at ? new Date(data.loaded_at).toLocaleTimeString() : '';
+
+  const categories = ['All', ...new Set(catalogue.map(f => f['Category']).filter(Boolean))];
+  const riskLevels = ['All', ...new Set(catalogue.map(f => f['Risk Relevance']).filter(Boolean))];
+
+  const filteredCat = catalogue.filter(f => {
+    const nm = (f['Feature Name'] || '').toLowerCase();
+    const ds = (f['Description']  || '').toLowerCase();
+    const q  = catSearch.toLowerCase();
+    return (!q || nm.includes(q) || ds.includes(q))
+        && (catFilter  === 'All' || f['Category']      === catFilter)
+        && (riskFilter === 'All' || f['Risk Relevance'] === riskFilter);
+  });
+
+  const scatterClusters = ['All', ...new Set(scatter.map(r => r['Cluster Label'] || r['Cluster']).filter(Boolean))];
+  const scatterRisks    = ['All', ...new Set(scatter.map(r => r['Risk Rating']).filter(Boolean))];
+
+  const filteredScatter = scatter.filter(r =>
+    (scatterCluster === 'All' || (r['Cluster Label'] || r['Cluster']) === scatterCluster) &&
+    (scatterRisk    === 'All' || r['Risk Rating'] === scatterRisk)
+  );
+
+  const aClusters = ['All', ...new Set(anomalies.map(a => a['Cluster Label'] || a['Cluster']).filter(Boolean))];
+  const aRisks    = ['All', ...new Set(anomalies.map(a => a['Risk Rating']).filter(Boolean))];
+  const aStatuses = ['All', ...new Set(anomalies.map(a => a['Investigation Status']).filter(Boolean))];
+  const aTypes    = ['All', ...new Set(anomalies.map(a => a['Anomaly Type']).filter(Boolean))];
+
+  const filteredAnomalies = anomalies.filter(a =>
+    (aCluster === 'All' || (a['Cluster Label'] || a['Cluster']) === aCluster) &&
+    (aRisk    === 'All' || a['Risk Rating']          === aRisk) &&
+    (aStatus  === 'All' || a['Investigation Status'] === aStatus) &&
+    (aType    === 'All' || a['Anomaly Type']         === aType)
+  );
+
+  const highRiskCount      = anomalies.filter(a => String(a['Risk Rating']||'').toLowerCase().includes('high')).length;
+  const escalatedCount     = anomalies.filter(a => { const s = String(a['Investigation Status']||'').toLowerCase(); return s.includes('mlro')||s.includes('escal'); }).length;
+  const investigatingCount = anomalies.filter(a => String(a['Investigation Status']||'').toLowerCase().includes('invest')).length;
+  const monitoringCount    = anomalies.filter(a => String(a['Investigation Status']||'').toLowerCase().includes('monitor')).length;
+  const maxDistance        = Math.max(0, ...anomalies.map(a => parseFloat(a['Distance from Centroid']) || 0));
+
+  // Determine right panel state: needs 2+ features selected
+  const analysisReady = selectedFeatures.length >= 2;
+
+  return (
+    <div className="page">
+      <div className="page-header" style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
+        <div>
+          <div className="page-title">Analysis</div>
+          <div className="page-sub">K-Means clustering, feature catalogue and anomaly detection for AML risk review</div>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:4}}>
+          <button
+            onClick={() => loadData(true)}
+            disabled={refreshing}
+            style={{display:'flex',alignItems:'center',gap:7,padding:'8px 16px',background:'var(--surface)',border:'1px solid var(--border)',borderRadius:'var(--radius)',color:'var(--text)',fontSize:13,fontWeight:600,cursor:refreshing?'not-allowed':'pointer',opacity:refreshing?0.6:1,whiteSpace:'nowrap'}}
+          >
+            <i className={`fa-solid fa-rotate-right${refreshing?' fa-spin':''}`}></i>
+            {refreshing ? 'Refreshing…' : 'Refresh Data'}
+          </button>
+          {data?.loaded_at && (
+            <span style={{fontSize:11,color:'var(--text-muted)'}}>
+              Last loaded: {new Date(data.loaded_at).toLocaleTimeString()}
+            </span>
+          )}
+        </div>
+      </div>
+
+
+      {/* Selected Features Panel */}
+      <SelectedFeaturesPanel features={selectedFeatures} onRemove={toggleFeature} />
+
+      {/* Two-column layout */}
+      <div className="analysis-layout">
+
+        {/* Left: Feature Catalogue */}
+        <div className="analysis-left">
+          <div className="card" style={{padding:'16px'}}>
+            <div className="card-header" style={{marginBottom:12}}>
+              <span className="card-title">Feature Catalogue</span>
+              <span style={{fontSize:12,color:'var(--text-3)'}}>{filteredCat.length} features</span>
+            </div>
+            <input className="input-box" style={{marginBottom:8,fontSize:13,padding:'8px 12px'}}
+              placeholder="Search features…" value={catSearch} onChange={e => setCatSearch(e.target.value)} />
+            <select className="analysis-select" style={{marginBottom:6}} value={catFilter} onChange={e => setCatFilter(e.target.value)}>
+              {categories.map(c => <option key={c}>{c}</option>)}
+            </select>
+            <select className="analysis-select" style={{marginBottom:12}} value={riskFilter} onChange={e => setRiskFilter(e.target.value)}>
+              {riskLevels.map(r => <option key={r}>{r}</option>)}
+            </select>
+            <div className="feature-list">
+              {filteredCat.map((f, i) => (
+                <FeatureCard key={i} feature={f} selected={selectedFeatures.includes(f['Feature Name'])} onClick={() => toggleFeature(f['Feature Name'])} />
+              ))}
+              {!filteredCat.length && <div style={{color:'var(--text-3)',fontSize:13,textAlign:'center',padding:20}}>No features match filters.</div>}
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Main Analysis — 3-state panel */}
+        <div className="analysis-right">
+
+          {selectedFeatures.length === 0 ? (
+            /* State 0: No features selected */
+            <div className="analysis-instruction">
+              <div className="analysis-instruction-icon">
+                <i className="fa-solid fa-wand-magic-sparkles"></i>
+              </div>
+              <div className="analysis-instruction-title">Select features to begin</div>
+              <div className="analysis-instruction-sub">
+                Select or drag features from the Feature Catalogue to start analysis.
+              </div>
+            </div>
+
+          ) : !analysisReady ? (
+            /* State 1: Features selected but fewer than 2 */
+            <div className="analysis-instruction">
+              <div className="analysis-instruction-icon">
+                <i className="fa-solid fa-chart-scatter"></i>
+              </div>
+              <div className="analysis-instruction-title">{selectedFeatures.length} feature selected</div>
+              <div className="analysis-instruction-sub">Select at least one more feature to unlock the model.</div>
+            </div>
+
+          ) : !modelRun ? (
+            /* State 2: 2+ features selected — ready to run */
+            <div className="analysis-instruction">
+              <div className="analysis-instruction-icon" style={{background:'rgba(139,28,28,0.1)',color:'var(--primary)'}}>
+                <i className="fa-solid fa-play"></i>
+              </div>
+              <div className="analysis-instruction-title">{selectedFeatures.length} features ready</div>
+              <div className="analysis-instruction-sub" style={{marginBottom:20}}>
+                Click <strong>Run Model</strong> to generate the scatter plot, cluster descriptions, anomaly detection, and insights summary.
+              </div>
+              <button
+                onClick={runModel}
+                disabled={modelRunning}
+                className="btn-primary"
+                style={{fontSize:14,padding:'10px 28px',display:'inline-flex',alignItems:'center',gap:8}}
+              >
+                {modelRunning
+                  ? <><div className="spinner" style={{width:15,height:15,borderWidth:2}}></div> Running…</>
+                  : <><i className="fa-solid fa-circle-play"></i> Run Model</>}
+              </button>
+            </div>
+
+          ) : (
+            /* State 3: Model has been run — full analysis */
+            <>
+              <div className="card" style={{marginBottom:16}}>
+                <div className="card-header">
+                  <span className="card-title">Transaction Behaviour Clusters</span>
+                  <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                    {selectedFeatures.slice(0,3).map(f => (
+                      <span key={f} className="sfp-chip" style={{fontSize:11}}>{f}</span>
+                    ))}
+                    {selectedFeatures.length > 3 && <span className="sfp-chip" style={{fontSize:11}}>+{selectedFeatures.length-3} more</span>}
+                  </div>
+                </div>
+
+                {/* Scatter filters */}
+                <div className="scatter-filters">
+                  <select className="analysis-select" value={scatterCluster} onChange={e => setScatterCluster(e.target.value)}>
+                    {scatterClusters.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                  <select className="analysis-select" value={scatterRisk} onChange={e => setScatterRisk(e.target.value)}>
+                    {scatterRisks.map(r => <option key={r}>{r}</option>)}
+                  </select>
+                  <span style={{fontSize:12,color:'var(--text-3)',alignSelf:'center'}}>{filteredScatter.length} parties</span>
+                </div>
+
+                {/* X/Y axis selectors */}
+                <div className="axis-selectors">
+                  <span className="axis-label">X Axis:</span>
+                  <select className="analysis-select" value={xCol} onChange={e => setXCol(e.target.value)}>
+                    {scatterNumericCols.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <span className="axis-label" style={{marginLeft:4}}>Y Axis:</span>
+                  <select className="analysis-select" value={yCol} onChange={e => setYCol(e.target.value)}>
+                    {scatterNumericCols.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+
+                <ScatterPlotChart data={filteredScatter} xCol={xCol} yCol={yCol} />
+              </div>
+
+              <div className="card" style={{marginBottom:16}}>
+                <div className="card-header">
+                  <span className="card-title">Cluster Descriptions</span>
+                  {descLoading && (
+                    <span style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'var(--text-3)'}}>
+                      <div className="spinner" style={{width:13,height:13,borderWidth:2}}></div> Generating…
+                    </span>
+                  )}
+                </div>
+                <ClusterDescriptions descriptions={clusterDescs} scatter={scatter} />
+              </div>
+
+              <AnomalySection
+                anomalies={filteredAnomalies}   allAnomalies={anomalies}
+                highRiskCount={highRiskCount}   escalatedCount={escalatedCount}
+                investigatingCount={investigatingCount} monitoringCount={monitoringCount}
+                maxDistance={maxDistance}
+                selectedFeatures={selectedFeatures}
+                filters={{ aCluster, aRisk, aStatus, aType }}
+                filterOptions={{ aClusters, aRisks, aStatuses, aTypes }}
+                onFilter={(key, val) => {
+                  if (key==='cluster') setACluster(val);
+                  if (key==='risk')    setARisk(val);
+                  if (key==='status')  setAStatus(val);
+                  if (key==='type')    setAType(val);
+                }}
+              />
+            </>
+          )}
+
+          {/* Insights Quick Summary */}
+          {(summaryLoading || insightsSummary) && (
+            <div className="card" style={{marginTop:16}}>
+              <div className="card-header">
+                <span className="card-title"><i className="fa-solid fa-lightbulb" style={{marginRight:7,color:'#D97706'}}></i>Insights Quick Summary</span>
+                {summaryLoading && (
+                  <span style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'var(--text-3)'}}>
+                    <div className="spinner" style={{width:13,height:13,borderWidth:2}}></div> Generating…
+                  </span>
+                )}
+              </div>
+              {insightsSummary && (
+                <div style={{padding:'14px 18px',fontSize:14,color:'var(--text)',lineHeight:1.75,borderLeft:'3px solid #D97706',margin:'0 0 4px 0',background:'rgba(217,119,6,0.04)',borderRadius:'0 var(--radius) var(--radius) 0'}}>
+                  {insightsSummary}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Source note */}
+          <div className="source-note" style={{marginTop:12}}>
+            <i className="fa-solid fa-database"></i>
+            Source: Approved Excel datasets only — no external data used.
+            {loadedAt && <span style={{marginLeft:8}}>Loaded at {loadedAt}</span>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
