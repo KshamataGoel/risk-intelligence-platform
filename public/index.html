@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Risk Intelligence Platform</title>
+  <title>CRCO Cockpit</title>
 
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,8 +16,10 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- Chart.js -->
+  <!-- Chart.js + Zoom plugin -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
 
 <style>
 /* ── Reset & Variables ────────────────────────────────────────────── */
@@ -63,7 +65,7 @@ body {
 }
 
 /* ── App Shell ────────────────────────────────────────────────────── */
-.app  { display: flex; height: 100vh; overflow: hidden; }
+.app  { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 .main { flex: 1; overflow-y: auto; background: var(--bg); }
 
 /* ── Sidebar ──────────────────────────────────────────────────────── */
@@ -259,6 +261,92 @@ body {
 .badge-active  { background: var(--primary-light); color: var(--primary); }
 .badge-soon    { background: #F1F5F9; color: var(--text-3); }
 
+/* ── Top Navigation Bar ───────────────────────────────────────────── */
+.topnav {
+  height: 58px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  gap: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 300;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+.topnav-brand { display:flex; align-items:center; gap:0; flex-shrink:0; }
+.topnav-genpact { display:flex; align-items:center; }
+.topnav-divider { width:1px; height:24px; background:var(--border); margin:0 16px; flex-shrink:0; }
+.topnav-cockpit { display:flex; align-items:center; gap:8px; color:var(--text); font-size:13.5px; font-weight:700; letter-spacing:-0.2px; white-space:nowrap; }
+.topnav-cockpit-icon { width:26px; height:26px; background:var(--primary); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; flex-shrink:0; }
+.topnav-nav { display:flex; align-items:center; gap:2px; margin-left:auto; overflow-x:auto; }
+.topnav-item {
+  display:flex; align-items:center; gap:6px; padding:6px 11px;
+  border:none; background:none; color:var(--text-2);
+  border-radius:var(--radius-sm); cursor:pointer;
+  font-size:12.5px; font-weight:500; transition:all 0.15s;
+  white-space:nowrap; font-family:inherit;
+}
+.topnav-item i { font-size:12px; }
+.topnav-item:hover  { background:var(--primary-light); color:var(--primary); }
+.topnav-item.active { background:var(--primary); color:#fff; }
+.topnav-item .nav-badge {
+  background:rgba(255,255,255,0.25); color:rgba(255,255,255,0.9);
+  font-size:9px; padding:1px 5px; border-radius:20px; font-weight:600;
+}
+.topnav-item:not(.active) .nav-badge { background:var(--primary-light); color:var(--primary); }
+
+/* ── Dark landing page (home) ─────────────────────────────────────── */
+.landing-page { min-height:100vh; background:#0F172A; display:flex; flex-direction:column; }
+.landing-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 52px; height:64px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  background:rgba(15,23,42,0.95);
+  position:sticky; top:0; z-index:100;
+}
+.landing-brand { display:flex; align-items:center; gap:14px; }
+.landing-divider { width:1px; height:22px; background:rgba(255,255,255,0.15); }
+.landing-cockpit { display:flex; align-items:center; gap:8px; color:#fff; font-size:13.5px; font-weight:700; letter-spacing:-0.2px; }
+.landing-cockpit-icon { width:26px; height:26px; background:var(--primary); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; }
+.landing-header-meta { display:flex; align-items:center; gap:16px; }
+.landing-header-date { color:rgba(255,255,255,0.35); font-size:12px; }
+.landing-confidential {
+  background:rgba(139,28,28,0.3); color:#FCA5A5;
+  border:1px solid rgba(139,28,28,0.4); border-radius:20px;
+  font-size:10px; font-weight:600; padding:2px 10px; letter-spacing:0.4px;
+}
+.landing-main { flex:1; display:flex; flex-direction:column; align-items:center; padding:80px 40px 60px; }
+.landing-hero { text-align:center; max-width:600px; margin-bottom:64px; }
+.landing-eyebrow { color:rgba(255,255,255,0.35); font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; margin-bottom:16px; }
+.landing-title { color:#fff; font-size:52px; font-weight:800; letter-spacing:-2px; margin-bottom:18px; line-height:1.05; }
+.landing-title span { color:var(--primary); }
+.landing-sub { color:rgba(255,255,255,0.5); font-size:15px; line-height:1.65; max-width:480px; margin:0 auto; }
+.landing-modules { display:flex; flex-direction:column; gap:10px; width:100%; max-width:700px; }
+.landing-card {
+  display:flex; align-items:center; gap:18px; padding:18px 22px;
+  background:rgba(255,255,255,0.035); border:1px solid rgba(255,255,255,0.07);
+  border-radius:12px; cursor:pointer; transition:all 0.18s;
+}
+.landing-card:hover { background:rgba(255,255,255,0.07); border-color:rgba(255,255,255,0.14); transform:translateX(5px); }
+.landing-card-icon { width:46px; height:46px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0; }
+.landing-card-icon.red    { background:rgba(139,28,28,0.3);  color:#FCA5A5; }
+.landing-card-icon.blue   { background:rgba(30,58,95,0.45);  color:#93C5FD; }
+.landing-card-icon.green  { background:rgba(5,150,105,0.3);  color:#6EE7B7; }
+.landing-card-icon.purple { background:rgba(124,58,237,0.3); color:#C4B5FD; }
+.landing-card-body { flex:1; min-width:0; }
+.landing-card-title { color:#fff; font-size:14px; font-weight:600; margin-bottom:3px; }
+.landing-card-desc  { color:rgba(255,255,255,0.42); font-size:12.5px; line-height:1.45; }
+.landing-card-arrow { color:rgba(255,255,255,0.2); font-size:14px; transition:all 0.18s; flex-shrink:0; }
+.landing-card:hover .landing-card-arrow { color:var(--primary); transform:translateX(4px); }
+.landing-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 52px; border-top:1px solid rgba(255,255,255,0.06);
+  color:rgba(255,255,255,0.22); font-size:11px;
+}
+
 /* ── Insights Page ────────────────────────────────────────────────── */
 .catalogue-row {
   display: flex;
@@ -369,6 +457,51 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── Processing view (long-running actions) ──────────────────────── */
+.processing-view {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 48px 32px 40px;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  margin: 24px 0;
+}
+.processing-icon-ring {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--primary-light);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 22px;
+  animation: procPulse 1.6s ease-in-out infinite;
+}
+.processing-icon-ring i { font-size: 24px; color: var(--primary); }
+@keyframes procPulse {
+  0%,100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(139,28,28,0.18); }
+  50%      { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(139,28,28,0); }
+}
+.processing-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.processing-msg {
+  font-size: 13px; color: var(--text-2); min-height: 22px;
+  transition: opacity 0.5s ease;
+}
+.processing-bar-wrap {
+  width: 260px; height: 4px; background: var(--border);
+  border-radius: 4px; margin: 20px auto 0; overflow: hidden;
+}
+.processing-bar {
+  height: 100%; background: var(--primary);
+  border-radius: 4px;
+  animation: procBar 2.2s ease-in-out infinite alternate;
+}
+@keyframes procBar {
+  from { width: 15%; margin-left: 0; }
+  to   { width: 55%; margin-left: 30%; }
+}
+.processing-counter {
+  font-size: 11.5px; color: var(--text-3); margin-top: 14px;
+  font-variant-numeric: tabular-nums; letter-spacing: 0.2px;
+}
+
 /* Error / not-found */
 .alert {
   padding: 16px 20px;
@@ -393,6 +526,73 @@ body {
 .summary-icon   { color: var(--primary); font-size: 16px; }
 .summary-label  { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--primary); }
 .summary-text   { font-size: 14px; color: var(--text); line-height: 1.7; white-space: pre-line; }
+
+/* A-F structured summary sections */
+.summary-sections { display: flex; flex-direction: column; gap: 10px; }
+.summary-section {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 12px;
+  align-items: baseline;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid transparent;
+}
+.summary-section.section-blue   { background: #EFF6FF; border-left-color: #3B82F6; }
+.summary-section.section-orange { background: #FFF7ED; border-left-color: #F97316; }
+.summary-section.section-purple { background: #F5F3FF; border-left-color: #8B5CF6; }
+.summary-section.section-teal   { background: #F0FDFA; border-left-color: #14B8A6; }
+.summary-section.section-gray   { background: #F8FAFC; border-left-color: #94A3B8; }
+.summary-section-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-2);
+}
+.summary-section-label i { font-size: 12px; }
+.summary-section.section-blue   .summary-section-label { color: #1D4ED8; }
+.summary-section.section-orange .summary-section-label { color: #C2410C; }
+.summary-section.section-purple .summary-section-label { color: #6D28D9; }
+.summary-section.section-teal   .summary-section-label { color: #0F766E; }
+.summary-section.section-gray   .summary-section-label { color: #64748B; }
+.summary-section-content { font-size: 13.5px; color: var(--text); line-height: 1.65; }
+
+/* Concentration insight banner */
+.concentration-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #FFFBEB;
+  border: 1px solid #FCD34D;
+  border-left: 4px solid #F59E0B;
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13.5px;
+  color: #92400E;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.concentration-banner i { color: #F59E0B; font-size: 15px; margin-top: 1px; flex-shrink: 0; }
+
+/* Quality note */
+.quality-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+.quality-note i { color: #64748B; font-size: 13px; }
 
 /* Metrics row */
 .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
@@ -621,6 +821,48 @@ tbody tr:last-child td { border-bottom: none; }
 .narrative-label { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
 .narrative-text  { font-size: 13px; color: var(--text); line-height: 1.65; }
 
+/* Anomaly structured narrative */
+.anomaly-narrative { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.anomaly-narrative-section {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 10px;
+  align-items: baseline;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid transparent;
+  font-size: 13px;
+}
+.anomaly-narrative-section.anv-pattern  { background: #EFF6FF; border-left-color: #3B82F6; }
+.anomaly-narrative-section.anv-drivers  { background: #F5F3FF; border-left-color: #8B5CF6; }
+.anomaly-narrative-section.anv-risk     { background: #FFF7ED; border-left-color: #F97316; }
+.anomaly-narrative-section.anv-status   { background: #F8FAFC; border-left-color: #94A3B8; }
+.anomaly-narrative-section.anv-review   { background: #F0FDF4; border-left-color: #22C55E; }
+.anomaly-narrative-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 6px;
+}
+.anomaly-narrative-section.anv-pattern .anomaly-narrative-label { color: #1D4ED8; }
+.anomaly-narrative-section.anv-drivers .anomaly-narrative-label { color: #6D28D9; }
+.anomaly-narrative-section.anv-risk    .anomaly-narrative-label { color: #C2410C; }
+.anomaly-narrative-section.anv-status  .anomaly-narrative-label { color: #64748B; }
+.anomaly-narrative-section.anv-review  .anomaly-narrative-label { color: #15803D; }
+.anomaly-narrative-content { color: var(--text); line-height: 1.6; }
+
+/* Insights Quick Summary structured sections */
+.insights-summary-sections { display: flex; flex-direction: column; gap: 10px; padding: 14px 0 4px; }
+.insights-summary-section {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid #D97706;
+  background: rgba(217,119,6,0.05);
+}
+.insights-summary-section-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  color: #92400E; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;
+}
+.insights-summary-section-content { font-size: 13.5px; color: var(--text); line-height: 1.65; }
+
 /* ── Vault ────────────────────────────────────────────────────────── */
 .vault-tabs {
   display: flex; gap: 4px; margin-bottom: 22px;
@@ -785,6 +1027,39 @@ tbody tr:last-child td { border-bottom: none; }
   font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 6px;
 }
 
+/* Confidence pills */
+.vault-confidence-pill {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 7px; border-radius: 10px; font-size: 9.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.4px; margin-left: 8px;
+  vertical-align: middle; flex-shrink: 0;
+}
+.vault-confidence-pill.extracted { background: #ECFDF5; color: #065F46; border: 1px solid #6EE7B7; }
+.vault-confidence-pill.inferred  { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+
+/* Source traceability tooltip */
+.vault-summary-section { position: relative; }
+.vault-source-tip {
+  display: none; position: absolute; bottom: calc(100% + 4px); left: 0;
+  background: #0F172A; color: #E2E8F0; font-size: 11px; padding: 5px 10px;
+  border-radius: 5px; white-space: nowrap; z-index: 20;
+  pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.vault-source-tip::after {
+  content: ''; position: absolute; top: 100%; left: 14px;
+  border: 4px solid transparent; border-top-color: #0F172A;
+}
+.vault-summary-section:hover .vault-source-tip { display: block; }
+
+/* Intelligence extraction type badge */
+.vault-extraction-type {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 4px; padding: 2px 8px; font-size: 10px; font-weight: 600;
+  color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px;
+  margin-left: 8px;
+}
+
 /* Window footer */
 .vault-summary-footer {
   padding: 10px 20px; border-top: 1px solid var(--border);
@@ -920,6 +1195,351 @@ tbody tr:last-child td { border-bottom: none; }
   .page { padding: 0 !important; max-width: none !important; }
   .report-body { padding: 16px !important; }
 }
+
+/* ── Scenario Intelligence Module ───────────────────────────────────── */
+.scenario-alert-banner {
+  background: linear-gradient(135deg,#7f1d1d,#991b1b);
+  color:#fff; border-radius:var(--radius); padding:14px 20px;
+  margin-bottom:20px; display:flex; align-items:center; gap:12px;
+  font-weight:700; letter-spacing:0.5px; font-size:13px;
+}
+.scenario-meta-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:12px; margin-bottom:20px; }
+.scenario-meta-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; box-shadow:var(--shadow); }
+.scenario-meta-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-3); margin-bottom:6px; }
+.scenario-meta-value { font-size:13.5px; font-weight:600; color:var(--text); line-height:1.3; }
+.scenario-meta-value.critical { color:#991B1B; }
+.scenario-meta-value.warning  { color:#D97706; }
+
+.risk-flow { display:flex; flex-direction:column; align-items:center; gap:0; padding:12px 16px; }
+.risk-flow-step {
+  background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius);
+  padding:12px 28px; font-size:13.5px; font-weight:600; color:var(--text);
+  text-align:center; min-width:300px; box-shadow:var(--shadow);
+}
+.risk-flow-step.trigger    { background:#7f1d1d; color:#fff; border-color:#7f1d1d; }
+.risk-flow-step.escalation { background:linear-gradient(135deg,#7f1d1d,#991b1b); color:#fff; border-color:#7f1d1d; }
+.risk-flow-arrow { color:#D97706; font-size:18px; margin:4px 0; line-height:1; }
+
+.impact-table-wrap { overflow-x:auto; border-radius:var(--radius-sm); border:1px solid var(--border); }
+.impact-table { width:100%; border-collapse:collapse; font-size:13px; }
+.impact-table th { background:#F8FAFC; padding:10px 14px; text-align:left; font-weight:700; color:var(--text-2); border-bottom:2px solid var(--border); font-size:11px; text-transform:uppercase; letter-spacing:0.4px; }
+.impact-table td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:top; line-height:1.5; }
+.impact-table tr:hover td { background:#FAFAFA; }
+
+.sev-badge { display:inline-block; padding:3px 9px; border-radius:12px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; white-space:nowrap; }
+.sev-critical { background:#FEF2F2; color:#991B1B; border:1px solid #FCA5A5; }
+.sev-high     { background:#FFF7ED; color:#C2410C; border:1px solid #FDBA74; }
+.sev-medium   { background:#FFFBEB; color:#92400E; border:1px solid #FDE68A; }
+.sev-low      { background:#F0FDF4; color:#15803D; border:1px solid #86EFAC; }
+
+.scope-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:16px; }
+.scope-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); }
+.scope-card-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-3); margin-bottom:10px; }
+.scope-card-item { display:flex; align-items:flex-start; gap:8px; font-size:13px; color:var(--text); padding:6px 0; border-bottom:1px solid var(--border); line-height:1.4; }
+.scope-card-item:last-child { border-bottom:none; }
+.scope-card-item i { color:var(--primary); font-size:10px; margin-top:4px; flex-shrink:0; }
+
+.action-tabs { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:16px; }
+.action-tab { padding:10px 20px; font-size:13px; font-weight:600; color:var(--text-2); background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-2px; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+.action-tab.active { color:var(--primary); border-bottom-color:var(--primary); }
+.action-tab:hover:not(.active) { color:var(--text); }
+.action-item { display:flex; align-items:flex-start; gap:12px; padding:11px 0; border-bottom:1px solid var(--border); font-size:13.5px; color:var(--text); line-height:1.5; }
+.action-item:last-child { border-bottom:none; }
+.action-bullet { width:22px; height:22px; min-width:22px; background:var(--primary-light); color:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; margin-top:1px; }
+
+.model-warning-card { background:#FFFBEB; border:1px solid #FDE68A; border-left:4px solid #D97706; border-radius:var(--radius); padding:20px 24px; margin-bottom:16px; }
+.model-warning-title { font-size:15px; font-weight:700; color:#92400E; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+.model-warning-item { display:flex; align-items:flex-start; gap:10px; margin-bottom:10px; font-size:13.5px; color:#78350F; line-height:1.5; }
+
+.reg-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+.reg-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); }
+.reg-card-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.reg-card-body { font-size:13px; color:var(--text-2); line-height:1.6; }
+.reg-note { margin-top:16px; padding:10px 14px; background:var(--warning-bg); border:1px solid #FCD34D; border-radius:var(--radius-sm); font-size:12px; color:var(--warning-text); }
+
+.scenario-library-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:20px; }
+.scenario-lib-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); transition:all 0.18s; position:relative; }
+.scenario-lib-card.sc-active { cursor:pointer; }
+.scenario-lib-card.sc-active:hover { box-shadow:var(--shadow-lg); transform:translateY(-2px); border-color:var(--primary); }
+.scenario-lib-card.sc-soon { opacity:0.7; }
+.scenario-lib-num { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-3); margin-bottom:8px; }
+.scenario-lib-title { font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px; line-height:1.3; }
+.scenario-lib-event { font-size:12px; color:var(--primary); font-weight:600; margin-bottom:10px; }
+.scenario-lib-desc { font-size:13px; color:var(--text-2); line-height:1.55; margin-bottom:14px; }
+.scenario-lib-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+.scenario-lib-tag { background:var(--primary-light); color:var(--primary); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; }
+.scenario-lib-footer { display:flex; align-items:center; justify-content:space-between; }
+
+.briefing-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; display:flex; align-items:flex-start; justify-content:center; padding:40px 20px; overflow-y:auto; }
+.briefing-modal { background:var(--surface); border-radius:var(--radius); padding:32px 36px; max-width:700px; width:100%; box-shadow:var(--shadow-lg); position:relative; }
+.briefing-modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+.briefing-modal-title { font-size:17px; font-weight:700; color:var(--text); }
+.briefing-modal-close { background:none; border:none; cursor:pointer; color:var(--text-3); font-size:18px; padding:4px; }
+.briefing-modal-close:hover { color:var(--text); }
+.briefing-content { font-size:13.5px; color:var(--text); line-height:1.8; white-space:pre-wrap; }
+.briefing-actions { display:flex; gap:10px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); flex-wrap:wrap; }
+
+.scenario-section-header { font-size:16px; font-weight:700; color:var(--text); margin:24px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); display:flex; align-items:center; gap:10px; }
+.section-letter { width:28px; height:28px; background:var(--primary); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0; }
+
+.heatmap-wrap { overflow-x:auto; }
+.heatmap-table { width:100%; border-collapse:collapse; font-size:12px; }
+.heatmap-table th { background:#1E293B; color:#fff; padding:8px 10px; text-align:center; font-weight:600; font-size:11px; white-space:nowrap; }
+.heatmap-table th:first-child { text-align:left; min-width:180px; }
+.heatmap-table td { padding:7px 10px; border:1px solid var(--border); text-align:center; font-weight:600; font-size:11px; }
+.heatmap-table td:first-child { text-align:left; font-weight:500; }
+.hm-critical { background:#991B1B; color:#fff; }
+.hm-high     { background:#EA580C; color:#fff; }
+.hm-elevated { background:#D97706; color:#fff; }
+.hm-normal   { background:#E2E8F0; color:#475569; }
+
+.scenario-charts-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(420px,1fr)); gap:20px; margin-bottom:16px; }
+.scenario-chart-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); }
+.scenario-chart-title { font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:0.4px; flex:1; margin-bottom:0; }
+.scenario-chart-unavail { font-size:13px; color:var(--text-3); font-style:italic; padding:20px 0; text-align:center; }
+
+/* ── Chart card header & icon buttons ─────────────────────────────── */
+.scenario-chart-card-hdr { display:flex; align-items:center; gap:6px; margin-bottom:10px; }
+.chart-icon-btn { border:none; background:none; cursor:pointer; padding:3px 6px; border-radius:4px; color:var(--text-3); font-size:13px; line-height:1; transition:all 0.15s; flex-shrink:0; }
+.chart-icon-btn:hover { background:var(--primary-light); color:var(--primary); }
+.chart-info-wrap { position:relative; display:inline-flex; }
+.chart-info-tip {
+  position:absolute; bottom:calc(100% + 7px); right:0;
+  width:230px; background:#1E293B; color:#F8FAFC;
+  font-size:11.5px; font-weight:400; line-height:1.5;
+  padding:9px 12px; border-radius:7px; z-index:300;
+  pointer-events:none; opacity:0; transition:opacity 0.15s;
+  text-transform:none; letter-spacing:0; white-space:normal;
+  box-shadow:0 4px 16px rgba(0,0,0,0.25);
+}
+.chart-info-tip::after { content:''; position:absolute; top:100%; right:10px; border:5px solid transparent; border-top-color:#1E293B; }
+.chart-info-wrap:hover .chart-info-tip { opacity:1; }
+
+/* ── Chart expand/fullscreen modal ────────────────────────────────── */
+.chart-modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.65);
+  z-index:1200; display:flex; align-items:center; justify-content:center;
+  padding:20px;
+}
+.chart-modal {
+  background:var(--surface); border-radius:14px;
+  width:100%; max-width:980px; max-height:90vh;
+  display:flex; flex-direction:column;
+  box-shadow:0 24px 64px rgba(0,0,0,0.35); overflow:hidden;
+}
+.chart-modal-hdr {
+  display:flex; align-items:flex-start; padding:16px 20px 14px;
+  border-bottom:1px solid var(--border); gap:12px; flex-shrink:0;
+}
+.chart-modal-hdr-text { flex:1; }
+.chart-modal-title { font-size:15px; font-weight:600; color:var(--text); }
+.chart-modal-desc { font-size:12px; color:var(--text-3); margin-top:3px; line-height:1.45; }
+.chart-modal-controls { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+.chart-zoom-btn {
+  border:1px solid var(--border); background:var(--surface);
+  cursor:pointer; padding:5px 10px; border-radius:5px;
+  color:var(--text-2); font-size:12px; font-weight:600;
+  transition:all 0.15s; font-family:inherit;
+}
+.chart-zoom-btn:hover { background:var(--primary-light); color:var(--primary); border-color:var(--primary); }
+.chart-modal-body { flex:1; padding:18px 22px 20px; min-height:0; overflow:hidden; }
+
+/* Enhanced Risk Transmission Flow */
+.risk-flow-step {
+  position:relative;
+  cursor:pointer;
+  transition:all 0.15s;
+  user-select:none;
+}
+.risk-flow-step:hover { box-shadow:var(--shadow-md); }
+.risk-flow-step.active-step { border-color:var(--primary) !important; box-shadow:0 0 0 3px var(--primary-light),var(--shadow-md) !important; }
+.risk-flow-step.trigger.active-step { box-shadow:0 0 0 3px rgba(255,255,255,0.3),var(--shadow-md) !important; }
+.flow-info-icon {
+  position:absolute; top:8px; right:10px;
+  font-size:12px; opacity:0.55; transition:opacity 0.15s;
+  line-height:1;
+}
+.risk-flow-step:hover .flow-info-icon,
+.risk-flow-step.active-step .flow-info-icon { opacity:1; }
+.risk-flow-step.trigger .flow-info-icon,
+.risk-flow-step.escalation .flow-info-icon { color:rgba(255,255,255,0.85); }
+
+.flow-popover {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-left:3px solid var(--primary);
+  border-radius:var(--radius);
+  padding:16px 18px;
+  margin:4px 0 0;
+  box-shadow:var(--shadow-lg);
+  width:100%;
+  min-width:300px;
+  max-width:540px;
+  animation:popoverIn 0.15s ease;
+  position:relative;
+  z-index:10;
+}
+@keyframes popoverIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+.flow-popover-title { font-size:13.5px; font-weight:700; color:var(--text); margin-bottom:4px; padding-right:20px; }
+.flow-popover-close { position:absolute; top:10px; right:10px; background:none; border:none; cursor:pointer; color:var(--text-3); font-size:14px; padding:2px 4px; }
+.flow-popover-close:hover { color:var(--text); }
+.flow-popover-explanation { font-size:13px; color:var(--text-2); line-height:1.55; margin-bottom:12px; }
+.flow-popover-meta { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+.flow-popover-tag { display:flex; align-items:center; gap:4px; font-size:11px; font-weight:600; }
+.flow-popover-tag-label { color:var(--text-3); text-transform:uppercase; letter-spacing:0.4px; }
+.flow-popover-tag-val { color:var(--text-2); }
+.flow-evidence-block {
+  background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:10px 12px; font-size:12.5px; color:var(--text-2); line-height:1.6;
+  font-style:italic; margin-bottom:10px;
+  border-left:2px solid var(--primary);
+}
+.flow-evidence-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary); margin-bottom:4px; font-style:normal; }
+.flow-popover-footer { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+.flow-source-ref { font-size:11px; color:var(--text-3); display:flex; align-items:center; gap:4px; }
+.flow-view-source-btn { font-size:11.5px; font-weight:600; color:var(--primary); background:var(--primary-light); border:none; border-radius:20px; padding:4px 12px; cursor:pointer; font-family:inherit; transition:all 0.15s; display:flex; align-items:center; gap:5px; }
+.flow-view-source-btn:hover { background:#f0dcdc; }
+
+/* Source Drawer */
+.source-drawer-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:2000; }
+.source-drawer {
+  position:fixed; top:0; right:0; bottom:0; width:420px; max-width:92vw;
+  background:var(--surface); box-shadow:-4px 0 24px rgba(0,0,0,0.12);
+  display:flex; flex-direction:column; z-index:2001;
+  animation:drawerIn 0.22s ease;
+}
+@keyframes drawerIn { from{transform:translateX(100%)} to{transform:translateX(0)} }
+.source-drawer-header {
+  padding:20px 24px 16px; border-bottom:1px solid var(--border);
+  display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+}
+.source-drawer-title { font-size:15px; font-weight:700; color:var(--text); line-height:1.3; }
+.source-drawer-close { background:none; border:none; cursor:pointer; color:var(--text-3); font-size:18px; padding:2px; flex-shrink:0; }
+.source-drawer-close:hover { color:var(--text); }
+.source-drawer-body { flex:1; overflow-y:auto; padding:20px 24px; }
+.source-drawer-section { margin-bottom:20px; }
+.source-drawer-section-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-3); margin-bottom:6px; }
+.source-drawer-section-val { font-size:13.5px; color:var(--text); line-height:1.65; }
+.source-drawer-evidence { background:#F8FAFC; border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:var(--radius-sm); padding:14px 16px; font-size:13px; color:var(--text-2); line-height:1.7; font-style:italic; margin-top:6px; }
+.source-drawer-footer { padding:16px 24px; border-top:1px solid var(--border); font-size:11px; color:var(--text-3); }
+
+.btn-outline { padding:9px 18px; background:var(--surface); color:var(--text); border:1.5px solid var(--border); border-radius:var(--radius); font-size:13.5px; font-weight:600; cursor:pointer; transition:all 0.15s; font-family:inherit; display:inline-flex; align-items:center; gap:7px; }
+.btn-outline:hover { background:var(--bg); border-color:#CBD5E1; }
+
+/* Enhanced Action Playbook */
+.action-row-enhanced {
+  border:1px solid var(--border); border-radius:var(--radius); margin-bottom:8px;
+  background:var(--surface); overflow:hidden; transition:all 0.15s; cursor:pointer;
+}
+.action-row-enhanced:hover { border-color:#CBD5E1; box-shadow:var(--shadow); }
+.action-row-enhanced.expanded { border-color:var(--primary); box-shadow:0 0 0 2px var(--primary-light); }
+.action-row-header { display:flex; align-items:flex-start; gap:12px; padding:13px 16px; }
+.action-row-main { flex:1; min-width:0; }
+.action-row-title { font-size:13.5px; font-weight:600; color:var(--text); line-height:1.35; margin-bottom:3px; }
+.action-row-short { font-size:12.5px; color:var(--text-2); line-height:1.4; }
+.action-row-right { display:flex; align-items:center; gap:8px; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end; }
+.action-row-chevron { font-size:11px; color:var(--text-3); transition:transform 0.2s; }
+.action-row-enhanced.expanded .action-row-chevron { transform:rotate(180deg); }
+.action-row-owner { font-size:11px; color:var(--text-3); max-width:160px; text-align:right; line-height:1.3; display:none; }
+@media(min-width:640px){ .action-row-owner { display:block; } }
+
+.action-row-detail {
+  border-top:1px solid var(--border); padding:16px 18px 16px 18px;
+  background:linear-gradient(135deg,#fafbfc 0%,#f8f9fa 100%);
+  animation:detailIn 0.15s ease;
+}
+@keyframes detailIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+.action-detail-section { margin-bottom:12px; }
+.action-detail-label { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-3); margin-bottom:4px; }
+.action-detail-text { font-size:13px; color:var(--text); line-height:1.7; }
+.action-why-block { background:#FFFBEB; border:1px solid #FDE68A; border-left:3px solid #D97706; border-radius:var(--radius-sm); padding:10px 12px; font-size:13px; color:#78350F; line-height:1.65; margin-bottom:12px; }
+.action-why-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#D97706; margin-bottom:4px; }
+.action-detail-meta { display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:12px; color:var(--text-2); }
+.action-meta-pair { display:flex; align-items:center; gap:4px; }
+.action-meta-key { color:var(--text-3); font-weight:600; font-size:10.5px; text-transform:uppercase; letter-spacing:0.3px; }
+
+.playbook-toolbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px; }
+.playbook-count { font-size:12px; color:var(--text-3); }
+.playbook-toolbar-btns { display:flex; gap:8px; }
+
+.action-summary-panel {
+  background:linear-gradient(135deg,#fafbfc,#f8f9fa); border:1px solid var(--border);
+  border-left:3px solid #D97706; border-radius:var(--radius); padding:16px 20px;
+  margin-top:16px; font-size:13.5px; color:var(--text); line-height:1.8; white-space:pre-wrap;
+}
+.action-summary-header { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#D97706; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+
+/* Crisis Snapshot */
+.crisis-snapshot-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:20px 24px; margin-bottom:16px; box-shadow:var(--shadow);
+}
+.crisis-snapshot-header {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:12px;
+}
+.crisis-snapshot-title {
+  font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--primary);
+  display:flex; align-items:center; gap:6px;
+}
+.crisis-bullets { list-style:none; padding:0; margin:0; }
+.crisis-bullet {
+  display:flex; align-items:flex-start; gap:10px; padding:7px 0;
+  border-bottom:1px solid #F1F5F9; font-size:13.5px; color:var(--text); line-height:1.5;
+}
+.crisis-bullet:last-child { border-bottom:none; }
+.crisis-bullet-dot {
+  width:7px; height:7px; min-width:7px; background:var(--primary);
+  border-radius:50%; margin-top:6px; flex-shrink:0;
+}
+
+/* Actions dropdown */
+.actions-dropdown-wrap { position:relative; }
+.actions-dropdown-btn {
+  display:flex; align-items:center; gap:6px; padding:7px 14px;
+  background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius);
+  font-size:13px; font-weight:600; color:var(--text); cursor:pointer; font-family:inherit;
+  transition:all 0.15s; white-space:nowrap;
+}
+.actions-dropdown-btn:hover { background:var(--bg); border-color:#CBD5E1; }
+.actions-dropdown-btn.open { border-color:var(--primary); background:var(--primary-light); color:var(--primary); }
+.actions-dropdown-menu {
+  position:absolute; top:calc(100% + 6px); right:0; min-width:210px;
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  box-shadow:var(--shadow-lg); z-index:100; overflow:hidden;
+  animation:popoverIn 0.12s ease;
+}
+.actions-dropdown-item {
+  display:flex; align-items:center; gap:10px; padding:10px 16px;
+  font-size:13px; font-weight:500; color:var(--text); cursor:pointer;
+  background:none; border:none; width:100%; text-align:left; font-family:inherit;
+  transition:background 0.1s;
+}
+.actions-dropdown-item:hover { background:var(--bg); }
+.actions-dropdown-item i { width:14px; text-align:center; color:var(--primary); font-size:12px; }
+.actions-dropdown-divider { height:1px; background:var(--border); margin:4px 0; }
+.quant-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px; margin-top:4px; }
+.quant-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:18px 20px; box-shadow:var(--shadow); cursor:pointer; transition:all 0.15s; position:relative;
+}
+.quant-card:hover { box-shadow:var(--shadow-md); border-color:#CBD5E1; }
+.quant-card.qc-open { border-color:var(--primary); box-shadow:0 0 0 2px var(--primary-light),var(--shadow-md); }
+.quant-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:10px; }
+.quant-label { font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.6px; }
+.quant-info-icon { font-size:12px; color:var(--text-3); opacity:0.6; transition:opacity 0.15s; flex-shrink:0; margin-top:1px; }
+.quant-card:hover .quant-info-icon, .quant-card.qc-open .quant-info-icon { opacity:1; color:var(--primary); }
+.quant-narrative { font-size:13px; color:var(--text); line-height:1.7; margin-bottom:12px; font-style:italic; border-left:3px solid var(--primary); padding-left:10px; }
+.quant-card-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.quant-stripe { font-size:11px; color:var(--text-3); font-weight:500; }
+
+.quant-popover {
+  margin-top:10px; padding:14px 16px; background:#F8FAFC; border:1px solid var(--border);
+  border-radius:var(--radius-sm); animation:popoverIn 0.15s ease;
+}
+.quant-popover-row { margin-bottom:8px; }
+.quant-popover-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-3); margin-bottom:3px; }
+.quant-popover-val { font-size:12.5px; color:var(--text-2); line-height:1.6; }
+.quant-popover-evidence { background:#fff; border:1px solid var(--border); border-left:2px solid var(--primary); border-radius:var(--radius-sm); padding:8px 10px; font-size:12px; color:var(--text-2); line-height:1.6; font-style:italic; margin-top:4px; }
 </style>
 </head>
 <body>
@@ -1180,11 +1800,12 @@ function DataTable({ columns, preview }) {
 
 // ── Sidebar ───────────────────────────────────────────────────────────────────
 const NAV = [
-  { id: 'home',     label: 'Home',     icon: 'fa-house' },
-  { id: 'insights', label: 'Insights', icon: 'fa-chart-bar' },
-  { id: 'reports',  label: 'Reports',  icon: 'fa-file-lines' },
-  { id: 'vault',    label: 'Vault',    icon: 'fa-vault' },
-  { id: 'analysis', label: 'Analysis', icon: 'fa-magnifying-glass-chart' }
+  { id: 'home',     label: 'Home',                icon: 'fa-house' },
+  { id: 'insights', label: 'Intelligence Center', icon: 'fa-chart-bar' },
+  { id: 'reports',  label: 'Insight Composer',    icon: 'fa-file-lines' },
+  { id: 'vault',    label: 'Knowledge Vault',     icon: 'fa-vault' },
+  { id: 'analysis', label: 'Analytics Lab',       icon: 'fa-magnifying-glass-chart' },
+  { id: 'scenario', label: 'Scenario Analysis',   icon: 'fa-radiation' }
 ];
 
 function Sidebar({ page, setPage }) {
@@ -1193,7 +1814,7 @@ function Sidebar({ page, setPage }) {
       <div className="sidebar-brand">
         <div className="sidebar-brand-icon"><i className="fa-solid fa-shield-halved"></i></div>
         <div className="sidebar-brand-text">
-          <div className="sidebar-brand-title">Risk Intelligence</div>
+          <div className="sidebar-brand-title">CRCO Cockpit</div>
         </div>
       </div>
 
@@ -1213,7 +1834,7 @@ function Sidebar({ page, setPage }) {
       </nav>
 
       <div className="sidebar-footer">
-        <div className="sidebar-footer-label">v1.0 · Insights Module</div>
+        <div className="sidebar-footer-label">v1.0 · CRCO Cockpit</div>
       </div>
     </div>
   );
@@ -1222,68 +1843,106 @@ function Sidebar({ page, setPage }) {
 // ── Home Page ─────────────────────────────────────────────────────────────────
 const MODULES = [
   {
-    id: 'insights', label: 'Insights', icon: 'fa-chart-bar', iconClass: 'red',
+    id: 'insights', label: 'Intelligence Centre', icon: 'fa-chart-bar', iconClass: 'red',
     desc: 'Ask natural language questions across approved Risk & Compliance datasets. Get instant charts and executive summaries.',
     active: true
   },
   {
-    id: 'reports', label: 'Reports', icon: 'fa-file-lines', iconClass: 'blue',
-    desc: 'Generate leadership ready board packs and committee reports from structured risk data.',
+    id: 'reports', label: 'Insight Composer', icon: 'fa-file-lines', iconClass: 'blue',
+    desc: 'Generate leadership-ready board packs and committee reports from structured risk data.',
     active: true
   },
   {
-    id: 'vault', label: 'Vault', icon: 'fa-vault', iconClass: 'green',
+    id: 'vault', label: 'Knowledge Vault', icon: 'fa-vault', iconClass: 'green',
     desc: 'Search and retrieve approved policy documents, regulatory guidance, and knowledge assets.',
     active: true
   },
   {
-    id: 'analysis', label: 'Analysis', icon: 'fa-magnifying-glass-chart', iconClass: 'purple',
-    desc: 'Perform deeper model assisted analysis, clustering, and regulatory impact assessment.',
+    id: 'analysis', label: 'Analytics Lab', icon: 'fa-magnifying-glass-chart', iconClass: 'purple',
+    desc: 'Perform deeper model-assisted analysis, clustering, and regulatory impact assessment.',
+    active: true
+  },
+  {
+    id: 'scenario', label: 'Scenario Analysis', icon: 'fa-radiation', iconClass: 'red',
+    desc: 'Stress simulation and CRO war-room dashboards. Explore named stress scenarios and generate executive briefings.',
     active: true
   }
 ];
 
 function HomePage({ setPage }) {
+  const today = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   return (
-    <div className="page">
-      <div className="home-hero">
-        <div className="home-hero-title">Risk Intelligence Platform</div>
-        <div className="home-hero-sub">
-          A unified platform for risk insights, reporting, document management, and advanced analysis.
+    <div className="landing-page">
+      <header className="landing-header">
+        <div className="landing-brand">
+          <div className="landing-cockpit">
+            <div className="landing-cockpit-icon"><i className="fa-solid fa-shield-halved"></i></div>
+            CRCO Cockpit
+          </div>
+        </div>
+        <div className="landing-header-meta">
+          <span className="landing-confidential">Internal · Confidential</span>
+          <span className="landing-header-date"><i className="fa-regular fa-calendar" style={{marginRight:5}}></i>{today}</span>
+        </div>
+      </header>
+
+      <main className="landing-main">
+        <div className="landing-hero">
+          <div className="landing-eyebrow">Chief Risk &amp; Compliance Officer</div>
+          <h1 className="landing-title">CRCO <span>Cockpit</span></h1>
+          <p className="landing-sub">
+            A unified intelligence platform for risk insights, reporting, knowledge management, scenario analysis, and advanced analytics.
+          </p>
+        </div>
+
+        <div className="landing-modules">
+          {MODULES.map(m => (
+            <div key={m.id} className="landing-card" onClick={() => setPage(m.id)}>
+              <div className={`landing-card-icon ${m.iconClass}`}>
+                <i className={`fa-solid ${m.icon}`}></i>
+              </div>
+              <div className="landing-card-body">
+                <div className="landing-card-title">{m.label}</div>
+                <div className="landing-card-desc">{m.desc}</div>
+              </div>
+              <div className="landing-card-arrow"><i className="fa-solid fa-arrow-right"></i></div>
+            </div>
+          ))}
+        </div>
+      </main>
+
+      <footer className="landing-footer">
+        <span>v1.0 · CRCO Cockpit</span>
+        <span>Internal Use Only · Not for External Distribution</span>
+      </footer>
+    </div>
+  );
+}
+
+// ── Top Navigation Bar ────────────────────────────────────────────────────────
+function TopNav({ page, setPage }) {
+  return (
+    <header className="topnav">
+      <div className="topnav-brand">
+        <div className="topnav-cockpit">
+          <div className="topnav-cockpit-icon"><i className="fa-solid fa-shield-halved"></i></div>
+          CRCO Cockpit
         </div>
       </div>
-
-      <div className="page-header">
-        <div className="page-title">Platform Modules</div>
-        <div className="page-sub">Select a module to get started.</div>
-      </div>
-
-      <div className="modules-grid">
-        {MODULES.map(m => (
-          <div
-            key={m.id}
-            className="module-card"
-            onClick={() => setPage(m.id)}
+      <nav className="topnav-nav">
+        {NAV.map(item => (
+          <button
+            key={item.id}
+            className={`topnav-item ${page === item.id ? 'active' : ''}`}
+            onClick={() => setPage(item.id)}
           >
-            <div className={`module-card-icon ${m.iconClass}`}>
-              <i className={`fa-solid ${m.icon}`}></i>
-            </div>
-            <div className="module-card-title">{m.label}</div>
-            <div className="module-card-desc">{m.desc}</div>
-            <div className="module-card-arrow">
-              <span className={`badge ${m.active ? 'badge-active' : 'badge-soon'}`}>
-                {m.active
-                  ? <><i className="fa-solid fa-circle-check" style={{fontSize:10}}></i> Live</>
-                  : <><i className="fa-solid fa-clock" style={{fontSize:10}}></i> Coming Soon</>}
-              </span>
-              <span className="module-card-open">
-                Open <i className="fa-solid fa-arrow-right"></i>
-              </span>
-            </div>
-          </div>
+            <i className={`fa-solid ${item.icon}`}></i>
+            <span>{item.label}</span>
+            {item.id === 'insights' && <span className="nav-badge">Live</span>}
+          </button>
         ))}
-      </div>
-    </div>
+      </nav>
+    </header>
   );
 }
 
@@ -1306,13 +1965,54 @@ function PlaceholderPage({ label, icon, desc }) {
   );
 }
 
+// ── Processing helpers ────────────────────────────────────────────────────────
+function minDelay(minMs, maxMs) {
+  const ms = minMs + Math.random() * (maxMs - minMs);
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function ProcessingView({ title, messages, icon }) {
+  const [msgIdx,   setMsgIdx]   = useState(0);
+  const [fade,     setFade]     = useState(true);
+
+  useEffect(() => {
+  }, []);
+
+  useEffect(() => {
+    const cycle = () => {
+      const delay = 3200 + Math.random() * 1600;
+      return setTimeout(() => {
+        setFade(false);
+        setTimeout(() => {
+          setMsgIdx(i => (i + 1) % messages.length);
+          setFade(true);
+          cycleRef.current = cycle();
+        }, 400);
+      }, delay);
+    };
+    const cycleRef = { current: cycle() };
+    return () => clearTimeout(cycleRef.current);
+  }, []);
+
+  return (
+    <div className="processing-view">
+      <div className="processing-icon-ring">
+        <i className={`fa-solid ${icon || 'fa-microchip-ai'}`}></i>
+      </div>
+      <div className="processing-title">{title || 'Processing…'}</div>
+      <div className="processing-msg" style={{opacity: fade ? 1 : 0}}>{messages[msgIdx]}</div>
+      <div className="processing-bar-wrap"><div className="processing-bar"></div></div>
+    </div>
+  );
+}
+
 // ── Insights Page ─────────────────────────────────────────────────────────────
 const SUGGESTED = [
-  { text: 'How many parties are in the database broken down by type?',  icon: 'fa-users',             tag: 'Parties' },
-  { text: 'Show me the risk rating distribution across all customers',   icon: 'fa-shield-halved',     tag: 'Risk Ratings' },
-  { text: 'What are the top 10 accounts by total transaction volume?',  icon: 'fa-chart-bar',         tag: 'Accounts' },
-  { text: 'Show monthly transaction trends over time',                   icon: 'fa-chart-line',        tag: 'Monthly Trends' },
-  { text: 'What are my top 10 counterparty exposures?',                  icon: 'fa-building-columns',  tag: 'Exposures' }
+  { text: 'How is the customer population distributed across key party segments?',                 icon: 'fa-users',            tag: 'Parties' },
+  { text: 'Summarise the current customer risk profile distribution across all risk tiers.',      icon: 'fa-shield-halved',    tag: 'Risk Ratings' },
+  { text: 'Identify the highest transaction-volume accounts currently driving overall exposure.', icon: 'fa-chart-bar',        tag: 'Accounts' },
+  { text: 'Show transaction activity trends over time and highlight notable movement patterns.',  icon: 'fa-chart-line',       tag: 'Monthly Trends' },
+  { text: "Provide the bank's largest counterparty exposure concentrations by value.",           icon: 'fa-building-columns', tag: 'Exposures' }
 ];
 
 const FOLLOWUPS = {
@@ -1322,6 +2022,35 @@ const FOLLOWUPS = {
   Monthly_TXN_Trends:           ['What are the top 10 accounts by volume?', 'Show counterparty exposures', 'How many parties are in the database?'],
   Top10_Counterparty_Exposures: ['Show the risk rating distribution', 'What are the top 10 accounts by volume?', 'Show monthly transaction trends']
 };
+
+const SECTION_ICONS = { A: 'fa-bullseye', B: 'fa-magnifying-glass-chart', C: 'fa-shield-halved', D: 'fa-gears', E: 'fa-chart-line', F: 'fa-database' };
+const SECTION_COLORS = { A: 'section-blue', B: 'section-blue', C: 'section-orange', D: 'section-purple', E: 'section-teal', F: 'section-gray' };
+
+function SummaryView({ text }) {
+  if (!text) return null;
+  const sectionRegex = /^([A-F])\.\s*([^:\n]+):\s*(.+)$/gm;
+  const sections = [];
+  let match;
+  while ((match = sectionRegex.exec(text)) !== null) {
+    sections.push({ key: match[1], label: match[2].trim(), content: match[3].trim() });
+  }
+  if (sections.length >= 3) {
+    return (
+      <div className="summary-sections">
+        {sections.map(s => (
+          <div key={s.key} className={`summary-section ${SECTION_COLORS[s.key] || ''}`}>
+            <div className="summary-section-label">
+              <i className={`fa-solid ${SECTION_ICONS[s.key] || 'fa-circle'}`}></i>
+              <span>{s.key}. {s.label}</span>
+            </div>
+            <div className="summary-section-content">{s.content}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return <div className="summary-text">{text}</div>;
+}
 
 function InsightsPage() {
   const [question,    setQuestion]    = useState('');
@@ -1343,11 +2072,10 @@ function InsightsPage() {
     if (!text) return;
     setLoading(true); setResult(null); setError(null); setShowPreview(false);
     try {
-      const res  = await fetch('/api/insights', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: text })
-      });
+      const [res] = await Promise.all([
+        fetch('/api/insights', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ question: text }) }),
+        minDelay(8000, 15000)
+      ]);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Server error');
       setResult(data);
@@ -1366,7 +2094,7 @@ function InsightsPage() {
     <div className="page">
       {/* Header */}
       <div className="page-header">
-        <div className="page-title">Insights</div>
+        <div className="page-title">Intelligence Centre</div>
         <div className="page-sub">
           Ask questions across approved Risk &amp; Compliance datasets.
           
@@ -1406,10 +2134,19 @@ function InsightsPage() {
 
       {/* Loading */}
       {loading && (
-        <div className="spinner-wrap">
-          <div className="spinner"></div>
-          <span>Analysing data and generating insight…</span>
-        </div>
+        <ProcessingView
+          title="Analysing Intelligence Data"
+          icon="fa-chart-bar"
+          messages={[
+            'Scanning dataset dimensions…',
+            'Executing semantic query layer…',
+            'Resolving risk data entities…',
+            'Aggregating cross-dataset signals…',
+            'Applying analytical filters…',
+            'Constructing insight response…',
+            'Validating output against schema…',
+          ]}
+        />
       )}
 
       {/* Error */}
@@ -1431,13 +2168,21 @@ function InsightsPage() {
       {/* Results */}
       {result && result.answer_available && (
         <div>
-          {/* Summary */}
+          {/* Concentration / Trend Alert Banner */}
+          {result.concentration_insight && (
+            <div className="concentration-banner">
+              <i className="fa-solid fa-triangle-exclamation"></i>
+              {result.concentration_insight}
+            </div>
+          )}
+
+          {/* Structured Intelligence Brief */}
           <div className="summary-card">
             <div className="summary-header">
               <i className="fa-solid fa-brain summary-icon"></i>
-              <span className="summary-label">Executive Summary</span>
+              <span className="summary-label">Intelligence Brief</span>
             </div>
-            <div className="summary-text">{result.summary}</div>
+            <SummaryView text={result.summary} />
           </div>
 
           {/* Metrics */}
@@ -1460,6 +2205,14 @@ function InsightsPage() {
               highlightType={result.highlight_type}
             />
           </div>
+
+          {/* Data Quality Note */}
+          {result.quality_note && (
+            <div className="quality-note">
+              <i className="fa-solid fa-circle-info"></i>
+              {result.quality_note}
+            </div>
+          )}
 
           {/* Source + preview */}
           <div className="info-row">
@@ -1491,6 +2244,1300 @@ function InsightsPage() {
   );
 }
 
+// ── Scenario Intelligence Module ─────────────────────────────────────────────
+
+const SCENARIOS_LIB = [
+  { id:1, num:'Scenario 01', title:'Credit Event for a Top 10 Large Exposure Counterparty', eventType:'Credit / Concentration Risk',
+    desc:'A sudden credit deterioration or default of a top 10 large exposure counterparty, triggering CCR, PFE, and credit migration impacts across the bank.',
+    severity:'Critical', tags:['Credit Risk','CCR','Concentration','Large Exposure'], available:false },
+  { id:2, num:'Scenario 02', title:'Middle East Region Conflict and Closure of the Strait of Hormuz', eventType:'Geopolitical / Commodity Risk',
+    desc:'Escalation of Middle East conflict leading to closure of the Strait of Hormuz, causing energy commodity price spikes and sovereign credit stress.',
+    severity:'High', tags:['Geopolitical','Commodity','Market Risk','Energy'], available:false },
+  { id:3, num:'Scenario 03', title:'Asian Storms Supercharged by Climate Change', eventType:'Physical Climate Risk',
+    desc:'Severe climate events across Asia-Pacific impacting real asset valuations, trade finance exposures, and physical climate risk across the loan book.',
+    severity:'High', tags:['Climate Risk','Physical Risk','ESG','Trade Finance'], available:false },
+  { id:4, num:'Scenario 04', title:'CME Exchange Failure — Closure of an Exchange due to Cyber Attack', eventType:'Cyber / Market Infrastructure Failure',
+    desc:'A cyber attack on CME infrastructure causes exchange closure for 3–5 business days. Impacts include unhedged derivatives, frozen margin, liquidity stress, and regulatory escalation.',
+    severity:'Critical', tags:['Cyber','Market Risk','Liquidity','Operational Risk'], available:true }
+];
+
+const CME_META = [
+  { label:'Event Type',              value:'Cyber / Market Infrastructure Failure',      cls:'' },
+  { label:'Status',                  value:'Active Scenario',                            cls:'' },
+  { label:'Severity',                value:'Critical',                                   cls:'critical' },
+  { label:'Board Escalation',        value:'Required if closure exceeds 3 days',         cls:'warning' },
+  { label:'Regulatory Notification', value:'Required / Confirm with Legal & Compliance', cls:'warning' }
+];
+
+const RISK_FLOW = [
+  {
+    label:'Cyber Attack on CME Infrastructure', type:'trigger', severity:'Critical',
+    riskStripe:'Operational Risk — Cyber Risk',
+    sourceSection:'Scenario 4 — Event Description',
+    explanation:'A cyber event compromises CME trading, clearing, and margin infrastructure.',
+    sourceEvidence:'A sophisticated, state-sponsored cyber attack targets CME Group\'s core trading and clearing infrastructure — the matching engine, ClearPort clearing system, and the margin management platform.'
+  },
+  {
+    label:'Exchange Closure', severity:'Critical',
+    riskStripe:'Operational Risk — Resilience',
+    sourceSection:'Scenario 4 — Event Description',
+    explanation:'The exchange becomes unavailable for trading, clearing, and settlement activity.',
+    sourceEvidence:'The 3–5 day closure creates a cascade of compounding problems.'
+  },
+  {
+    label:'Pricing and Settlement Disruption', severity:'High',
+    riskStripe:'Traded Risk — Market Risk / Treasury Risk',
+    sourceSection:'Scenario 4 — Event Description',
+    explanation:'Price discovery and settlement processes are disrupted, affecting risk and collateral calculations.',
+    sourceEvidence:'Variation margin flows stop, hedges cannot be adjusted, and the central clearing counterparty cannot determine current exposure levels.'
+  },
+  {
+    label:'Margin and Collateral Freeze', severity:'High',
+    riskStripe:'Treasury Risk — Liquidity',
+    sourceSection:'Scope and Quantification / First Order Impact',
+    explanation:'Margin posted at CME becomes trapped and cannot be recalled, creating liquidity pressure.',
+    sourceEvidence:'Initial margin posted at CME is trapped and cannot be recalled. Liquidity Coverage Ratio impact if survival horizon falls below regulatory minimum.'
+  },
+  {
+    label:'Unhedged Trading Positions', severity:'Critical',
+    riskStripe:'Traded Risk — Market Risk',
+    sourceSection:'Scenario 4 — Event Description / First Order Impact',
+    explanation:'Trading desks cannot adjust hedges, causing directional exposure to accumulate.',
+    sourceEvidence:'Banks with large exchange-traded derivatives books face unhedged directional exposure to market moves they cannot offset.'
+  },
+  {
+    label:'Liquidity Stress', severity:'High',
+    riskStripe:'Treasury Risk — Liquidity',
+    sourceSection:'Financial Impact Summary',
+    explanation:'Trapped collateral and funding requirements reduce available liquidity and survival horizon.',
+    sourceEvidence:'LCR deteriorates by estimated 8–15 percentage points; Survival Horizon reduces by 3–7 days.'
+  },
+  {
+    label:'Capital / RWA Pressure', severity:'High',
+    riskStripe:'Capital Management / Traded Risk / CCR',
+    sourceSection:'Financial Impact Summary',
+    explanation:'Unhedged exposures and stressed counterparty assumptions increase capital consumption.',
+    sourceEvidence:'Traded risk RWA increases by approximately 12–18%, with estimated £28–55M additional CET1 drawdown depending on market moves during closure.'
+  },
+  {
+    label:'Regulatory & Board Escalation', type:'escalation', severity:'Critical',
+    riskStripe:'Regulatory Compliance / Governance',
+    sourceSection:'Regulatory Notification Requirements / Actions',
+    explanation:'The event triggers regulatory notification and Board-level escalation requirements.',
+    sourceEvidence:'Notify PRA/FCA as required under DORA/SYSC 15A. If closure extends beyond 3 days, escalate to Board Risk Committee.'
+  }
+];
+
+const FIRST_ORDER = [
+  { stripe:'Traded Risk — Market Risk',      measure:'VaR, Sensitivity',       impact:'Exchange closure creates pricing gaps. Open positions cannot be hedged or valued. VaR models assume continuous price availability.',     sev:'Critical' },
+  { stripe:'Operational Risk — Resilience',  measure:'Business Continuity',     impact:'Trading operations, settlement processes, and client servicing impaired by exchange unavailability.',                                   sev:'Critical' },
+  { stripe:'Operational Risk — Cyber Risk',  measure:'Third-Party Dependency',  impact:'Cyber attack on exchange infrastructure triggers operational resilience review and incident reporting obligations.',                    sev:'High' },
+  { stripe:'Treasury Risk — Liquidity',      measure:'LCR, Survival Horizon',   impact:'Margin calls frozen at CME; trapped collateral creates liquidity stress. Asset monetisation impaired.',                                sev:'High' }
+];
+
+const SECOND_ORDER = [
+  { stripe:'Credit Risk — CCR',              measure:'Net Current Exposure',    impact:'Counterparty credit exposures on cleared derivatives cannot be marked to market. Uncleared OTC hedges activate.',                     sev:'High' },
+  { stripe:'Credit Risk — Credit Migration', measure:'Credit Watch',            impact:'Clients with CME-cleared exposures face margin uncertainty. Credit deterioration risk elevated for affected counterparties.',           sev:'Medium' },
+  { stripe:'Traded Risk — Market Risk',      measure:'VaR, Greeks',             impact:'Residual unhedged sensitivity accumulates. Model limitations amplified over extended closure period.',                                  sev:'Critical' },
+  { stripe:'Treasury Risk — Liquidity',      measure:'LCR, NSFR',              impact:'Prolonged closure depletes contingency liquidity buffers. RWA impact triggers capital planning review.',                               sev:'High' },
+  { stripe:'Operational Risk — Resilience',  measure:'Recovery Time',           impact:'Client-facing obligations and settlement backlogs accumulate. Prime Brokerage client communication required.',                         sev:'High' }
+];
+
+const SCOPE = {
+  entities:      ['Atlas UK Ltd','Atlas US LLC','Atlas Singapore Pte'],
+  businessLines: ['Global Markets — Equities, Rates, FX, Commodities','Securities Services — Collateral Management','Prime Brokerage'],
+  instruments:   ['Exchange-traded futures and options','CME-cleared OTC swaps','SOFR / Treasury futures'],
+  desks:         ['Equity Derivatives Desk','Rates Desk','FX Desk','Commodities Desk','Prime Brokerage','Collateral Management']
+};
+
+const QUANTIFICATION = [
+  {
+    title:'Trading VaR Breach',
+    narrative:'1-day 99% VaR limit likely breached by Day 2 of closure as unhedged delta accumulates — immediate escalation to CRO and Board Risk Committee required.',
+    severity:'Critical', riskStripe:'Traded Risk — Market Risk',
+    impactedDesk:'All Trading Desks',
+    sourceSection:'Scope and Quantification',
+    sourceEvidence:'Standard VaR models assume continuous exchange availability for hedging. Exchange closure removes the ability to rebalance delta, causing unhedged sensitivity to accumulate beyond normal VaR thresholds by Day 2.'
+  },
+  {
+    title:'PVBP Spike',
+    narrative:'Interest rate delta unhedgeable via CME — bank\'s PVBP exposure increases by estimated factor of 3–5x on rates desk during closure.',
+    severity:'Critical', riskStripe:'Traded Risk — Market Risk',
+    impactedDesk:'Rates Desk',
+    sourceSection:'Scope and Quantification',
+    sourceEvidence:'SOFR and Treasury futures, the primary rate hedging instruments, are exchange-listed CME products. Closure prevents delta rebalancing, multiplying effective PVBP exposure.'
+  },
+  {
+    title:'CS01 Widening',
+    narrative:'Credit spread sensitivity increases as credit index products (CDX, iTraxx) cannot be hedged via cleared instruments — OTC spreads 40–80bps wider than pre-event.',
+    severity:'High', riskStripe:'Traded Risk — Credit Risk',
+    impactedDesk:'Credit Desk / Equity Derivatives Desk',
+    sourceSection:'Scope and Quantification',
+    sourceEvidence:'Credit index derivatives cleared via CME become inaccessible. OTC bilateral hedging substitutes at materially wider spreads, increasing the cost and reducing effectiveness of credit risk mitigation.'
+  },
+  {
+    title:'FX Net Short',
+    narrative:'FX futures positions unmanageable — net short USD position exposure amplifies if USD appreciates during event (flight-to-safety flows).',
+    severity:'High', riskStripe:'Traded Risk — FX Risk',
+    impactedDesk:'FX Desk',
+    sourceSection:'Scope and Quantification',
+    sourceEvidence:'CME FX futures are the primary hedging vehicle for USD exposure. Closure removes the ability to neutralise the net short, creating directional P&L sensitivity to USD moves during a period where flight-to-safety flows may strengthen the dollar.'
+  },
+  {
+    title:'Margin Call Volumes',
+    narrative:'Variation margin calls frozen — bank may face calls from bilateral OTC counterparties while unable to recover margin from CME.',
+    severity:'High', riskStripe:'Treasury Risk — Liquidity / CCR',
+    impactedDesk:'Collateral Management / Prime Brokerage',
+    sourceSection:'First Order Impact — Treasury Risk',
+    sourceEvidence:'Initial and variation margin held at CME is trapped during closure. Simultaneously, bilateral OTC counterparties may issue margin calls based on mark-to-market moves, creating asymmetric liquidity pressure.'
+  },
+  {
+    title:'Liquidity / Survival Horizon',
+    narrative:'Liquidity Coverage Ratio deteriorates while trapped margin reduces available liquidity buffers — survival horizon reduces by estimated 3–7 days.',
+    severity:'High', riskStripe:'Treasury Risk — Liquidity',
+    impactedDesk:'Treasury',
+    sourceSection:'Financial Impact Summary',
+    sourceEvidence:'LCR deteriorates as trapped margin reduces the high-quality liquid asset buffer. The survival horizon shortens proportionally to the volume of collateral locked at CME, with estimated reduction of 3–7 days depending on trapped margin volumes.'
+  }
+];
+
+const MODEL_LIMITS = [
+  { title:'Price Staleness',                      desc:'VaR and sensitivity models assume continuous price feeds from live exchanges. CME closure creates stale prices, making model outputs unreliable for the duration of the event.' },
+  { title:'Delta Hedging Assumption Breakdown',   desc:'Delta hedging strategies require exchange access for continuous rebalancing. Frozen exchange removes the ability to hedge intraday Greeks, leading to unmanaged directional exposure.' },
+  { title:'Correlation Breakdown',                desc:'Stress scenarios involving exchange infrastructure failure produce abnormal correlation patterns not captured in standard historical VaR lookback windows.' }
+];
+
+const REGULATORY = [
+  { title:'PRA / FCA Notification', icon:'fa-building-columns', body:'Significant operational disruption affecting exchange-traded activity may trigger notification obligations under SYSC and operational resilience rules. Confirm timeline and thresholds with Legal & Compliance.' },
+  { title:'CFTC Notification',      icon:'fa-landmark',         body:'US-registered entities (Atlas US LLC) should assess CFTC notification obligations for disruptions affecting cleared derivatives activity at CME Group exchanges.' },
+  { title:'Basel 3.1 — Op Risk Loss Data Capture', icon:'fa-shield-halved', body:'Operational risk losses arising from exchange closure and associated trading disruption must be captured in the operational risk loss database per Basel 3.1 requirements.' }
+];
+
+const ACTION_TABS = [
+  { id:'immediate', label:'Immediate — 0 to 4 Hours' },
+  { id:'shortTerm', label:'Short-Term — 4 to 24 Hours' },
+  { id:'ongoing',   label:'Ongoing — Day 2 to Resolution' }
+];
+
+const ACTIONS = {
+  immediate: [
+    {
+      title:'Convene Emergency Risk Committee',
+      timeBucket:'0–4 Hours', owner:'Emergency Risk Committee / CRO', priority:'Critical',
+      riskStripe:'Governance / Operational Resilience',
+      sourceSection:'7.1 Immediate Actions — T+0 Immediate Escalation Protocol',
+      shortText:'Convene Emergency Risk Committee within 1 hour.',
+      fullDetail:'Convene Emergency Risk Committee within 1 hour of confirmed CME closure. Activate Business Continuity Plan for Global Markets. Notify PRA/FCA as required under DORA/SYSC 15A. Freeze new exchange-traded derivatives business pending assessment.',
+      whyItMatters:'Provides immediate governance control, activates crisis response, and ensures regulatory and trading restrictions are assessed early.'
+    },
+    {
+      title:'Declare Operational Incident',
+      timeBucket:'0–4 Hours', owner:'Operational Risk', priority:'Critical',
+      riskStripe:'Operational Risk — Resilience',
+      sourceSection:'7.1 Immediate Actions',
+      shortText:'Declare operational incident and activate CME Exchange Failure playbook.',
+      fullDetail:'Declare operational incident — activate CME Exchange Failure playbook within Operational Risk framework.',
+      whyItMatters:'Formally classifies the scenario as an operational resilience event and activates predefined response procedures.'
+    },
+    {
+      title:'Freeze New CME-Listed Derivatives Transactions',
+      timeBucket:'0–4 Hours', owner:'Global Markets / Trading Desks', priority:'Critical',
+      riskStripe:'Traded Risk — Market Risk',
+      sourceSection:'7.1 Immediate Actions',
+      shortText:'Halt all new CME-listed derivatives transactions immediately.',
+      fullDetail:'Freeze new on-boarding of exchange-traded products — halt all new CME-listed derivatives transactions immediately.',
+      whyItMatters:'Prevents new exposure build-up while pricing, margining, and clearing infrastructure is unavailable.'
+    },
+    {
+      title:'Produce Real-Time Unhedged Sensitivity Report',
+      timeBucket:'0–4 Hours', owner:'Risk Team', priority:'Critical',
+      riskStripe:'Traded Risk — Market Risk',
+      sourceSection:'7.1 Immediate Actions',
+      shortText:'Produce CRO sensitivity report every 2 hours.',
+      fullDetail:'Risk team to produce real-time unhedged sensitivity report for CRO every 2 hours during closure — key metrics: net delta per asset class, trapped margin amount, daily P&L sensitivity.',
+      whyItMatters:'Gives CRO frequent visibility of accumulating unhedged exposure and trapped margin during the outage.'
+    },
+    {
+      title:'Activate OTC Fallback Execution',
+      timeBucket:'0–4 Hours', owner:'Rates / FX / Equity Desks', priority:'High',
+      riskStripe:'Market Risk / Execution Risk',
+      sourceSection:'7.1 Immediate Actions',
+      shortText:'Use OTC fallback venues where feasible.',
+      fullDetail:'Activate OTC fallback execution: Rates desk to ICE/Eurex; FX desk to bilateral bank counterparties; Equity desk to OTC total return swaps where feasible.',
+      whyItMatters:'Provides alternative execution and hedging routes where exchange-traded instruments are unavailable.'
+    },
+    {
+      title:'Segregate Client Margin Held at CME',
+      timeBucket:'0–4 Hours', owner:'Collateral Management', priority:'Critical',
+      riskStripe:'Treasury Risk / Client Asset Protection',
+      sourceSection:'7.1 Immediate Actions',
+      shortText:'Identify and segregate trapped client margin.',
+      fullDetail:'Collateral management team to identify and segregate client margin held at CME — no netting or rehypothecation of trapped client assets.',
+      whyItMatters:'Protects client assets and reduces conduct, liquidity, and regulatory risk during clearing disruption.'
+    }
+  ],
+  shortTerm: [
+    {
+      title:'Approve Temporary Limit Waivers',
+      timeBucket:'4–24 Hours', owner:'CRO', priority:'High',
+      riskStripe:'Market Risk Governance',
+      sourceSection:'7.2 Short-Term Actions',
+      shortText:'Approve temporary limit waivers and new monitoring bands.',
+      fullDetail:'CRO to approve temporary limit waivers for Trading VaR, PVBP, and CS01 — set new monitoring bands specific to the exchange closure scenario.',
+      whyItMatters:'Normal limits may be breached due to infrastructure outage rather than trading intent; temporary governance bands help manage exceptional conditions.'
+    },
+    {
+      title:'Wind Down / Replicate Trades',
+      timeBucket:'4–24 Hours', owner:'Trading Desks', priority:'High',
+      riskStripe:'Traded Risk — Market Risk',
+      sourceSection:'7.2 Short-Term Actions',
+      shortText:'Prioritise largest sensitivity exposures for OTC replication.',
+      fullDetail:'Identify positions where OTC replication is feasible and execute delta-hedging transactions — prioritise largest sensitivity exposures first.',
+      whyItMatters:'Reduces unhedged directional exposure and limits P&L volatility while CME remains unavailable.'
+    },
+    {
+      title:'Prime Brokerage Client Communication',
+      timeBucket:'4–24 Hours', owner:'Prime Brokerage', priority:'High',
+      riskStripe:'Client / Credit Risk',
+      sourceSection:'7.2 Short-Term Actions',
+      shortText:'Contact clients with CME-cleared positions.',
+      fullDetail:'Prime Brokerage to contact all clients with CME-cleared positions — communicate exposure implications, alternative margin arrangements, and timeline expectations.',
+      whyItMatters:'Reduces client uncertainty and manages counterparty credit risk from affected leveraged clients.'
+    },
+    {
+      title:'Cyber Risk Assessment',
+      timeBucket:'4–24 Hours', owner:'CISO', priority:'Critical',
+      riskStripe:'Operational Risk — Cyber Risk',
+      sourceSection:'7.2 Short-Term Actions',
+      shortText:'Assess bank systems for lateral attack vectors.',
+      fullDetail:'CISO to conduct immediate assessment of bank\'s own systems for any lateral attack vectors — assume adversary may target connected infrastructure.',
+      whyItMatters:'Ensures the exchange cyber event has not propagated into bank connectivity, clearing, or trading infrastructure.'
+    },
+    {
+      title:'Activate Liquidity Contingency',
+      timeBucket:'4–24 Hours', owner:'Treasury', priority:'Critical',
+      riskStripe:'Treasury Risk — Liquidity',
+      sourceSection:'7.2 Short-Term Actions',
+      shortText:'Pre-position contingency funding.',
+      fullDetail:'Treasury to pre-position contingency funding — activate committed credit facilities if trapped margin exceeds threshold of HQLA buffer.',
+      whyItMatters:'Protects liquidity survival horizon where collateral is trapped and funding markets may become stressed.'
+    }
+  ],
+  ongoing: [
+    {
+      title:'Daily CRO Dashboard Update',
+      timeBucket:'Day 2 – Resolution', owner:'Risk Team', priority:'High',
+      riskStripe:'Enterprise Risk Governance',
+      sourceSection:'7.3 Ongoing Actions',
+      shortText:'Produce daily single-page CRO dashboard.',
+      fullDetail:'Produce single-page CRO dashboard update daily — unhedged sensitivity, trapped margin status, P&L accumulation, limit breach register.',
+      whyItMatters:'Provides consistent executive visibility and trend monitoring throughout the event.'
+    },
+    {
+      title:'Maintain Regulatory Engagement',
+      timeBucket:'Day 2 – Resolution', owner:'Legal / Compliance / Regulatory Affairs', priority:'High',
+      riskStripe:'Regulatory Compliance',
+      sourceSection:'7.3 Ongoing Actions',
+      shortText:'Maintain daily contact with PRA/FCA.',
+      fullDetail:'Maintain daily contact with PRA/FCA — provide updates on operational resilience, market impact, and client fund protection.',
+      whyItMatters:'Demonstrates proactive regulatory management and transparency during a material operational disruption.'
+    },
+    {
+      title:'Escalate to Board Risk Committee',
+      timeBucket:'Day 2 – Resolution', owner:'CRO / Board Risk Committee', priority:'Critical',
+      riskStripe:'Governance',
+      sourceSection:'7.3 Ongoing Actions',
+      shortText:'Escalate if closure extends beyond 3 days.',
+      fullDetail:'If closure extends beyond 3 days, escalate to Board Risk Committee — consider whether the scenario is shifting from operational risk event to systemic risk event.',
+      whyItMatters:'Ensures Board oversight when the event duration increases systemic and capital implications.'
+    },
+    {
+      title:'Post-Event Review',
+      timeBucket:'Day 2 – Resolution', owner:'Operational Risk / Resilience Team', priority:'Medium',
+      riskStripe:'Operational Resilience',
+      sourceSection:'7.3 Ongoing Actions',
+      shortText:'Commission root cause and lessons learned report within 30 days.',
+      fullDetail:'Commission root cause analysis and lessons learned report within 30 days — assess whether current business continuity plan provides adequate coverage for infrastructure attack scenarios.',
+      whyItMatters:'Improves future resilience and closes control gaps identified during the event.'
+    },
+    {
+      title:'Capital Planning Review',
+      timeBucket:'Day 2 – Resolution', owner:'ALCO', priority:'High',
+      riskStripe:'Capital / Treasury Risk',
+      sourceSection:'7.3 Ongoing Actions',
+      shortText:'Assess RWA and capital ratio impact.',
+      fullDetail:'Notify ALCO of potential RWA increase — assess impact on capital distribution plans and regulatory capital ratios for upcoming PRA submission.',
+      whyItMatters:'Ensures capital planning reflects stressed RWA and CET1 impacts from the scenario.'
+    }
+  ]
+};
+
+const BRIEFING_LABELS = { cro:'CRO Briefing', board:'Board Update', regulator:'Regulator Update' };
+
+// ── Scenario Chart metadata ───────────────────────────────────────────────────
+const CHART_META = {
+  '1_VaR_Breach_Timeline':  { xLabel:'Scenario Day', yLabel:'VaR Exposure (£M)', description:'1-day 99% VaR escalation across trading desks as CME closure extends and unhedged delta accumulates.' },
+  '2_Unhedged_Sensitivity': { xLabel:'Risk Factor',  yLabel:'Sensitivity (£M per bp)', description:'Point-in-time sensitivity of open positions across key risk factors (PVBP, CS01, delta) with no available hedge.' },
+  '3_Liquidity_Impact':     { xLabel:'Scenario Day', yLabel:'Liquidity Buffer (£M)', description:'Projected liquidity buffer erosion as margin calls, settlement fails, and client redemptions compound.' },
+  '4_PnL_Impact':           { xLabel:'Scenario Day', yLabel:'Cumulative P&L Impact (£M)', description:'Estimated mark-to-market and realised P&L degradation across affected business lines over the closure period.' },
+  '5_RWA_Capital_Impact':   { xLabel:'Scenario Day', yLabel:'RWA / Capital Req. (£M)', description:'Risk-weighted asset inflation and incremental capital requirement under Basel III stress add-ons.' },
+  '6_Margin_Collateral':    { xLabel:'Scenario Day', yLabel:'Margin Requirement (£M)', description:'Escalating margin and collateral demands from CCPs and prime brokers as credit spreads widen and IM is re-calculated.' }
+};
+
+// ── Scenario Chart helper ─────────────────────────────────────────────────────
+function buildScenarioChartCfg(chartInfo, opts = {}) {
+  if (!chartInfo || !chartInfo.available || !chartInfo.chart_data) return null;
+  const { type, chart_data, multi } = chartInfo;
+  const { xLabel, yLabel, enableZoom } = opts;
+
+  const PALETTE = ['#8B1C1C','#1E3A5F','#059669','#D97706','#7C3AED','#DB2777','#0284C7'];
+
+  const axisTitle = (label) => label ? { display:true, text:label, color:'#64748B', font:{family:'Inter',size:11,weight:'500'} } : {};
+
+  const zoomCfg = enableZoom ? {
+    zoom: { zoom:{ wheel:{enabled:true}, pinch:{enabled:true}, mode:'xy' }, pan:{enabled:true,mode:'xy'} }
+  } : {};
+
+  const baseOpts = {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{ position:'bottom', labels:{ font:{family:'Inter',size:11}, padding:12, boxWidth:12 } },
+      title:{ display:false },
+      tooltip:{ callbacks:{ label: ctx => ` ${ctx.dataset.label || ''}: ${ctx.formattedValue}` } },
+      zoom: enableZoom ? zoomCfg.zoom : undefined
+    }
+  };
+
+  const scaleFont = { family:'Inter', size:11 };
+
+  if (multi) {
+    const datasets = chart_data.datasets.map((ds, i) => ({
+      label: ds.label,
+      data:  ds.values,
+      backgroundColor: PALETTE[i % PALETTE.length] + 'CC',
+      borderColor:     PALETTE[i % PALETTE.length],
+      borderWidth: 1,
+      borderRadius: 3
+    }));
+    return {
+      type: 'bar',
+      data: { labels: chart_data.labels, datasets },
+      options: {
+        ...baseOpts,
+        indexAxis: type === 'horizontalBar' ? 'y' : 'x',
+        scales:{
+          x:{ stacked:false, grid:{color:'rgba(0,0,0,0.05)'}, ticks:{font:scaleFont}, title:{ display:!!xLabel, text:xLabel||'', color:'#64748B', font:{...scaleFont,weight:'500'} } },
+          y:{ stacked:false, grid:{color:'rgba(0,0,0,0.05)'}, ticks:{font:scaleFont}, beginAtZero:true, title:{ display:!!yLabel, text:yLabel||'', color:'#64748B', font:{...scaleFont,weight:'500'} } }
+        }
+      }
+    };
+  }
+
+  return {
+    type: type === 'horizontalBar' ? 'bar' : (type === 'line' ? 'line' : 'bar'),
+    data:{
+      labels: chart_data.labels,
+      datasets:[{
+        label: chartInfo.title || '',
+        data: chart_data.values,
+        backgroundColor: type === 'line' ? 'rgba(139,28,28,0.1)' : PALETTE.map((c,i) => i===0?'#8B1C1C':c+'99'),
+        borderColor: '#8B1C1C',
+        borderWidth: type === 'line' ? 2.5 : 0,
+        fill: type === 'line',
+        tension: type === 'line' ? 0.4 : 0,
+        pointBackgroundColor: '#8B1C1C',
+        pointRadius: type === 'line' ? 4 : 0,
+        borderRadius: type === 'line' ? 0 : 4
+      }]
+    },
+    options:{
+      ...baseOpts,
+      indexAxis: type === 'horizontalBar' ? 'y' : 'x',
+      plugins:{...baseOpts.plugins, legend:{display:false}},
+      scales:{
+        x:{ grid:{color:'rgba(0,0,0,0.05)'}, ticks:{font:scaleFont}, title:{ display:!!xLabel, text:xLabel||'', color:'#64748B', font:{...scaleFont,weight:'500'} } },
+        y:{ grid:{color:'rgba(0,0,0,0.05)'}, ticks:{font:scaleFont}, beginAtZero:true, title:{ display:!!yLabel, text:yLabel||'', color:'#64748B', font:{...scaleFont,weight:'500'} } }
+      }
+    }
+  };
+}
+
+function ScenarioChart({ chartInfo, opts }) {
+  const canvasRef = useRef(null);
+  const chartRef  = useRef(null);
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; }
+    const cfg = buildScenarioChartCfg(chartInfo, opts || {});
+    if (!cfg) return;
+    chartRef.current = new Chart(canvasRef.current.getContext('2d'), cfg);
+    return () => { if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; } };
+  }, [JSON.stringify(chartInfo), JSON.stringify(opts)]);
+
+  if (!chartInfo || !chartInfo.available) {
+    return <div className="scenario-chart-unavail"><i className="fa-solid fa-circle-info" style={{marginRight:6}}></i>Chart data not available in uploaded Excel file.</div>;
+  }
+  return <div style={{position:'relative',height:'100%'}}><canvas ref={canvasRef}></canvas></div>;
+}
+
+// ── Chart Expand Modal ────────────────────────────────────────────────────────
+function ChartExpandModal({ sheetKey, chartInfo, onClose }) {
+  const meta = CHART_META[sheetKey] || {};
+  const chartRef = useRef(null);
+  const title = chartInfo?.title || sheetKey.replace(/_/g,' ');
+
+  const handleZoom = (dir) => {
+    if (!chartRef.current) return;
+    const chart = chartRef.current;
+    if (dir === 'in')    chart.zoom(1.2);
+    else if (dir === 'out') chart.zoom(0.8);
+    else chart.resetZoom();
+  };
+
+  const handleExport = () => {
+    if (!chartRef.current) return;
+    const url = chartRef.current.toBase64Image();
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${title.replace(/\s+/g,'_')}.png`;
+    a.click();
+  };
+
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
+
+  return (
+    <div className="chart-modal-overlay" onClick={onClose}>
+      <div className="chart-modal" onClick={e => e.stopPropagation()}>
+        <div className="chart-modal-hdr">
+          <div className="chart-modal-hdr-text">
+            <div className="chart-modal-title">{title}</div>
+            {meta.description && <div className="chart-modal-desc">{meta.description}</div>}
+          </div>
+          <div className="chart-modal-controls">
+            <button className="chart-zoom-btn" onClick={() => handleZoom('in')} title="Zoom in"><i className="fa-solid fa-magnifying-glass-plus"></i></button>
+            <button className="chart-zoom-btn" onClick={() => handleZoom('out')} title="Zoom out"><i className="fa-solid fa-magnifying-glass-minus"></i></button>
+            <button className="chart-zoom-btn" onClick={() => handleZoom('reset')} title="Reset zoom" style={{fontSize:11}}>Reset</button>
+            <button className="chart-zoom-btn" onClick={handleExport} title="Export as PNG"><i className="fa-solid fa-download"></i></button>
+            <button className="chart-icon-btn" onClick={onClose} title="Close" style={{marginLeft:4,fontSize:16}}><i className="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+        <div className="chart-modal-body" style={{height:480}}>
+          <ChartModalCanvas chartInfo={chartInfo} meta={meta} chartRef={chartRef} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ChartModalCanvas({ chartInfo, meta, chartRef }) {
+  const canvasRef = useRef(null);
+  const instanceRef = useRef(null);
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (instanceRef.current) { instanceRef.current.destroy(); instanceRef.current = null; }
+    const cfg = buildScenarioChartCfg(chartInfo, { xLabel: meta.xLabel, yLabel: meta.yLabel, enableZoom: true });
+    if (!cfg) return;
+    instanceRef.current = new Chart(canvasRef.current.getContext('2d'), cfg);
+    chartRef.current = instanceRef.current;
+    return () => { if (instanceRef.current) { instanceRef.current.destroy(); instanceRef.current = null; } };
+  }, [JSON.stringify(chartInfo)]);
+  return <div style={{position:'relative',height:'100%'}}><canvas ref={canvasRef}></canvas></div>;
+}
+
+// ── Chart Card (with ⓘ tooltip + expand button) ───────────────────────────────
+function ScenarioChartCard({ sheetKey, chartInfo, onExpand }) {
+  const meta = CHART_META[sheetKey] || {};
+  const title = chartInfo?.title || sheetKey.replace(/_/g,' ');
+  return (
+    <div className="scenario-chart-card">
+      <div className="scenario-chart-card-hdr">
+        <div className="scenario-chart-title">{title}</div>
+        {meta.description && (
+          <div className="chart-info-wrap">
+            <button className="chart-icon-btn" title="Chart info"><i className="fa-solid fa-circle-info"></i></button>
+            <div className="chart-info-tip">{meta.description}</div>
+          </div>
+        )}
+        <button className="chart-icon-btn" onClick={() => onExpand(sheetKey)} title="Expand chart"><i className="fa-solid fa-expand"></i></button>
+      </div>
+      <div style={{height:250}}>
+        <ScenarioChart chartInfo={chartInfo} opts={{ xLabel: meta.xLabel, yLabel: meta.yLabel }} />
+      </div>
+    </div>
+  );
+}
+
+function HeatmapTable({ chartInfo }) {
+  if (!chartInfo || !chartInfo.available || !chartInfo.rows || !chartInfo.rows.length) {
+    return <div className="scenario-chart-unavail"><i className="fa-solid fa-circle-info" style={{marginRight:6}}></i>Chart data not available in uploaded Excel file.</div>;
+  }
+  const { rows, columns } = chartInfo;
+  const labelCol  = columns[0];
+  const dayCols   = columns.slice(1);
+
+  const sevClass = (val) => {
+    if (val === null || val === undefined || val === '') return '';
+    const s = String(val).toLowerCase();
+    if (s === 'critical' || s === '4' || (typeof val === 'number' && val >= 4)) return 'hm-critical';
+    if (s === 'breach' || s === 'high' || s === '3' || (typeof val === 'number' && val >= 3)) return 'hm-high';
+    if (s === 'elevated' || s === 'medium' || s === '2' || (typeof val === 'number' && val >= 2)) return 'hm-elevated';
+    return 'hm-normal';
+  };
+
+  return (
+    <div className="heatmap-wrap">
+      <table className="heatmap-table">
+        <thead>
+          <tr>
+            <th>{labelCol}</th>
+            {dayCols.map(c => <th key={c}>{c}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i}>
+              <td>{String(row[labelCol] ?? '')}</td>
+              {dayCols.map(c => <td key={c} className={sevClass(row[c])}>{row[c] !== null && row[c] !== undefined ? String(row[c]) : '—'}</td>)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function ActionRow({ action, idx, isExpanded, onToggle }) {
+  const priCls = action.priority === 'Critical' ? 'sev-critical' : action.priority === 'High' ? 'sev-high' : 'sev-medium';
+  return (
+    <div className={`action-row-enhanced ${isExpanded ? 'expanded' : ''}`} onClick={onToggle}>
+      <div className="action-row-header">
+        <div className="action-bullet" style={{flexShrink:0}}>{idx + 1}</div>
+        <div className="action-row-main">
+          <div className="action-row-title">{action.title}</div>
+          <div className="action-row-short">{action.shortText}</div>
+        </div>
+        <div className="action-row-right">
+          <span className={`sev-badge ${priCls}`}>{action.priority}</span>
+          <div className="action-row-owner">{action.owner}</div>
+          <i className="fa-solid fa-chevron-down action-row-chevron"></i>
+        </div>
+      </div>
+      {isExpanded && (
+        <div className="action-row-detail" onClick={e => e.stopPropagation()}>
+          <div className="action-detail-section">
+            <div className="action-detail-label">Full Action Detail</div>
+            <div className="action-detail-text">{action.fullDetail}</div>
+          </div>
+          <div className="action-why-block">
+            <div className="action-why-label"><i className="fa-solid fa-lightbulb" style={{marginRight:4}}></i>Why This Matters</div>
+            {action.whyItMatters}
+          </div>
+          <div className="action-detail-meta">
+            <div className="action-meta-pair">
+              <span className="action-meta-key">Owner:</span>
+              <span>{action.owner}</span>
+            </div>
+            <div className="action-meta-pair">
+              <span className="action-meta-key">Risk Stripe:</span>
+              <span>{action.riskStripe}</span>
+            </div>
+            <div className="action-meta-pair">
+              <span className="action-meta-key">Time Bucket:</span>
+              <span>{action.timeBucket}</span>
+            </div>
+            <div className="action-meta-pair">
+              <span className="action-meta-key">Source:</span>
+              <span style={{color:'var(--primary)'}}>{action.sourceSection}</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ScenarioLibrary({ onSelect }) {
+  return (
+    <div className="page">
+      <div className="page-header">
+        <div className="page-title">Scenario Analysis</div>
+        <div className="page-sub">Stress Simulation &amp; CRO War Room — select a scenario to open the full dashboard.</div>
+      </div>
+      <div className="scenario-library-grid">
+        {SCENARIOS_LIB.map(s => (
+          <div key={s.id} className={`scenario-lib-card ${s.available ? 'sc-active' : 'sc-soon'}`}
+               onClick={() => s.available && onSelect(s.id)}>
+            <div className="scenario-lib-num">{s.num}</div>
+            <div className="scenario-lib-title">{s.title}</div>
+            <div className="scenario-lib-event"><i className="fa-solid fa-bolt" style={{marginRight:5}}></i>{s.eventType}</div>
+            <div className="scenario-lib-desc">{s.desc}</div>
+            <div className="scenario-lib-tags">{s.tags.map(t => <span key={t} className="scenario-lib-tag">{t}</span>)}</div>
+            <div className="scenario-lib-footer">
+              <span className={`sev-badge ${s.severity==='Critical'?'sev-critical':'sev-high'}`}>{s.severity}</span>
+              {s.available
+                ? <span style={{fontSize:12,fontWeight:700,color:'var(--primary)',display:'flex',alignItems:'center',gap:4}}>Open Scenario <i className="fa-solid fa-arrow-right"></i></span>
+                : <span style={{fontSize:12,color:'var(--text-3)',fontStyle:'italic'}}>Detailed dashboard coming soon</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BriefingModal({ type, briefing, generating, onClose }) {
+  const copy = () => { if (briefing) navigator.clipboard?.writeText(briefing); };
+  const download = () => {
+    if (!briefing) return;
+    const blob = new Blob([briefing], { type:'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${type}-briefing.txt`;
+    a.click();
+  };
+  return (
+    <div className="briefing-overlay" onClick={e => e.target===e.currentTarget && onClose()}>
+      <div className="briefing-modal">
+        <div className="briefing-modal-header">
+          <div className="briefing-modal-title">
+            <i className="fa-solid fa-file-lines" style={{marginRight:8,color:'var(--primary)'}}></i>
+            {BRIEFING_LABELS[type] || 'Briefing'}
+          </div>
+          <button className="briefing-modal-close" onClick={onClose}><i className="fa-solid fa-xmark"></i></button>
+        </div>
+        {generating
+          ? <div style={{padding:'8px 16px'}}><ProcessingView
+              title={`Generating ${BRIEFING_LABELS[type] || 'Briefing'}`}
+              icon="fa-radiation"
+              messages={[
+                'Parsing scenario event parameters…',
+                'Running stress transmission analysis…',
+                'Evaluating risk stripe exposures…',
+                'Synthesising management action priorities…',
+                'Cross-referencing regulatory thresholds…',
+                'Structuring executive narrative…',
+                'Finalising briefing document…',
+              ]}
+            /></div>
+          : <div className="briefing-content">{briefing}</div>}
+        {!generating && briefing && (
+          <div className="briefing-actions">
+            <button className="btn-primary" style={{fontSize:13}} onClick={download}><i className="fa-solid fa-download"></i> Download</button>
+            <button className="btn-outline" style={{fontSize:13}} onClick={copy}><i className="fa-regular fa-copy"></i> Copy</button>
+            <button className="btn-outline" style={{fontSize:13}} onClick={window.print}><i className="fa-solid fa-print"></i> Print</button>
+          </div>
+        )}
+        <div style={{marginTop:16,fontSize:11,color:'var(--text-3)'}}>
+          Source: Scenario_Analysis_Module.docx — Generated for internal CRO / Board restricted use.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FlowPopover({ step, onViewSource, onClose }) {
+  const sevCls = step.severity === 'Critical' ? 'sev-critical' : step.severity === 'High' ? 'sev-high' : 'sev-medium';
+  return (
+    <div className="flow-popover">
+      <div className="flow-popover-title">{step.label}</div>
+      <button className="flow-popover-close" onClick={onClose}><i className="fa-solid fa-xmark"></i></button>
+      <div className="flow-popover-explanation">{step.explanation}</div>
+      <div className="flow-popover-meta">
+        <span className={`sev-badge ${sevCls}`}>{step.severity}</span>
+        <span className="flow-popover-tag">
+          <span className="flow-popover-tag-label">Risk Stripe:</span>
+          <span className="flow-popover-tag-val">{step.riskStripe}</span>
+        </span>
+      </div>
+      <div className="flow-evidence-block">
+        <div className="flow-evidence-label"><i className="fa-solid fa-quote-left" style={{marginRight:4}}></i>Source Evidence</div>
+        {step.sourceEvidence || 'Not available in source document.'}
+      </div>
+      <div className="flow-popover-footer">
+        <span className="flow-source-ref"><i className="fa-solid fa-book-open"></i>{step.sourceSection}</span>
+        <button className="flow-view-source-btn" onClick={onViewSource}>
+          <i className="fa-solid fa-sidebar"></i> View Full Source
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SourceDrawer({ step, onClose }) {
+  const sevCls = step.severity === 'Critical' ? 'sev-critical' : step.severity === 'High' ? 'sev-high' : 'sev-medium';
+  return (
+    <>
+      <div className="source-drawer-overlay" onClick={onClose} />
+      <div className="source-drawer">
+        <div className="source-drawer-header">
+          <div>
+            <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.6px',color:'var(--primary)',marginBottom:4}}>Source Evidence</div>
+            <div className="source-drawer-title">{step.label}</div>
+          </div>
+          <button className="source-drawer-close" onClick={onClose}><i className="fa-solid fa-xmark"></i></button>
+        </div>
+        <div className="source-drawer-body">
+          <div className="source-drawer-section">
+            <div className="source-drawer-section-label">Stage</div>
+            <div className="source-drawer-section-val">{step.label}</div>
+          </div>
+          <div className="source-drawer-section">
+            <div className="source-drawer-section-label">Severity</div>
+            <span className={`sev-badge ${sevCls}`}>{step.severity}</span>
+          </div>
+          <div className="source-drawer-section">
+            <div className="source-drawer-section-label">Impacted Risk Stripe</div>
+            <div className="source-drawer-section-val">{step.riskStripe}</div>
+          </div>
+          <div className="source-drawer-section">
+            <div className="source-drawer-section-label">Source Section</div>
+            <div className="source-drawer-section-val" style={{color:'var(--primary)',fontWeight:600}}>{step.sourceSection}</div>
+          </div>
+          <div className="source-drawer-section">
+            <div className="source-drawer-section-label">Explanation</div>
+            <div className="source-drawer-section-val">{step.explanation}</div>
+          </div>
+          <div className="source-drawer-section">
+            <div className="source-drawer-section-label">Supporting Evidence from Source Document</div>
+            <div className="source-drawer-evidence">
+              <i className="fa-solid fa-quote-left" style={{marginRight:6,color:'var(--primary)',opacity:0.5}}></i>
+              {step.sourceEvidence || 'Not available in source document.'}
+            </div>
+          </div>
+        </div>
+        <div className="source-drawer-footer">
+          <i className="fa-solid fa-database" style={{marginRight:5}}></i>
+          Source: Scenario_Analysis_Module.docx — Internal use only.
+        </div>
+      </div>
+    </>
+  );
+}
+
+function CMEDashboard({ scenarioData, chartData, onBack, onGenerateBriefing, briefing, briefingType, generatingBriefing, showBriefing, setShowBriefing }) {
+  const [actionTab,        setActionTab]        = useState('immediate');
+  const [expandedAction,   setExpandedAction]   = useState(null);
+  const [activeStep,       setActiveStep]       = useState(null);
+  const [drawerStep,       setDrawerStep]       = useState(null);
+  const [actionSummary,    setActionSummary]    = useState(null);
+  const [summaryLoading,   setSummaryLoading]   = useState(false);
+  const [expandAll,        setExpandAll]        = useState(false);
+  const [openQuant,        setOpenQuant]        = useState(null);
+  const [actionsMenuOpen,  setActionsMenuOpen]  = useState(false);
+  const [expandedChart,    setExpandedChart]    = useState(null);
+  const actionsMenuRef = React.useRef(null);
+
+  useEffect(() => {
+    if (!actionsMenuOpen) return;
+    const handler = (e) => { if (actionsMenuRef.current && !actionsMenuRef.current.contains(e.target)) setActionsMenuOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [actionsMenuOpen]);
+
+  const toggleStep   = (i) => setActiveStep(prev => prev === i ? null : i);
+  const toggleAction = (tab, idx) => setExpandedAction(prev =>
+    prev?.tab === tab && prev?.idx === idx ? null : { tab, idx }
+  );
+  const isExpanded   = (tab, idx) => expandAll || (expandedAction?.tab === tab && expandedAction?.idx === idx);
+
+  const generateActionSummary = async () => {
+    setSummaryLoading(true); setActionSummary(null);
+    try {
+      const res  = await fetch('/api/scenario/briefing', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'actions' })
+      });
+      const data = await res.json();
+      setActionSummary(data.briefing);
+    } catch (err) {
+      setActionSummary('Failed to generate summary: ' + err.message);
+    } finally {
+      setSummaryLoading(false);
+    }
+  };
+  const charts = chartData?.charts || {};
+  const execSummary = scenarioData?.executiveSummary ||
+    'This is not a normal market event. It is an infrastructure event. Standard VaR, delta hedging, margin management, and pricing frameworks assume exchange availability. A CME closure creates pricing gaps, frozen margin, unhedged positions, liquidity stress, and regulatory escalation requiring immediate CRO leadership attention.';
+
+  const SectionHeader = ({ letter, title }) => (
+    <div className="scenario-section-header">
+      <span className="section-letter">{letter}</span>
+      {title}
+    </div>
+  );
+
+  return (
+    <div className="page" style={{maxWidth:1240}}>
+      {showBriefing && (
+        <BriefingModal
+          type={briefingType}
+          briefing={briefing}
+          generating={generatingBriefing}
+          onClose={() => setShowBriefing(false)}
+        />
+      )}
+
+      {/* Back + title */}
+      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
+        <button className="btn-outline" style={{padding:'7px 14px',fontSize:13}} onClick={onBack}>
+          <i className="fa-solid fa-arrow-left"></i> Scenario Library
+        </button>
+      </div>
+
+      <div className="page-header" style={{marginBottom:16}}>
+        <div className="page-title">CME Exchange Failure</div>
+        <div className="page-sub">Closure of an Exchange due to Cyber Attack</div>
+      </div>
+
+      {/* Alert banner */}
+      <div className="scenario-alert-banner">
+        <i className="fa-solid fa-triangle-exclamation" style={{fontSize:18}}></i>
+        ACTIVE SCENARIO — IMMEDIATE MANAGEMENT ATTENTION REQUIRED
+      </div>
+
+      {/* Metadata cards */}
+      <div className="scenario-meta-grid">
+        {CME_META.map(m => (
+          <div key={m.label} className="scenario-meta-card">
+            <div className="scenario-meta-label">{m.label}</div>
+            <div className={`scenario-meta-value ${m.cls}`}>{m.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Section A — Crisis Snapshot */}
+      <SectionHeader letter="A" title="Crisis Snapshot" />
+      <div className="crisis-snapshot-card">
+        <div className="crisis-snapshot-header">
+          <div className="crisis-snapshot-title">
+            <i className="fa-solid fa-circle-radiation"></i>
+            Operational Status — CME Exchange Failure
+          </div>
+          <div className="actions-dropdown-wrap" ref={actionsMenuRef}>
+            <button
+              className={`actions-dropdown-btn ${actionsMenuOpen ? 'open' : ''}`}
+              onClick={() => setActionsMenuOpen(o => !o)}
+            >
+              <i className="fa-solid fa-bolt"></i>
+              Actions
+              <i className={`fa-solid fa-chevron-${actionsMenuOpen ? 'up' : 'down'}`} style={{fontSize:10}}></i>
+            </button>
+            {actionsMenuOpen && (
+              <div className="actions-dropdown-menu">
+                {[
+                  { type:'cro',       icon:'fa-user-tie',       label:'Generate CRO Briefing' },
+                  { type:'board',     icon:'fa-building',       label:'Generate Board Update' },
+                  { type:'regulator', icon:'fa-landmark',       label:'Generate Regulator Draft' },
+                ].map(item => (
+                  <button key={item.type} className="actions-dropdown-item"
+                    onClick={() => { onGenerateBriefing(item.type); setActionsMenuOpen(false); }}>
+                    <i className={`fa-solid ${item.icon}`}></i>{item.label}
+                  </button>
+                ))}
+                <div className="actions-dropdown-divider" />
+                <button className="actions-dropdown-item" onClick={() => { window.print(); setActionsMenuOpen(false); }}>
+                  <i className="fa-solid fa-print"></i>Export PDF
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+        <ul className="crisis-bullets">
+          {[
+            'CME trading and clearing infrastructure unavailable due to cyber attack.',
+            'Estimated outage duration: 3–5 business days.',
+            'Margin and collateral trapped at clearing venue.',
+            'Unhedged market sensitivities expected to escalate from Day 2.',
+            'Liquidity and capital pressure increasing.',
+            'PRA/FCA notification requirements potentially triggered.'
+          ].map((b, i) => (
+            <li key={i} className="crisis-bullet">
+              <span className="crisis-bullet-dot"></span>
+              {b}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Source Drawer */}
+      {drawerStep !== null && (
+        <SourceDrawer step={RISK_FLOW[drawerStep]} onClose={() => setDrawerStep(null)} />
+      )}
+
+      {/* Section B — Risk Transmission Flow */}
+      <SectionHeader letter="B" title="Risk Transmission Flow" />
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{fontSize:12,color:'var(--text-3)',marginBottom:14,display:'flex',alignItems:'center',gap:6}}>
+          <i className="fa-solid fa-circle-info" style={{color:'var(--primary)'}}></i>
+          Click any stage to view source evidence and risk details.
+        </div>
+        <div className="risk-flow">
+          {RISK_FLOW.map((step, i) => (
+            <React.Fragment key={i}>
+              <div
+                className={`risk-flow-step ${step.type||''} ${activeStep===i?'active-step':''}`}
+                onClick={() => toggleStep(i)}
+              >
+                {step.label}
+                <span className="flow-info-icon">
+                  <i className={`fa-solid ${activeStep===i ? 'fa-circle-xmark' : 'fa-circle-info'}`}></i>
+                </span>
+              </div>
+              {activeStep === i && (
+                <FlowPopover
+                  step={step}
+                  onClose={() => setActiveStep(null)}
+                  onViewSource={() => { setDrawerStep(i); setActiveStep(null); }}
+                />
+              )}
+              {i < RISK_FLOW.length - 1 && <div className="risk-flow-arrow"><i className="fa-solid fa-chevron-down"></i></div>}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+
+      {/* Section C — First Order Impact */}
+      <SectionHeader letter="C" title="First Order Impact" />
+      <div className="card" style={{marginBottom:16}}>
+        <div className="impact-table-wrap">
+          <table className="impact-table">
+            <thead><tr><th>Risk Stripe</th><th>Risk Measurement</th><th>Impact</th><th>Severity</th></tr></thead>
+            <tbody>
+              {FIRST_ORDER.map((r, i) => (
+                <tr key={i}>
+                  <td><strong>{r.stripe}</strong></td>
+                  <td style={{whiteSpace:'nowrap'}}>{r.measure}</td>
+                  <td>{r.impact}</td>
+                  <td><span className={`sev-badge sev-${r.sev.toLowerCase()}`}>{r.sev}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Section D — Second Order Impact */}
+      <SectionHeader letter="D" title="Second Order Impact" />
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{fontSize:13,color:'var(--text-2)',marginBottom:12,lineHeight:1.6}}>
+          Second-order impacts emerge over days 2–10 as the initial exchange closure shock propagates across credit, liquidity, client, market, and operational risk profiles.
+        </div>
+        <div className="impact-table-wrap">
+          <table className="impact-table">
+            <thead><tr><th>Risk Stripe</th><th>Risk Measurement</th><th>Impact</th><th>Severity</th></tr></thead>
+            <tbody>
+              {SECOND_ORDER.map((r, i) => (
+                <tr key={i}>
+                  <td><strong>{r.stripe}</strong></td>
+                  <td style={{whiteSpace:'nowrap'}}>{r.measure}</td>
+                  <td>{r.impact}</td>
+                  <td><span className={`sev-badge sev-${r.sev.toLowerCase()}`}>{r.sev}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Section E — Scope and Exposure */}
+      <SectionHeader letter="E" title="Scope and Exposure" />
+      <div className="scope-grid">
+        {[
+          { title:'Group Entities Impacted', items:SCOPE.entities },
+          { title:'Business Lines Impacted',  items:SCOPE.businessLines },
+          { title:'Instruments Impacted',     items:SCOPE.instruments },
+          { title:'Desks Impacted',           items:SCOPE.desks }
+        ].map(sc => (
+          <div key={sc.title} className="scope-card">
+            <div className="scope-card-title">{sc.title}</div>
+            {sc.items.map((item, i) => (
+              <div key={i} className="scope-card-item">
+                <i className="fa-solid fa-circle-dot"></i>
+                {item}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div style={{marginBottom:16}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}>
+          <div>
+            <div style={{fontSize:13.5,fontWeight:700,color:'var(--text)'}}>Quantified Stress Intelligence</div>
+            <div style={{fontSize:12,color:'var(--text-3)',marginTop:2}}>Click any card for source evidence and desk impact.</div>
+          </div>
+        </div>
+        <div className="quant-grid">
+          {QUANTIFICATION.map((q, i) => {
+            const sevCls = q.severity === 'Critical' ? 'sev-critical' : q.severity === 'High' ? 'sev-high' : 'sev-medium';
+            const isOpen = openQuant === i;
+            return (
+              <div key={i} className={`quant-card ${isOpen ? 'qc-open' : ''}`}
+                   onClick={() => setOpenQuant(isOpen ? null : i)}>
+                <div className="quant-card-top">
+                  <div className="quant-label">{q.title}</div>
+                  <i className={`fa-solid ${isOpen ? 'fa-circle-xmark' : 'fa-circle-info'} quant-info-icon`}></i>
+                </div>
+                <div className="quant-narrative">"{q.narrative}"</div>
+                <div className="quant-card-meta">
+                  <span className={`sev-badge ${sevCls}`}>{q.severity}</span>
+                  <span className="quant-stripe">{q.riskStripe}</span>
+                </div>
+                {isOpen && (
+                  <div className="quant-popover" onClick={e => e.stopPropagation()}>
+                    {q.impactedDesk && (
+                      <div className="quant-popover-row">
+                        <div className="quant-popover-label">Impacted Desk</div>
+                        <div className="quant-popover-val">{q.impactedDesk}</div>
+                      </div>
+                    )}
+                    <div className="quant-popover-row">
+                      <div className="quant-popover-label">Source Section</div>
+                      <div className="quant-popover-val" style={{color:'var(--primary)',fontWeight:600}}>{q.sourceSection}</div>
+                    </div>
+                    <div className="quant-popover-row">
+                      <div className="quant-popover-label"><i className="fa-solid fa-quote-left" style={{marginRight:4}}></i>Source Evidence</div>
+                      <div className="quant-popover-evidence">{q.sourceEvidence}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Section F — Financial Impact Dashboard */}
+      <SectionHeader letter="F" title="Financial Impact Dashboard" />
+      {!chartData?.available
+        ? <div className="alert alert-info" style={{marginBottom:16}}><i className="fa-solid fa-circle-info alert-icon"></i>Scenario chart data not found. Please place Scenario_Analysis_ChartData.xlsx in /data/scenario/.</div>
+        : (
+          <div className="scenario-charts-grid">
+            {['1_VaR_Breach_Timeline','2_Unhedged_Sensitivity','3_Liquidity_Impact','4_PnL_Impact','5_RWA_Capital_Impact','6_Margin_Collateral'].map(sheet => (
+              <ScenarioChartCard key={sheet} sheetKey={sheet} chartInfo={charts[sheet]} onExpand={setExpandedChart} />
+            ))}
+          </div>
+        )
+      }
+      {expandedChart && charts[expandedChart] && (
+        <ChartExpandModal sheetKey={expandedChart} chartInfo={charts[expandedChart]} onClose={() => setExpandedChart(null)} />
+      )}
+
+      {/* Section G — Day-by-Day Escalation Heatmap */}
+      <SectionHeader letter="G" title="Day-by-Day Escalation Matrix" />
+      <div className="card" style={{marginBottom:16}}>
+        {!chartData?.available
+          ? <div className="scenario-chart-unavail"><i className="fa-solid fa-circle-info" style={{marginRight:6}}></i>Chart data not available in uploaded Excel file.</div>
+          : <HeatmapTable chartInfo={charts['7_Risk_Stripe_Heatmap']} />
+        }
+        <div style={{display:'flex',gap:10,marginTop:12,flexWrap:'wrap'}}>
+          {[{cls:'hm-normal',label:'Normal'},{cls:'hm-elevated',label:'Elevated'},{cls:'hm-high',label:'Breach / High'},{cls:'hm-critical',label:'Critical'}].map(l => (
+            <span key={l.label} style={{display:'flex',alignItems:'center',gap:5,fontSize:11}}>
+              <span className={l.cls} style={{width:12,height:12,borderRadius:2,display:'inline-block'}}></span>
+              {l.label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Section H — Model Limitation Warning */}
+      <SectionHeader letter="H" title="Why Standard Risk Models Fail in This Scenario" />
+      <div className="model-warning-card">
+        <div className="model-warning-title">
+          <i className="fa-solid fa-triangle-exclamation"></i>
+          Why Standard Risk Models Fail in This Scenario
+        </div>
+        {MODEL_LIMITS.map((m, i) => (
+          <div key={i} className="model-warning-item">
+            <i className="fa-solid fa-circle-xmark" style={{marginTop:2,color:'#D97706',flexShrink:0}}></i>
+            <div><strong>{m.title}:</strong> {m.desc}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Section I — Regulatory Notifications */}
+      <SectionHeader letter="I" title="Regulatory Notification Requirements" />
+      <div className="reg-grid" style={{marginBottom:16}}>
+        {REGULATORY.map((r, i) => (
+          <div key={i} className="reg-card">
+            <div className="reg-card-title">
+              <i className={`fa-solid ${r.icon}`} style={{color:'var(--primary)'}}></i>
+              {r.title}
+            </div>
+            <div className="reg-card-body">{r.body}</div>
+          </div>
+        ))}
+      </div>
+      <div className="reg-note"><i className="fa-solid fa-circle-info" style={{marginRight:6}}></i>Confirm all reporting obligations with Legal &amp; Compliance before submitting notifications.</div>
+
+      {/* Section J — Action Playbook */}
+      <SectionHeader letter="J" title="Management Action Playbook" />
+      <div className="card" style={{marginBottom:16}}>
+        <div className="action-tabs">
+          {ACTION_TABS.map(t => (
+            <button key={t.id} className={`action-tab ${actionTab===t.id?'active':''}`}
+              onClick={() => { setActionTab(t.id); setExpandedAction(null); }}>
+              {t.label}
+              <span style={{marginLeft:6,background:'rgba(0,0,0,0.07)',borderRadius:10,padding:'1px 7px',fontSize:10,fontWeight:700}}>
+                {(ACTIONS[t.id]||[]).length}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <div className="playbook-toolbar">
+          <span className="playbook-count">
+            <i className="fa-solid fa-list-check" style={{marginRight:5,color:'var(--primary)'}}></i>
+            {(ACTIONS[actionTab]||[]).length} actions · click any row to expand detail
+          </span>
+          <div className="playbook-toolbar-btns">
+            <button className="btn-outline" style={{fontSize:12,padding:'6px 14px'}}
+              onClick={() => { setExpandAll(p => !p); setExpandedAction(null); }}>
+              <i className={`fa-solid ${expandAll ? 'fa-compress' : 'fa-expand'}`}></i>
+              {expandAll ? 'Collapse All' : 'Expand All'}
+            </button>
+            <button className="btn-primary" style={{fontSize:12,padding:'6px 14px'}}
+              onClick={generateActionSummary} disabled={summaryLoading}>
+              {summaryLoading
+                ? <><div className="spinner" style={{width:12,height:12,borderWidth:2}}></div> Generating…</>
+                : <><i className="fa-solid fa-wand-magic-sparkles"></i> Generate Action Summary</>}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          {(ACTIONS[actionTab]||[]).map((action, i) => (
+            <ActionRow
+              key={i} action={action} idx={i}
+              isExpanded={isExpanded(actionTab, i)}
+              onToggle={() => toggleAction(actionTab, i)}
+            />
+          ))}
+        </div>
+
+        {(actionSummary || summaryLoading) && (
+          <div className="action-summary-panel">
+            <div className="action-summary-header">
+              <i className="fa-solid fa-wand-magic-sparkles"></i>
+              AI Action Summary
+              {summaryLoading && <div className="spinner" style={{width:12,height:12,borderWidth:2,marginLeft:6}}></div>}
+            </div>
+            {actionSummary && <div>{actionSummary}</div>}
+          </div>
+        )}
+      </div>
+
+      {/* Source note */}
+      <div className="source-note" style={{marginTop:8}}>
+        <i className="fa-solid fa-database"></i>
+        Source: Scenario_Analysis_Module.docx and Scenario_Analysis_ChartData.xlsx — Generated for internal CRO / Board restricted use.
+      </div>
+    </div>
+  );
+}
+
+function ScenarioPage() {
+  const [selected,           setSelected]           = useState(null);
+  const [transitioning,      setTransitioning]      = useState(false);
+  const [scenarioData,       setScenarioData]       = useState(null);
+  const [chartData,          setChartData]          = useState(null);
+  const [loading,            setLoading]            = useState(true);
+  const [showBriefing,       setShowBriefing]       = useState(false);
+  const [briefingType,       setBriefingType]       = useState(null);
+  const [briefing,           setBriefing]           = useState(null);
+  const [generatingBriefing, setGeneratingBriefing] = useState(false);
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/scenario/data').then(r => r.json()).catch(() => ({ available:false })),
+      fetch('/api/scenario/chart-data').then(r => r.json()).catch(() => ({ available:false }))
+    ]).then(([doc, charts]) => {
+      setScenarioData(doc);
+      setChartData(charts);
+      setLoading(false);
+    });
+  }, []);
+
+  const handleSelect = async (id) => {
+    setTransitioning(true);
+    await minDelay(10000, 15000);
+    setSelected(id);
+    setTransitioning(false);
+  };
+
+  const generateBriefing = async (type) => {
+    setBriefingType(type);
+    setGeneratingBriefing(true);
+    setShowBriefing(true);
+    setBriefing(null);
+    try {
+      const [res] = await Promise.all([
+        fetch('/api/scenario/briefing', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ type }) }),
+        minDelay(8000, 20000)
+      ]);
+      const data = await res.json();
+      setBriefing(data.briefing);
+    } catch (err) {
+      setBriefing('Failed to generate briefing: ' + err.message);
+    } finally {
+      setGeneratingBriefing(false);
+    }
+  };
+
+  if (loading) return <div className="page"><div className="spinner-wrap"><div className="spinner"></div> Loading scenario data…</div></div>;
+
+  if (transitioning) return (
+    <div className="page">
+      <ProcessingView
+        title="Loading Scenario Dashboard"
+        icon="fa-radiation"
+        messages={[
+          'Initialising stress scenario engine…',
+          'Loading risk transmission model…',
+          'Fetching quantification parameters…',
+          'Building war-room dashboard…',
+          'Resolving regulatory notification matrix…',
+          'Preparing scenario intelligence data…',
+        ]}
+      />
+    </div>
+  );
+
+  if (!selected) return <ScenarioLibrary onSelect={handleSelect} />;
+
+  if (selected !== 4) {
+    return (
+      <div className="page">
+        <button className="btn-outline" style={{marginBottom:20,fontSize:13}} onClick={() => setSelected(null)}>
+          <i className="fa-solid fa-arrow-left"></i> Scenario Library
+        </button>
+        <div className="card" style={{textAlign:'center',padding:'64px 40px'}}>
+          <div style={{fontSize:40,marginBottom:16,color:'var(--border)'}}>🚧</div>
+          <div style={{fontSize:18,fontWeight:700,marginBottom:8}}>Detailed dashboard coming soon</div>
+          <div style={{color:'var(--text-2)',fontSize:14}}>This scenario is currently in development. Please check back in a future release.</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <CMEDashboard
+      scenarioData={scenarioData}
+      chartData={chartData}
+      onBack={() => setSelected(null)}
+      onGenerateBriefing={generateBriefing}
+      briefing={briefing}
+      briefingType={briefingType}
+      generatingBriefing={generatingBriefing}
+      showBriefing={showBriefing}
+      setShowBriefing={setShowBriefing}
+    />
+  );
+}
+
 // ── App Root ──────────────────────────────────────────────────────────────────
 function App() {
   const [page, setPage] = useState('home');
@@ -1505,13 +3552,15 @@ function App() {
         return <VaultPage />;
       case 'analysis':
         return <AnalysisPage />;
+      case 'scenario':
+        return <ScenarioPage />;
       default: return <HomePage setPage={setPage} />;
     }
   };
 
   return (
     <div className="app">
-      <Sidebar page={page} setPage={setPage} />
+      {page !== 'home' && <TopNav page={page} setPage={setPage} />}
       <div className="main">
         {renderPage()}
       </div>
@@ -1703,6 +3752,74 @@ function ScatterPlotChart({ data, xCol, yCol }) {
   return <div style={{position:'relative',height:420}}><canvas ref={canvasRef}></canvas></div>;
 }
 
+function buildAnomalyNarrative(a) {
+  const riskRating   = String(a['Risk Rating'] || '');
+  const clusterLabel = a['Cluster Label'] || a['Cluster'] || '';
+  const anomalyType  = a['Anomaly Type'] || '';
+  const distRaw      = parseFloat(a['Distance from Centroid']);
+  const dist         = isNaN(distRaw) ? null : distRaw;
+  const status       = a['Investigation Status'] || '';
+  const topFeats     = a['Top Features'] || '';
+  const amlNarrative = a['Notes / AML Narrative'] || a['Notes  AML Narrative'] || '';
+  const isHighRisk   = /(high|critical)/i.test(riskRating);
+  const isEscalated  = /(mlro|escal)/i.test(status);
+
+  let behaviouralPattern;
+  if (amlNarrative) {
+    behaviouralPattern = amlNarrative;
+  } else if (anomalyType && dist !== null) {
+    const severity = dist > 5 ? 'materially elevated' : dist > 2 ? 'elevated' : 'moderate';
+    behaviouralPattern = `Party exhibits ${severity} behavioural deviation from its cluster centroid (distance: ${dist.toFixed(2)}), consistent with ${anomalyType} typology indicators. Behaviour suggests deviation from expected activity profile within the ${clusterLabel || 'assigned'} cluster.`;
+  } else {
+    behaviouralPattern = 'Not available in source dataset.';
+  }
+
+  const keyDrivers = topFeats || 'Not available in source dataset.';
+
+  let riskIndicatorParts = [];
+  if (anomalyType) riskIndicatorParts.push(`Anomaly classification: ${anomalyType}`);
+  if (dist !== null) {
+    const level = dist > 5 ? 'high' : dist > 2 ? 'moderate' : 'low';
+    riskIndicatorParts.push(`Centroid distance indicates ${level} behavioural deviation from cluster norm`);
+  }
+  if (isHighRisk) riskIndicatorParts.push(`${riskRating} risk rating indicates elevated monitoring attention`);
+  if (clusterLabel) riskIndicatorParts.push(`Cluster assignment: ${clusterLabel}`);
+  const riskIndicators = riskIndicatorParts.length
+    ? riskIndicatorParts.join('. ') + '. Pattern may warrant further investigation against customer profile, expected activity documentation, and supporting transaction evidence.'
+    : 'Not available in source dataset.';
+
+  let reviewFocus;
+  if (isEscalated) {
+    reviewFocus = 'Case is currently escalated. Validate all supporting documentation, transaction purpose, counterparty relationships, and source of funds evidence before determining next action or regulatory notification requirement.';
+  } else if (isHighRisk) {
+    reviewFocus = 'Enhanced due diligence review is indicated given the High risk rating. Validate transaction purpose, counterparty profile, source of funds, and any linked trade documentation. Consider whether escalation thresholds have been met.';
+  } else {
+    reviewFocus = 'Review transaction patterns against customer profile and expected activity thresholds. Confirm monitoring disposition and validate supporting evidence before case closure or status update.';
+  }
+
+  return { behaviouralPattern, keyDrivers, riskIndicators, investigationStatus: status || 'Not available in source dataset.', reviewFocus };
+}
+
+function parseInsightsSections(text) {
+  if (!text) return [];
+  const lines = text.split('\n');
+  const sections = [];
+  let cur = null;
+  for (const line of lines) {
+    const m = line.match(/^(\d+)\.\s+([^:]+):\s*(.*)/);
+    if (m) {
+      if (cur) sections.push(cur);
+      cur = { num: m[1], label: m[2].trim(), content: m[3].trim() };
+    } else if (cur && line.trim()) {
+      cur.content += (cur.content ? ' ' : '') + line.trim();
+    }
+  }
+  if (cur) sections.push(cur);
+  return sections;
+}
+
+const INSIGHTS_SECTION_ICONS = ['fa-layer-group','fa-shield-halved','fa-chart-bar','fa-gauge-high','fa-circle-arrow-right'];
+
 function ClusterDescriptions({ descriptions, scatter }) {
   if (!descriptions) {
     const clusters = [...new Set((scatter||[]).map(r => r['Cluster Label'] || r['Cluster']).filter(Boolean))];
@@ -1790,29 +3907,37 @@ function AnomalySection({ anomalies, allAnomalies, highRiskCount, escalatedCount
                     <td>{isNaN(distVal) ? (a['Distance from Centroid'] || '—') : distVal.toFixed(2)}</td>
                     <td title={topFeats}>{topFeats ? topFeats.substring(0,40)+(topFeats.length>40?'…':'') : '—'}</td>
                   </tr>
-                  {isOpen && (
-                    <tr className="expand-row">
-                      <td colSpan={ANOMALY_COLS.length + 1}>
-                        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-                          {topFeats && (
-                            <div className="narrative-box">
-                              <div className="narrative-label"><i className="fa-solid fa-list-check" style={{marginRight:5}}></i>Top Features</div>
-                              <div className="narrative-text">{topFeats}</div>
+                  {isOpen && (() => {
+                    const nav = buildAnomalyNarrative(a);
+                    return (
+                      <tr className="expand-row">
+                        <td colSpan={ANOMALY_COLS.length + 1}>
+                          <div className="anomaly-narrative">
+                            <div className="anomaly-narrative-section anv-pattern">
+                              <div className="anomaly-narrative-label"><i className="fa-solid fa-waveform-lines"></i>Behavioural Pattern</div>
+                              <div className="anomaly-narrative-content">{nav.behaviouralPattern}</div>
                             </div>
-                          )}
-                          {narrative && (
-                            <div className="narrative-box">
-                              <div className="narrative-label"><i className="fa-solid fa-file-lines" style={{marginRight:5}}></i>AML Narrative</div>
-                              <div className="narrative-text">{narrative}</div>
+                            <div className="anomaly-narrative-section anv-drivers">
+                              <div className="anomaly-narrative-label"><i className="fa-solid fa-gears"></i>Key Drivers</div>
+                              <div className="anomaly-narrative-content">{nav.keyDrivers}</div>
                             </div>
-                          )}
-                          {!topFeats && !narrative && (
-                            <div style={{color:'var(--text-3)',fontSize:13}}>No additional details available.</div>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  )}
+                            <div className="anomaly-narrative-section anv-risk">
+                              <div className="anomaly-narrative-label"><i className="fa-solid fa-triangle-exclamation"></i>Risk Indicators</div>
+                              <div className="anomaly-narrative-content">{nav.riskIndicators}</div>
+                            </div>
+                            <div className="anomaly-narrative-section anv-status">
+                              <div className="anomaly-narrative-label"><i className="fa-solid fa-circle-dot"></i>Investigation Status</div>
+                              <div className="anomaly-narrative-content">{nav.investigationStatus}</div>
+                            </div>
+                            <div className="anomaly-narrative-section anv-review">
+                              <div className="anomaly-narrative-label"><i className="fa-solid fa-magnifying-glass"></i>Suggested Review Focus</div>
+                              <div className="anomaly-narrative-content">{nav.reviewFocus}</div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })()}
                 </React.Fragment>
               );
             })}
@@ -1866,10 +3991,15 @@ function parseSummaryText(text) {
   const sections = [];
   let cur = null;
   for (const line of text.split('\n')) {
-    const m = line.match(/^\*\*([^*]+?):?\*\*\s*(.*)/);
+    // Match **Label [TAG]:**, **Label [TAG]**, or **Label:**
+    const m = line.match(/^\*\*([^*\[\]]+?)(?:\s*\[(EXTRACTED|INFERRED)\])?\s*:?\*\*\s*(.*)/i);
     if (m) {
       if (cur) sections.push(cur);
-      cur = { label: m[1].replace(/:$/, '').trim(), content: m[2].trim() };
+      cur = {
+        label:      m[1].replace(/:$/, '').trim(),
+        confidence: m[2] ? m[2].toUpperCase() : null,
+        content:    m[3].trim()
+      };
     } else if (cur && line.trim()) {
       cur.content += (cur.content ? '\n' : '') + line.trim();
     }
@@ -1878,11 +4008,14 @@ function parseSummaryText(text) {
   return sections;
 }
 
+const VAULT_DOC_TYPE_LABELS = { risk: 'Risk Analysis', regulatory: 'Regulatory', emails: 'Email Intelligence' };
+
 function VaultSummaryPanel({ doc, summary, loading, source, onClose }) {
   if (!doc) return null;
   const sections = parseSummaryText(summary);
   const { icon, cls } = VAULT_DOC_ICONS[doc.section] || VAULT_DOC_ICONS.risk;
   const sectionLabel = VAULT_TABS.find(t => t.key === doc.section)?.label || 'Document';
+  const docTypeLabel = VAULT_DOC_TYPE_LABELS[doc.section] || 'Document';
 
   // Close on backdrop click
   const handleBackdrop = (e) => { if (e.target === e.currentTarget) onClose(); };
@@ -1897,7 +4030,8 @@ function VaultSummaryPanel({ doc, summary, loading, source, onClose }) {
             <i className={`fa-solid ${icon}`}></i>
           </div>
           <span className="vault-summary-titlebar-text">
-            AI Summary — {sectionLabel}
+            Intelligence Extraction — {sectionLabel}
+            <span className="vault-extraction-type"><i className="fa-solid fa-database" style={{fontSize:8}}></i>{docTypeLabel}</span>
           </span>
           <div className="vault-summary-titlebar-actions">
             <button className="vault-summary-win-btn close-btn" onClick={onClose} title="Close window">
@@ -1929,24 +4063,39 @@ function VaultSummaryPanel({ doc, summary, loading, source, onClose }) {
           {loading ? (
             <div style={{display:'flex',flexDirection:'column',alignItems:'center',padding:'50px 0',gap:14,color:'var(--text-3)'}}>
               <div className="spinner"></div>
-              <span style={{fontSize:13}}>Generating AI summary from document content…</span>
+              <span style={{fontSize:13}}>Extracting intelligence from source document…</span>
             </div>
           ) : sections.length > 0 ? (
             <>
               {sections.map((s, i) => (
                 <div key={i} className="vault-summary-section">
-                  <div className="vault-summary-label">{s.label}</div>
+                  <div className="vault-source-tip">
+                    <i className="fa-solid fa-database" style={{marginRight:4,fontSize:9}}></i>
+                    Source: {source || doc.title} · {docTypeLabel}
+                  </div>
+                  <div className="vault-summary-label">
+                    {s.label}
+                    {s.confidence && (
+                      <span className={`vault-confidence-pill ${s.confidence.toLowerCase()}`}>
+                        {s.confidence === 'EXTRACTED'
+                          ? <><i className="fa-solid fa-circle-check" style={{fontSize:8}}></i> Extracted</>
+                          : <><i className="fa-solid fa-code-branch" style={{fontSize:8}}></i> Inferred</>}
+                      </span>
+                    )}
+                  </div>
                   <div className="vault-summary-text">{s.content || 'Not available in source document.'}</div>
                 </div>
               ))}
               <div className="vault-summary-source">
                 <i className="fa-solid fa-database"></i>
-                Source: {source || 'Vault+Report_Page_Data.docx'} | Internal Knowledge Vault
+                Source document: {source || 'Knowledge Vault'} &nbsp;·&nbsp;
+                <i className="fa-solid fa-lock" style={{fontSize:10}}></i>
+                Internal use only — no external data referenced
               </div>
             </>
           ) : (
             <div style={{color:'var(--text-3)',fontSize:13,padding:20}}>
-              {summary || 'Click "Generate Summary" on any document card to create an AI summary.'}
+              {summary || 'Click "Generate Summary" on any document card to extract intelligence.'}
             </div>
           )}
         </div>
@@ -1954,8 +4103,8 @@ function VaultSummaryPanel({ doc, summary, loading, source, onClose }) {
         {/* Footer */}
         <div className="vault-summary-footer">
           <span className="vault-summary-footer-left">
-            <i className="fa-solid fa-robot"></i>
-            Generated by Groq AI · llama-3.1-8b-instant
+            <i className="fa-solid fa-shield-halved"></i>
+            Intelligence extracted from source document only · No external data used
           </span>
           <button className="vault-summary-footer-close" onClick={onClose}>
             Close
@@ -2056,7 +4205,7 @@ function VaultPage() {
 
   if (loading) return (
     <div className="page">
-      <div className="page-header"><div className="page-title">Vault</div></div>
+      <div className="page-header"><div className="page-title">Knowledge Vault</div></div>
       <div className="spinner-wrap"><div className="spinner"></div><span>Loading knowledge vault…</span></div>
     </div>
   );
@@ -2064,7 +4213,7 @@ function VaultPage() {
   return (
     <div className="page" style={{maxWidth:1300}}>
       <div className="page-header">
-        <div className="page-title">Vault</div>
+        <div className="page-title">Knowledge Vault</div>
         <div className="page-sub">Internal knowledge base Risk, Regulatory, and Email intelligence documents. Summaries generated on-demand from source documents only.</div>
       </div>
 
@@ -2352,10 +4501,10 @@ function ReportsPage() {
   const doGenerate = async () => {
     setGenerating(true); setReport(null); setInsightsData(null); setError(null);
     try {
-      const res = await fetch('/api/reports/generate', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ selectedSources: selected, fromDate, toDate, includeUndated })
-      });
+      const [res] = await Promise.all([
+        fetch('/api/reports/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ selectedSources: selected, fromDate, toDate, includeUndated }) }),
+        minDelay(8000, 15000)
+      ]);
       const data = await res.json();
       setReport(data.report); setInsightsData(data.insightsData);
       setTimeout(() => reportRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
@@ -2438,6 +4587,22 @@ function ReportsPage() {
             : <><i className="fa-solid fa-envelope"></i>Generate Email</>}
         </button>
       </div>
+
+      {generating && (
+        <ProcessingView
+          title="Composing Intelligence Report"
+          icon="fa-file-lines"
+          messages={[
+            'Ingesting source documents…',
+            'Extracting key risk narratives…',
+            'Correlating regulatory data points…',
+            'Structuring executive summary…',
+            'Cross-referencing compliance signals…',
+            'Compiling intelligence brief…',
+            'Applying report formatting…',
+          ]}
+        />
+      )}
 
       {error && (
         <div className="alert alert-warning" style={{marginTop:16}}>
@@ -2561,8 +4726,9 @@ function AnalysisPage() {
 
   const runModel = async () => {
     setModelRunning(true);
-    setModelRun(true);
+    await minDelay(15000, 20000);
     await loadClusterDescs();
+    setModelRun(true);
     setModelRunning(false);
   };
 
@@ -2585,14 +4751,14 @@ function AnalysisPage() {
 
   if (loading) return (
     <div className="page">
-      <div className="page-header"><div className="page-title">Analysis</div></div>
+      <div className="page-header"><div className="page-title">Analytics Lab</div></div>
       <div className="spinner-wrap"><div className="spinner"></div><span>Loading analysis data…</span></div>
     </div>
   );
 
   if (error) return (
     <div className="page">
-      <div className="page-header"><div className="page-title">Analysis</div></div>
+      <div className="page-header"><div className="page-title">Analytics Lab</div></div>
       <div className="alert alert-info"><i className="fa-solid fa-folder-open alert-icon"></i>{error}</div>
     </div>
   );
@@ -2647,7 +4813,7 @@ function AnalysisPage() {
     <div className="page">
       <div className="page-header" style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
         <div>
-          <div className="page-title">Analysis</div>
+          <div className="page-title">Analytics Lab</div>
           <div className="page-sub">K-Means clustering, feature catalogue and anomaly detection for AML risk review</div>
         </div>
         <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:4}}>
@@ -2725,6 +4891,22 @@ function AnalysisPage() {
 
           ) : !modelRun ? (
             /* State 2: 2+ features selected — ready to run */
+            modelRunning ? (
+              <ProcessingView
+                title="Running Analytical Model"
+                icon="fa-magnifying-glass-chart"
+                messages={[
+                  'Loading feature matrix…',
+                  'Initialising K-Means cluster algorithm…',
+                  'Running centroid convergence iterations…',
+                  'Evaluating silhouette scores…',
+                  'Computing anomaly boundary distances…',
+                  'Building cluster risk profiles…',
+                  'Generating model commentary…',
+                  'Validating statistical outputs…',
+                ]}
+              />
+            ) : (
             <div className="analysis-instruction">
               <div className="analysis-instruction-icon" style={{background:'rgba(139,28,28,0.1)',color:'var(--primary)'}}>
                 <i className="fa-solid fa-play"></i>
@@ -2735,15 +4917,13 @@ function AnalysisPage() {
               </div>
               <button
                 onClick={runModel}
-                disabled={modelRunning}
                 className="btn-primary"
                 style={{fontSize:14,padding:'10px 28px',display:'inline-flex',alignItems:'center',gap:8}}
               >
-                {modelRunning
-                  ? <><div className="spinner" style={{width:15,height:15,borderWidth:2}}></div> Running…</>
-                  : <><i className="fa-solid fa-circle-play"></i> Run Model</>}
+                <i className="fa-solid fa-circle-play"></i> Run Model
               </button>
             </div>
+            )
 
           ) : (
             /* State 3: Model has been run — full analysis */
@@ -2819,18 +4999,36 @@ function AnalysisPage() {
           {(summaryLoading || insightsSummary) && (
             <div className="card" style={{marginTop:16}}>
               <div className="card-header">
-                <span className="card-title"><i className="fa-solid fa-lightbulb" style={{marginRight:7,color:'#D97706'}}></i>Insights Quick Summary</span>
+                <span className="card-title"><i className="fa-solid fa-lightbulb" style={{marginRight:7,color:'#D97706'}}></i>Analytics Intelligence Summary</span>
                 {summaryLoading && (
                   <span style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'var(--text-3)'}}>
                     <div className="spinner" style={{width:13,height:13,borderWidth:2}}></div> Generating…
                   </span>
                 )}
               </div>
-              {insightsSummary && (
-                <div style={{padding:'14px 18px',fontSize:14,color:'var(--text)',lineHeight:1.75,borderLeft:'3px solid #D97706',margin:'0 0 4px 0',background:'rgba(217,119,6,0.04)',borderRadius:'0 var(--radius) var(--radius) 0'}}>
-                  {insightsSummary}
-                </div>
-              )}
+              {insightsSummary && (() => {
+                const sections = parseInsightsSections(insightsSummary);
+                if (sections.length >= 3) {
+                  return (
+                    <div className="insights-summary-sections">
+                      {sections.map((s, i) => (
+                        <div key={i} className="insights-summary-section">
+                          <div className="insights-summary-section-label">
+                            <i className={`fa-solid ${INSIGHTS_SECTION_ICONS[i] || 'fa-circle'}`}></i>
+                            {s.num}. {s.label}
+                          </div>
+                          <div className="insights-summary-section-content">{s.content}</div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }
+                return (
+                  <div style={{padding:'14px 18px',fontSize:14,color:'var(--text)',lineHeight:1.75,borderLeft:'3px solid #D97706',margin:'0 0 4px 0',background:'rgba(217,119,6,0.04)',borderRadius:'0 var(--radius) var(--radius) 0'}}>
+                    {insightsSummary}
+                  </div>
+                );
+              })()}
             </div>
           )}
 

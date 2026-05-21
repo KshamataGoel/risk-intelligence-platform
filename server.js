@@ -30,6 +30,62 @@ function cleanKey(k) {
   return String(k).trim().replace(/\s+/g, '_').replace(/[^\w]/g, '');
 }
 
+// ─── Data Quality & Insight Helpers ──────────────────────────────────────────
+
+function cleanDataRows(rows, labelCol) {
+  const JUNK = /^(total|grand total|subtotal|n\/a|unknown|not applicable|tbc|tbd|-)$/i;
+  const clean = rows.filter(r => {
+    const lv = String(r[labelCol] ?? '').trim();
+    return lv && !JUNK.test(lv);
+  });
+  const excluded = rows.length - clean.length;
+  const qualityNote = excluded > 0
+    ? `${excluded} row(s) excluded — blank, N/A, or summary entries removed from analysis.`
+    : null;
+  return { clean, excluded, qualityNote };
+}
+
+function concentrationInsight(values, labels) {
+  if (!values || values.length < 3) return null;
+  const total = values.reduce((s, v) => s + v, 0);
+  if (!total) return null;
+  const sorted = labels
+    ? [...labels.map((l, i) => ({ l, v: values[i] })).sort((a, b) => b.v - a.v)]
+    : values.map((v, i) => ({ l: String(i), v })).sort((a, b) => b.v - a.v);
+  const top3Sum = sorted.slice(0, 3).reduce((s, x) => s + x.v, 0);
+  const pct = (top3Sum / total) * 100;
+  if (pct >= 45) {
+    const top3Names = sorted.slice(0, 3).map(x => x.l).join(', ');
+    return `Material concentration dependency identified: top 3 segments (${top3Names}) account for ${pct.toFixed(0)}% of total.`;
+  }
+  return null;
+}
+
+function trendInsight(values, labels) {
+  if (!values || values.length < 3) return null;
+  const n = values.length;
+  const firstHalf  = values.slice(0, Math.floor(n / 2));
+  const secondHalf = values.slice(Math.ceil(n / 2));
+  const avg1 = firstHalf.reduce((s, v) => s + v, 0) / (firstHalf.length || 1);
+  const avg2 = secondHalf.reduce((s, v) => s + v, 0) / (secondHalf.length || 1);
+  const chg  = ((avg2 - avg1) / (avg1 || 1)) * 100;
+  const firstLabel = labels?.[0] || 'start';
+  const lastLabel  = labels?.[n - 1] || 'end';
+  if (chg > 10)  return `Upward trajectory: average activity in the latter half is ${chg.toFixed(0)}% higher than the first half (${firstLabel} → ${lastLabel}). Monitor for sustained growth pressure.`;
+  if (chg < -10) return `Declining trend: activity has fallen ${Math.abs(chg).toFixed(0)}% from ${firstLabel} to ${lastLabel}. Investigate underlying drivers before next governance cycle.`;
+  return `Transaction volumes are broadly stable across the reporting period with no material directional shift detected (${firstLabel} → ${lastLabel}).`;
+}
+
+function riskConcentrationInsight(labelCounts, total) {
+  if (!labelCounts || !total) return null;
+  const highRiskKeys  = Object.keys(labelCounts).filter(k => /(high|critical|very.?high)/i.test(k));
+  const highRiskCount = highRiskKeys.reduce((s, k) => s + (labelCounts[k] || 0), 0);
+  const pct = (highRiskCount / total) * 100;
+  if (pct >= 30) return `Elevated risk concentration: ${pct.toFixed(0)}% of the customer population (${highRiskCount.toLocaleString()} customers) are classified as High or Critical risk. Board-level attention warranted.`;
+  if (pct >= 15) return `Moderate risk concentration: ${pct.toFixed(0)}% of customers carry elevated risk ratings. Periodic deep-dive review recommended.`;
+  return null;
+}
+
 // ─── Dataset Loading ──────────────────────────────────────────────────────────
 
 function loadDatasets() {
@@ -48,7 +104,7 @@ function loadDatasets() {
         const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
         const cnt0 = (raw[0] || []).filter(c => c !== '').length;
         const cnt1 = (raw[1] || []).filter(c => c !== '').length;
-        const headerRow = (raw.length >= 2 && cnt1 > cnt0) ? 1 : 0;
+        const headerRow = (raw.length >= 2 && (cnt1 > cnt0 || cnt0 <= 2)) ? 1 : 0;
 
         const rows = XLSX.utils.sheet_to_json(ws, { defval: null, range: headerRow });
         result[sheetName] = rows.map(row => {
@@ -139,11 +195,7 @@ function processParties(rows, opts = {}) {
   const cCol  = cols.find(c => /count/i.test(c));
   const rCol  = cols.find(c => /risk.?score|avg.?risk/i.test(c));
 
-  // Strip summary/total rows
-  const data = rows.filter(r => {
-    const t = String(r[tCol] ?? '').toLowerCase().trim();
-    return t && t !== 'total' && t !== 'grand total' && t !== 'subtotal';
-  });
+  const { clean: data, qualityNote } = cleanDataRows(rows, tCol);
 
   // ── Risk-ranked view ──────────────────────────────────────────────
   if (opts.rankByRisk && rCol) {
@@ -159,10 +211,12 @@ function processParties(rows, opts = {}) {
       title: 'Party Types Ranked by Average Risk Score',
       chart_data: { labels: ranked.map(d => d.type), values: ranked.map(d => d.score) },
       key_metrics: {
-        'Highest Risk Type':  ranked[0]?.type  ?? 'N/A',
-        'Top Risk Score':     ranked[0]?.score ?? 'N/A',
-        'Party Types Ranked': ranked.length
+        'Highest Risk Party Type': ranked[0]?.type  ?? 'N/A',
+        'Risk Score (Top)':        ranked[0]?.score ?? 'N/A',
+        'Party Types Assessed':    ranked.length,
+        'Data Coverage':           `${data.length} active segments`
       },
+      quality_note: qualityNote,
       columns: cols,
       preview: data.slice(0, 10)
     };
@@ -181,6 +235,11 @@ function processParties(rows, opts = {}) {
   const total  = values.reduce((s, v) => s + v, 0);
   const { idx: hlIdx, type: hlType } = resolveHighlight(opts.question || '', labels, values);
 
+  const largestLabel = labels[values.indexOf(Math.max(...values))];
+  const largestVal   = Math.max(...values);
+  const largestPct   = total ? ((largestVal / total) * 100).toFixed(1) : '0';
+  const concInsight  = concentrationInsight(values, labels);
+
   const metricLabel = hlType === 'min' ? 'Smallest Segment'
                     : hlType === 'mention' ? 'Highlighted Segment'
                     : 'Largest Segment';
@@ -189,18 +248,18 @@ function processParties(rows, opts = {}) {
     answer_available: true,
     dataset_used: 'Parties',
     chart_type: opts.chartType || 'bar',
-    title: opts.chartType === 'doughnut'
-      ? 'Party Type Distribution'
-      : 'Party Count by Type',
-    chart_data:      { labels, values },
-    highlight_index: hlIdx,
-    highlight_type:  hlType,
+    title: opts.chartType === 'doughnut' ? 'Party Type Distribution' : 'Party Count by Type',
+    chart_data:            { labels, values },
+    highlight_index:       hlIdx,
+    highlight_type:        hlType,
     key_metrics: {
-      'Total Parties':              total,
-      'Party Types':                labels.length,
-      [metricLabel]:                labels[hlIdx],
-      [`${metricLabel} Count`]:     values[hlIdx]
+      'Total Registered Parties': total.toLocaleString(),
+      'Distinct Party Types':     labels.length,
+      'Dominant Segment':         `${largestLabel} (${largestPct}%)`,
+      [metricLabel]:              labels[hlIdx]
     },
+    concentration_insight: concInsight,
+    quality_note:          qualityNote,
     columns: cols,
     preview: data.slice(0, 10)
   };
@@ -208,15 +267,11 @@ function processParties(rows, opts = {}) {
 
 function processRiskRatings(rows, opts = {}) {
   if (!rows.length) throw new Error('Risk_Ratings sheet is empty');
-  const cols  = Object.keys(rows[0]);
-  const rCol  = cols.find(c => /risk.*rating|rating/i.test(c)) || cols[0];
-  const cCol  = cols.find(c => /count|customer/i.test(c));
+  const cols = Object.keys(rows[0]);
+  const rCol = cols.find(c => /risk.*rating|rating/i.test(c)) || cols[0];
+  const cCol = cols.find(c => /count|customer/i.test(c));
 
-  // Strip summary/total rows
-  const data = rows.filter(r => {
-    const t = String(r[rCol] ?? '').toLowerCase().trim();
-    return t && t !== 'total' && t !== 'grand total' && t !== 'subtotal';
-  });
+  const { clean: data, qualityNote } = cleanDataRows(rows, rCol);
 
   const counts = {};
   data.forEach(r => {
@@ -235,6 +290,13 @@ function processRiskRatings(rows, opts = {}) {
   const total  = values.reduce((s, v) => s + v, 0);
   const { idx: hlIdx, type: hlType } = resolveHighlight(opts.question || '', labels, values);
 
+  const highRiskKeys  = labels.filter(l => /(high|critical|very.?high)/i.test(l));
+  const highRiskCount = highRiskKeys.reduce((s, k) => s + (counts[k] || 0), 0);
+  const highRiskPct   = total ? ((highRiskCount / total) * 100).toFixed(1) : '0';
+  const notRatedKeys  = labels.filter(l => /not.?rated/i.test(l));
+  const notRatedCount = notRatedKeys.reduce((s, k) => s + (counts[k] || 0), 0);
+  const riskInsight   = riskConcentrationInsight(counts, total);
+
   const tierLabel = hlType === 'min' ? 'Least Common Tier'
                   : hlType === 'mention' ? 'Highlighted Tier'
                   : 'Most Common Tier';
@@ -244,15 +306,17 @@ function processRiskRatings(rows, opts = {}) {
     dataset_used: 'Risk_Ratings',
     chart_type: 'doughnut',
     title: 'Risk Rating Distribution',
-    chart_data:      { labels, values },
-    highlight_index: hlIdx,
-    highlight_type:  hlType,
+    chart_data:            { labels, values },
+    highlight_index:       hlIdx,
+    highlight_type:        hlType,
     key_metrics: {
-      'Total Customers':      total,
-      'Risk Categories':      labels.length,
-      [tierLabel]:            labels[hlIdx],
-      [`${tierLabel} Count`]: values[hlIdx]
+      'Total Customers':      total.toLocaleString(),
+      'High / Critical Risk': `${highRiskCount.toLocaleString()} (${highRiskPct}%)`,
+      'Not Rated':            notRatedCount.toLocaleString(),
+      [tierLabel]:            labels[hlIdx]
     },
+    concentration_insight: riskInsight,
+    quality_note:          qualityNote,
     columns: cols,
     preview: data.slice(0, 10)
   };
@@ -260,20 +324,25 @@ function processRiskRatings(rows, opts = {}) {
 
 function processTopAccounts(rows, opts = {}) {
   if (!rows.length) throw new Error('Top10_Accounts_Volume sheet is empty');
-  const cols   = Object.keys(rows[0]);
-  // Prefer "Party Name" / "Account Name" over plain "Party ID" or "Party"
-  const nCol   = cols.find(c => /party.?name|account.?name|\bname\b/i.test(c))
-              || cols.find(c => /name|party|account/i.test(c))
-              || cols[0];
-  const vCol   = cols.find(c => /volume|total|amount|value|txn/i.test(c)) || cols[cols.length - 1];
+  const cols = Object.keys(rows[0]);
+  const nCol = cols.find(c => /party.?name|account.?name|\bname\b/i.test(c))
+            || cols.find(c => /name|party|account/i.test(c))
+            || cols[0];
+  const vCol = cols.find(c => /volume|total|amount|value|txn/i.test(c)) || cols[cols.length - 1];
 
-  const data = rows
+  const { clean: cleanRows, qualityNote } = cleanDataRows(rows, nCol);
+
+  const data = cleanRows
     .map(r => ({ name: String(r[nCol] ?? 'Unknown'), volume: parseGBP(r[vCol]) ?? 0 }))
     .sort((a, b) => b.volume - a.volume)
     .slice(0, 10);
 
-  const labels = data.map(d => d.name);
-  const values = data.map(d => d.volume);
+  const labels     = data.map(d => d.name);
+  const values     = data.map(d => d.volume);
+  const totalVol   = values.reduce((s, v) => s + v, 0);
+  const topVolume  = values[0] || 0;
+  const topShare   = totalVol ? ((topVolume / totalVol) * 100).toFixed(1) : '0';
+  const concInsight = concentrationInsight(values, labels);
   const { idx: hlIdx, type: hlType } = resolveHighlight(opts.question || '', labels, values);
 
   return {
@@ -281,60 +350,78 @@ function processTopAccounts(rows, opts = {}) {
     dataset_used: 'Top10_Accounts_Volume',
     chart_type: 'horizontalBar',
     title: 'Top 10 Accounts by Transaction Volume',
-    chart_data:      { labels, values },
-    highlight_index: hlIdx,
-    highlight_type:  hlType,
+    chart_data:            { labels, values },
+    highlight_index:       hlIdx,
+    highlight_type:        hlType,
     key_metrics: {
-      'Highlighted Account': labels[hlIdx] ?? 'N/A',
-      'Volume':              `£${(values[hlIdx] || 0).toLocaleString()}`,
-      'Top 10 Total':        `£${values.reduce((s, v) => s + v, 0).toLocaleString()}`
+      'Top Account':          labels[0] ?? 'N/A',
+      'Top Account Volume':   `£${topVolume.toLocaleString()}`,
+      'Top Account Share':    `${topShare}% of top 10`,
+      'Top 10 Combined':      `£${totalVol.toLocaleString()}`
     },
+    concentration_insight: concInsight,
+    quality_note:          qualityNote,
     columns: cols,
-    preview: rows.slice(0, 10)
+    preview: cleanRows.slice(0, 10)
   };
 }
 
 function processMonthlyTrends(rows) {
   if (!rows.length) throw new Error('Monthly_TXN_Trends sheet is empty');
-  const cols  = Object.keys(rows[0]);
-  const mCol  = cols.find(c => /month|date|period/i.test(c)) || cols[0];
-  const vCol  = cols.find(c => /volume|total|amount|value|txn/i.test(c)) || cols[cols.length - 1];
+  const cols = Object.keys(rows[0]);
+  const mCol = cols.find(c => /month|date|period/i.test(c)) || cols[0];
+  const vCol = cols.find(c => /volume|total|amount|value|txn/i.test(c)) || cols[cols.length - 1];
 
-  const data  = rows.map(r => ({ month: String(r[mCol] ?? ''), volume: parseGBP(r[vCol]) ?? 0 }));
-  const total = data.reduce((s, d) => s + d.volume, 0);
-  const avg   = total / (data.length || 1);
-  const max   = Math.max(...data.map(d => d.volume));
-  const peak  = data.find(d => d.volume === max);
+  const { clean: cleanRows, qualityNote } = cleanDataRows(rows, mCol);
+  const data   = cleanRows.map(r => ({ month: String(r[mCol] ?? ''), volume: parseGBP(r[vCol]) ?? 0 }));
+  const labels = data.map(d => d.month);
+  const values = data.map(d => d.volume);
+  const total  = values.reduce((s, v) => s + v, 0);
+  const avg    = total / (data.length || 1);
+  const max    = Math.max(...values);
+  const min    = Math.min(...values);
+  const peak   = data.find(d => d.volume === max);
+  const trough = data.find(d => d.volume === min);
+  const trendNote = trendInsight(values, labels);
 
   return {
     answer_available: true,
     dataset_used: 'Monthly_TXN_Trends',
     chart_type: 'line',
     title: 'Monthly Transaction Volume Trends',
-    chart_data: { labels: data.map(d => d.month), values: data.map(d => d.volume) },
+    chart_data:            { labels, values },
     key_metrics: {
       'Total Volume':    `£${total.toLocaleString()}`,
       'Monthly Average': `£${Math.round(avg).toLocaleString()}`,
-      'Peak Month':      peak?.month ?? 'N/A'
+      'Peak Month':      `${peak?.month ?? 'N/A'} (£${max.toLocaleString()})`,
+      'Lowest Month':    `${trough?.month ?? 'N/A'} (£${min.toLocaleString()})`
     },
+    concentration_insight: trendNote,
+    quality_note:          qualityNote,
     columns: cols,
-    preview: rows.slice(0, 10)
+    preview: cleanRows.slice(0, 10)
   };
 }
 
 function processCounterparties(rows, opts = {}) {
   if (!rows.length) throw new Error('Top10_Counterparty_Exposures sheet is empty');
-  const cols  = Object.keys(rows[0]);
-  const nCol  = cols.find(c => /counterpart|name|party/i.test(c)) || cols[0];
-  const eCol  = cols.find(c => /exposure|gross|amount|value/i.test(c)) || cols[cols.length - 1];
+  const cols = Object.keys(rows[0]);
+  const nCol = cols.find(c => /counterpart|name|party/i.test(c)) || cols[0];
+  const eCol = cols.find(c => /exposure|gross|amount|value/i.test(c)) || cols[cols.length - 1];
 
-  const data = rows
+  const { clean: cleanRows, qualityNote } = cleanDataRows(rows, nCol);
+
+  const data = cleanRows
     .map(r => ({ name: String(r[nCol] ?? 'Unknown'), exposure: parseGBP(r[eCol]) ?? 0 }))
     .sort((a, b) => b.exposure - a.exposure)
     .slice(0, 10);
 
-  const labels = data.map(d => d.name);
-  const values = data.map(d => d.exposure);
+  const labels      = data.map(d => d.name);
+  const values      = data.map(d => d.exposure);
+  const totalExp    = values.reduce((s, v) => s + v, 0);
+  const topExposure = values[0] || 0;
+  const topShare    = totalExp ? ((topExposure / totalExp) * 100).toFixed(1) : '0';
+  const concInsight = concentrationInsight(values, labels);
   const { idx: hlIdx, type: hlType } = resolveHighlight(opts.question || '', labels, values);
 
   return {
@@ -342,75 +429,123 @@ function processCounterparties(rows, opts = {}) {
     dataset_used: 'Top10_Counterparty_Exposures',
     chart_type: 'horizontalBar',
     title: 'Top 10 Counterparty Exposures',
-    chart_data:      { labels, values },
-    highlight_index: hlIdx,
-    highlight_type:  hlType,
+    chart_data:            { labels, values },
+    highlight_index:       hlIdx,
+    highlight_type:        hlType,
     key_metrics: {
-      'Highlighted Counterparty': labels[hlIdx] ?? 'N/A',
-      'Exposure':                 `£${(values[hlIdx] || 0).toLocaleString()}`,
-      'Total Exposure':           `£${values.reduce((s, v) => s + v, 0).toLocaleString()}`
+      'Largest Counterparty':   labels[0] ?? 'N/A',
+      'Largest Exposure':       `£${topExposure.toLocaleString()}`,
+      'Concentration Share':    `${topShare}% of top 10`,
+      'Total Top-10 Exposure':  `£${totalExp.toLocaleString()}`
     },
+    concentration_insight: concInsight,
+    quality_note:          qualityNote,
     columns: cols,
-    preview: rows.slice(0, 10)
+    preview: cleanRows.slice(0, 10)
   };
 }
 
 // ─── Summaries ────────────────────────────────────────────────────────────────
 
 function templateSummary(result) {
-  const { dataset_used: ds, key_metrics: m } = result;
-  const T = {
-    Parties:
-      `The database contains ${m['Total Parties']} registered parties across ${m['Party Types']} distinct types. ` +
-      `The ${m['Largest Segment']} segment represents the largest concentration. ` +
-      `Leadership should review segment distribution to assess portfolio diversification and onboarding patterns.`,
-    Risk_Ratings:
-      `The risk profile covers ${m['Total Customers']} customers distributed across ${m['Risk Categories']} rating categories. ` +
-      `The most prevalent risk tier is ${m['Most Common Tier']}. ` +
-      `Senior leadership should validate elevated-risk concentrations ahead of the next risk committee briefing.`,
-    Top10_Accounts_Volume:
-      `The leading account by transaction volume is ${m['Top Account']} at ${m['Highest Volume']}. ` +
-      `Combined top-10 volume stands at ${m['Top 10 Total']}, representing a material concentration. ` +
-      `Concentration risk thresholds for the highest-volume accounts warrant leadership review.`,
-    Monthly_TXN_Trends:
-      `Total transaction volume over the reporting period reached ${m['Total Volume']}, ` +
-      `with a monthly average of ${m['Monthly Average']}. Volume peaked in ${m['Peak Month']}. ` +
-      `These patterns should inform liquidity planning and capacity forecasting for the next quarter.`,
-    Top10_Counterparty_Exposures:
-      `The largest counterparty exposure is with ${m['Largest Counterparty']} at ${m['Highest Exposure']}. ` +
-      `Aggregate top-10 exposure totals ${m['Total Exposure']}. ` +
-      `A review of counterparty limits and concentration thresholds is recommended for the next governance cycle.`
+  const { dataset_used: ds, key_metrics: m, concentration_insight: ci, quality_note: qn } = result;
+
+  const sections = {
+    Parties: {
+      A: `The party database contains ${m['Total Registered Parties']} registered counterparties segmented across ${m['Distinct Party Types']} distinct party types.`,
+      B: `The dominant segment is ${m['Dominant Segment']}, representing the largest share of the registered population. Each segment carries distinct risk profiles and monitoring obligations.`,
+      C: `High-volume or concentrated segments warrant enhanced due diligence review. Portfolio diversification across party types should be assessed against risk appetite limits.`,
+      D: `Segment size directly influences onboarding capacity, KYC review cycles, and periodic refresh workloads. Imbalanced distributions may signal emerging concentration risk.`,
+      E: ci || 'No material concentration dependency identified across party segments.',
+      F: qn || 'All data rows processed. No quality issues identified.'
+    },
+    Risk_Ratings: {
+      A: `The risk profile covers ${m['Total Customers']} customers with High or Critical risk representing ${m['High / Critical Risk']} of the population.`,
+      B: `Not-rated customers stand at ${m['Not Rated']}, representing a blind spot in the risk management framework. The most prevalent rated tier is ${m['Most Common Tier']}.`,
+      C: `Elevated high-risk concentration increases exposure to AML, sanctions, and reputational risk. Not-rated customers require prioritised review and risk assessment completion.`,
+      D: `Risk tier distribution is the primary driver for KYC review frequency, enhanced due diligence triggers, and transaction monitoring calibration thresholds.`,
+      E: ci || 'Risk distribution is within expected bounds for the current portfolio profile.',
+      F: qn || 'All risk rating records processed without exclusions.'
+    },
+    Top10_Accounts_Volume: {
+      A: `The top 10 accounts by transaction volume are identified, with ${m['Top Account']} leading at ${m['Top Account Volume']}.`,
+      B: `The leading account represents ${m['Top Account Share']}, with combined top-10 volume at ${m['Top 10 Combined']}. This signals material single-name concentration.`,
+      C: `Accounts with disproportionate transaction volumes require enhanced transaction monitoring and periodic business rationale reviews.`,
+      D: `Volume-driven concentration risk may affect liquidity planning, limit utilisation, and correspondent banking relationships.`,
+      E: ci || 'Transaction volume is distributed across the top 10 accounts without extreme single-name dependency.',
+      F: qn || 'All account records processed. No quality issues identified.'
+    },
+    Monthly_TXN_Trends: {
+      A: `Total transaction volume over the reporting period reached ${m['Total Volume']}, with a monthly average of ${m['Monthly Average']}.`,
+      B: `Volume peaked in ${m['Peak Month']} and reached its lowest point in ${m['Lowest Month']}. This range indicates the scale of intra-period volatility.`,
+      C: `Significant volume deviations from the monthly average may indicate seasonal patterns, business events, or anomalous activity requiring investigation.`,
+      D: `Monthly transaction volumes inform liquidity forecasting, correspondent banking capacity planning, and threshold-based monitoring calibration.`,
+      E: ci || 'No material directional shift detected across the reporting period.',
+      F: qn || 'All monthly records processed. No quality issues identified.'
+    },
+    Top10_Counterparty_Exposures: {
+      A: `The largest counterparty exposure is with ${m['Largest Counterparty']} at ${m['Largest Exposure']}, representing ${m['Concentration Share']} of the top-10 aggregate.`,
+      B: `Total top-10 counterparty exposure stands at ${m['Total Top-10 Exposure']}. The leading counterparty's disproportionate share warrants limit review.`,
+      C: `Concentration in single counterparties amplifies credit, settlement, and systemic risk. Regulatory large exposure limits must be verified against current thresholds.`,
+      D: `Counterparty exposure concentration is a key driver of credit risk appetite utilisation, PFE calculations, and stress testing outcomes.`,
+      E: ci || 'Exposure is distributed across the top 10 counterparties without extreme single-name concentration.',
+      F: qn || 'All counterparty records processed. No quality issues identified.'
+    }
   };
-  return T[ds] || `Analysis complete for ${ds}. ${Object.entries(m).map(([k, v]) => `${k}: ${v}`).join('. ')}.`;
+
+  const s = sections[ds];
+  if (!s) return `Analysis complete for ${ds}. ${Object.entries(m).map(([k, v]) => `${k}: ${v}`).join('. ')}.`;
+
+  return [
+    `A. Situation Summary: ${s.A}`,
+    `B. Key Findings: ${s.B}`,
+    `C. Risk Interpretation: ${s.C}`,
+    `D. Material Drivers: ${s.D}`,
+    `E. Concentration / Trend: ${s.E}`,
+    `F. Data Quality Note: ${s.F}`
+  ].join('\n');
 }
 
 async function groqSummary(question, result) {
   const key = process.env.GROQ_API_KEY;
   if (!key) return templateSummary(result);
 
-  // Build a data table string so the AI uses real names/values, not hallucinated ones
   const dataRows = (result.chart_data?.labels || [])
     .map((lbl, i) => `  ${lbl}: ${result.chart_data.values[i]}`)
     .join('\n');
 
-  const prompt =
-    `You are a senior Risk & Compliance analytics assistant briefing CRO leadership.\n` +
-    `CRITICAL: Use ONLY the exact names and numbers from the data below. Do NOT invent names like "Market A" or "Account X".\n` +
-    `Use precise, executive-level language. Maximum 4 sentences.\n\n` +
-    `User question: ${question}\n` +
-    `Dataset: ${result.dataset_used}\n` +
-    `Key metrics: ${JSON.stringify(result.key_metrics)}\n` +
-    (dataRows ? `Data breakdown:\n${dataRows}\n` : '') +
-    `\nStructure:\n1. Direct answer using actual names from the data\n2. Two key observations\n3. Recommended leadership action`;
+  const systemPrompt =
+    `You are a senior Risk & Compliance intelligence analyst briefing the Chief Risk & Compliance Officer (CRCO). ` +
+    `You produce structured, data-driven executive intelligence. You never hallucinate, invent names, or extrapolate beyond the data provided. ` +
+    `Your language is institutional, precise, and board-ready.`;
+
+  const userPrompt =
+    `QUESTION: ${question}\n` +
+    `DATASET: ${result.dataset_used.replace(/_/g, ' ')}\n` +
+    `KEY METRICS:\n${Object.entries(result.key_metrics).map(([k, v]) => `  ${k}: ${v}`).join('\n')}\n` +
+    (dataRows ? `DATA BREAKDOWN:\n${dataRows}\n` : '') +
+    (result.concentration_insight ? `CONCENTRATION SIGNAL: ${result.concentration_insight}\n` : '') +
+    (result.quality_note ? `DATA QUALITY: ${result.quality_note}\n` : '') +
+    `\nUsing ONLY the data above (no external knowledge), write a structured executive intelligence summary with EXACTLY these 6 labelled sections:\n\n` +
+    `A. Situation Summary: [One sentence — the direct answer using actual names and numbers from the data]\n` +
+    `B. Key Findings: [Two to three specific observations drawn from the data — use exact values]\n` +
+    `C. Risk Interpretation: [One sentence on the risk implication for the CRO]\n` +
+    `D. Material Drivers: [One sentence on what is driving the pattern observed]\n` +
+    `E. Concentration / Trend: [One sentence on concentration risk or trend direction — use the concentration signal if provided]\n` +
+    `F. Data Quality Note: [One sentence on data completeness or exclusions — use the quality note if provided, otherwise state "All records processed."]\n\n` +
+    `Use exact names and values from the data. Do not invent any information.`;
 
   try {
     const res = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
       {
         model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 320,
-        temperature: 0.2
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user',   content: userPrompt }
+        ],
+        max_tokens: 600,
+        temperature: 0.15
       },
       { headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' } }
     );
@@ -608,37 +743,98 @@ function computeClusterStats(rows, selectedCols) {
 }
 
 function templateClusterDesc(s) {
-  const topRisk = Object.entries(s.risk_distribution).sort((a, b) => b[1] - a[1])[0];
-  const colEntries = Object.entries(s.column_averages || {}).slice(0, 5);
-  const colSummary = colEntries.map(([k, v]) => {
-    const isGBP = k.toLowerCase().includes('gbp') || k.toLowerCase().includes('amount');
-    return `${k}: ${isGBP ? '£' + Number(v).toLocaleString() : v}`;
-  }).join(', ');
-  return {
-    label: s.label,
-    description: `This cluster contains ${s.parties} parties. ` +
+  const topRisk    = Object.entries(s.risk_distribution).sort((a, b) => b[1] - a[1])[0];
+  const colEntries = Object.entries(s.column_averages || {});
+  const parties    = s.parties;
+  const dominantRisk = topRisk?.[0] || 'Unknown';
+
+  const avgTxnEntry = colEntries.find(([k]) => /avg.?txn|avg.?amount|avg.?value|avg_txn/i.test(k));
+  const avgTxnVal   = avgTxnEntry ? Number(avgTxnEntry[1]) : null;
+
+  let description;
+  if (avgTxnVal !== null && avgTxnVal >= 500000) {
+    description =
+      `Cluster contains ${parties} parties exhibiting materially higher-value transaction profiles consistent with corporate or private banking relationships. ` +
+      `Elevated average transaction values and concentrated payment flows indicate enhanced monitoring relevance. ` +
+      `Behaviour patterns suggest cross-border complexity and large-value flow indicators warranting enhanced review. ` +
+      `Predominant risk rating within this segment is ${dominantRisk}.`;
+  } else if (avgTxnVal !== null && avgTxnVal >= 50000) {
+    description =
+      `Cluster contains ${parties} parties demonstrating elevated commercial transaction throughput with moderate behavioural variability. ` +
+      `Increased transaction dispersion and cross-border activity indicate the need for continued monitoring of payment purpose, counterparty profile, and volume consistency. ` +
+      `Cluster behaviour is consistent with mid-tier commercial risk typology indicators. ` +
+      `Predominant risk rating is ${dominantRisk}.`;
+  } else if (avgTxnVal !== null) {
+    description =
+      `Cluster contains ${parties} parties exhibiting lower-value transactional behaviour with relatively stable transaction volatility and limited cross-border complexity. ` +
+      `Behaviour patterns are broadly aligned to lower inherent AML exposure profiles, subject to normal monitoring thresholds. ` +
+      `Predominant risk rating is ${dominantRisk}.`;
+  } else {
+    const colSummary = colEntries.slice(0, 4).map(([k, v]) => {
+      const isGBP = /gbp|amount/i.test(k);
+      return `${k}: ${isGBP ? '£' + Number(v).toLocaleString() : v}`;
+    }).join('; ');
+    description =
+      `Cluster contains ${parties} parties. ` +
       (colSummary ? `Feature averages — ${colSummary}. ` : '') +
-      `The predominant risk rating is ${topRisk?.[0] || 'Unknown'}.`
-  };
+      `Behaviour patterns require review against customer profile and expected activity thresholds. ` +
+      `Predominant risk rating is ${dominantRisk}.`;
+  }
+
+  return { label: s.label, description };
+}
+
+function templateInsightsSummary(clusterDescriptions, anomalySummary) {
+  const { total = 0, highRisk = 0, escalated = 0 } = anomalySummary || {};
+  const clusterCount = clusterDescriptions?.length || 0;
+  const investigating = total - highRisk;
+
+  return [
+    `1. Behavioural Segmentation Summary: Behavioural clustering has identified ${clusterCount} distinct customer segment${clusterCount !== 1 ? 's' : ''} based on transaction value, volatility, and cross-border activity patterns. Each cluster exhibits differentiated AML exposure characteristics requiring proportionate monitoring calibration.`,
+    `2. Key Risk Indicators: The highest-exposure segments demonstrate elevated average transaction values and concentrated payment flows, consistent with cross-border complexity and large-value flow typology indicators. Lower-exposure segments exhibit stable, lower-value transactional behaviour broadly aligned to standard monitoring thresholds.`,
+    `3. Anomaly Concentration: Anomaly detection identified ${total} record${total !== 1 ? 's' : ''} requiring monitoring attention, of which ${highRisk} carr${highRisk !== 1 ? 'y' : 'ies'} a High risk rating. ${escalated} record${escalated !== 1 ? 's are' : ' is'} currently escalated; remaining records are under investigation, enhanced review, or monitoring disposition.`,
+    `4. Monitoring Implication: The observed behavioural patterns indicate that existing monitoring thresholds may require recalibration across high-exposure segments. Enhanced due diligence review is indicated for all High-risk and escalated records prior to any disposition decision.`,
+    `5. Suggested Next Action: Priority review is indicated for all escalated and High-risk records. Validate supporting evidence, transaction purpose, counterparty relationships, and source of funds documentation before determining further action or case closure.`
+  ].join('\n\n');
 }
 
 async function generateClusterDescriptions(stats) {
   const key = process.env.GROQ_API_KEY;
   if (!key) return stats.map(templateClusterDesc);
 
-  const prompt =
-    `You are a senior AML analytics assistant preparing cluster summaries for CRO-level leadership.\n` +
-    `Use ONLY the provided cluster summary data. Do not assume anything outside the data.\n` +
-    `Do not invent regulatory facts, customer names, or external context.\n\n` +
-    `For each cluster provide:\n1. A business-friendly description (what the cluster represents)\n` +
-    `2. Key risk indicators visible in the data\nKeep each summary under 80 words.\n\n` +
-    `Cluster summary:\n${JSON.stringify(stats, null, 2)}\n\n` +
+  const systemPrompt =
+    `You are a senior AML analytics platform generating cluster behavioural descriptions for Chief Risk Officer decision-support. ` +
+    `Strict tone rules: Do not use first person. Do not say "our analysis reveals" or "I recommend". ` +
+    `Do not make accusatory statements. Do not say customers are involved in money laundering or terrorist financing. ` +
+    `Never use: suspicious, fraudulent, illegal, criminal, money laundering, terrorist. ` +
+    `Use institutional risk-indicator language only: ` +
+    `"indicates elevated monitoring attention", "suggests behavioural deviation", "requires enhanced review", ` +
+    `"may warrant further investigation", "is consistent with risk typology indicators", ` +
+    `"potential financial crime risk indicators", "AML monitoring indicators", "behavioural outlier", ` +
+    `"transaction concentration", "cross-border complexity", "structuring indicator". ` +
+    `All output must be derived solely from the cluster data provided. Do not invent any figures or names.`;
+
+  const userPrompt =
+    `Cluster data:\n${JSON.stringify(stats, null, 2)}\n\n` +
+    `For each cluster, write a description matching the most appropriate tier below based on avg transaction values:\n\n` +
+    `LOWER-VALUE / RETAIL:\n"Cluster contains [N] parties exhibiting lower-value transactional behaviour with relatively stable transaction volatility and limited cross-border complexity. Behaviour patterns are broadly aligned to lower inherent AML exposure profiles, subject to normal monitoring thresholds. Predominant risk rating is [X]."\n\n` +
+    `MID-TIER COMMERCIAL:\n"Cluster contains [N] parties demonstrating elevated commercial transaction throughput with moderate behavioural variability. Increased cross-border activity and transaction dispersion indicate the need for continued monitoring of payment purpose, counterparty profile, and volume consistency. Cluster behaviour is consistent with mid-tier commercial risk typology indicators."\n\n` +
+    `HIGH-VALUE CORPORATE / PB:\n"Cluster contains [N] parties exhibiting materially higher-value transaction profiles consistent with corporate or private banking relationships. Elevated average transaction values and concentrated payment flows indicate enhanced monitoring relevance. Behaviour patterns suggest cross-border complexity and large-value flow indicators warranting enhanced review."\n\n` +
+    `Keep each description under 80 words. Use exact party counts from the data.\n\n` +
     `Return a JSON array ONLY: [{"label": "...", "description": "..."}]`;
 
   try {
     const res = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
-      { model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant', messages: [{ role: 'user', content: prompt }], max_tokens: 700, temperature: 0.2 },
+      {
+        model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user',   content: userPrompt }
+        ],
+        max_tokens: 800,
+        temperature: 0.15
+      },
       { headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' } }
     );
     const text = res.data.choices?.[0]?.message?.content || '';
@@ -685,30 +881,48 @@ app.post('/api/analysis/cluster-descriptions', async (req, res) => {
 app.post('/api/analysis/insights-summary', async (req, res) => {
   const { clusterDescriptions, anomalySummary } = req.body || {};
   const key = process.env.GROQ_API_KEY;
-  if (!key) return res.json({ summary: 'Groq API key not configured.' });
+  if (!key) return res.json({ summary: templateInsightsSummary(clusterDescriptions, anomalySummary) });
 
-  const prompt =
-    `You are a senior AML Risk & Compliance analyst preparing a concise executive insight summary for CRO leadership.\n` +
-    `Use ONLY the data provided below. Do not invent facts or figures.\n` +
-    `Write 3-4 sentences covering: key cluster patterns, notable anomaly risk, and one recommended leadership action.\n\n` +
-    `Cluster Descriptions:\n${JSON.stringify(clusterDescriptions, null, 2)}\n\n` +
-    `Anomaly Summary:\n${JSON.stringify(anomalySummary, null, 2)}`;
+  const systemPrompt =
+    `You are a senior AML Risk & Compliance analytics platform generating executive intelligence summaries for Chief Risk Officer decision-support. ` +
+    `Strict tone rules: Do not use first person. Do not say "our analysis reveals" or "I recommend". ` +
+    `Do not make accusatory statements. Do not say customers are involved in money laundering or terrorist financing. ` +
+    `Never use: suspicious, fraudulent, illegal, criminal, money laundering, terrorist financing. ` +
+    `Use institutional risk-indicator language: ` +
+    `"indicates elevated monitoring attention", "suggests behavioural deviation", "requires enhanced review", ` +
+    `"potential financial crime risk indicators", "AML monitoring indicators", "behavioural outlier", ` +
+    `"transaction concentration", "structuring indicator", "sanctions corridor exposure pattern". ` +
+    `Use ONLY the data provided. If data is not available, state: "Not available in source dataset."`;
+
+  const userPrompt =
+    `CLUSTER DESCRIPTIONS:\n${JSON.stringify(clusterDescriptions, null, 2)}\n\n` +
+    `ANOMALY SUMMARY:\n${JSON.stringify(anomalySummary, null, 2)}\n\n` +
+    `Generate an Analytics Intelligence Summary with EXACTLY these 5 numbered sections:\n\n` +
+    `1. Behavioural Segmentation Summary: [Describe customer cluster profile distribution using risk-indicator language. Reference cluster count and segment characteristics.]\n` +
+    `2. Key Risk Indicators: [Identify the material risk signals from the cluster data — transaction values, volatility, cross-border complexity, concentration.]\n` +
+    `3. Anomaly Concentration: [Quantify anomaly distribution — state total anomalies, high-risk count, escalated count, and investigation dispositions from the data.]\n` +
+    `4. Monitoring Implication: [State what the observed behavioural patterns mean for AML monitoring threshold calibration and oversight requirements.]\n` +
+    `5. Suggested Next Action: [One concise institutional action statement — not "I recommend". Use: "Priority review is indicated for..." or "Enhanced due diligence review is required..."]\n\n` +
+    `Use exact numbers from the data. Keep each section to 2-3 sentences.`;
 
   try {
     const response = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
       {
         model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 280,
-        temperature: 0.2
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user',   content: userPrompt }
+        ],
+        max_tokens: 600,
+        temperature: 0.15
       },
       { headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' } }
     );
-    res.json({ summary: response.data.choices?.[0]?.message?.content || 'Summary not available.' });
+    res.json({ summary: response.data.choices?.[0]?.message?.content || templateInsightsSummary(clusterDescriptions, anomalySummary) });
   } catch (err) {
     console.error('Insights summary error:', err.message);
-    res.json({ summary: 'Summary generation failed.' });
+    res.json({ summary: templateInsightsSummary(clusterDescriptions, anomalySummary) });
   }
 });
 
@@ -884,27 +1098,46 @@ async function loadVaultData() {
 }
 
 function vaultTemplateSummary(doc) {
-  if (doc.isEmail) {
+  const na = 'Not available in source document.';
+  const overview = [doc.title, doc.meta.date && `Date: ${doc.meta.date}`, doc.meta.author && `Author: ${doc.meta.author}`, doc.meta.classification && `Classification: ${doc.meta.classification}`].filter(Boolean).join(' | ');
+
+  if (doc.isEmail || doc.section === 'emails') {
     return [
-      `**Sender:** ${doc.meta.author || 'Not available in source document.'}`,
-      `**Recipients:** ${doc.meta.to || 'Not available in source document.'}`,
-      `**Subject:** ${doc.meta.subject || doc.title}`,
-      `**Date:** ${doc.meta.date || 'Not available in source document.'}`,
-      `**Main Message:** ${doc.preview || 'Not available in source document.'}`,
-      `**Required Actions:** Review document for specific action items.`,
-      `**Deadline:** ${doc.meta.deadline || 'Not available in source document.'}`,
-      `**Impacted Customers / Jurisdictions:** Not available in source document.`,
-      `**Escalation Required:** Not available in source document.`,
+      `**Document Overview [EXTRACTED]:** ${overview}`,
+      `**Main Message [EXTRACTED]:** ${doc.preview || na}`,
+      `**Required Actions [EXTRACTED]:** ${na} Review source document for explicit action items.`,
+      `**Deadlines [EXTRACTED]:** ${doc.meta.deadline || na}`,
+      `**Impacted Customers / Jurisdictions [EXTRACTED]:** ${na}`,
+      `**Policy / Regulatory Changes [EXTRACTED]:** ${na}`,
+      `**Escalation Requirements [EXTRACTED]:** ${na}`,
+      `**Source Traceability [EXTRACTED]:** Source: ${doc.title}. Full document available in Knowledge Vault.`,
     ].join('\n');
   }
+
+  if (doc.section === 'regulatory') {
+    return [
+      `**Document Overview [EXTRACTED]:** ${overview}`,
+      `**Regulation / Change Description [EXTRACTED]:** ${doc.preview || na}`,
+      `**Effective Date [EXTRACTED]:** ${na}`,
+      `**Impacted Business Areas [EXTRACTED]:** ${na}`,
+      `**Capital / Liquidity / Control Impact [INFERRED]:** ${na}`,
+      `**Required Implementation Actions [EXTRACTED]:** ${na} Review source document for explicit action items.`,
+      `**Deadlines [EXTRACTED]:** ${doc.meta.deadline || na}`,
+      `**Regulatory Authority [EXTRACTED]:** ${doc.meta.author || na}`,
+      `**Source Traceability [EXTRACTED]:** Source: ${doc.title}. Full document available in Knowledge Vault.`,
+    ].join('\n');
+  }
+
   return [
-    `**Executive Summary:** ${doc.preview || 'Not available in source document.'}`,
-    `**Key Findings:** Review document for detailed findings.`,
-    `**Risk / Regulatory Impact:** Not available in source document.`,
-    `**Required Actions:** Review document for action items.`,
-    `**Deadlines:** ${doc.meta.deadline || 'Not available in source document.'}`,
-    `**Owners / Teams Mentioned:** ${doc.meta.author || doc.meta.owner || 'Not available in source document.'}`,
-    `**Leadership Attention Required:** Please review the full document for leadership actions.`,
+    `**Document Overview [EXTRACTED]:** ${overview}`,
+    `**Key Risk Indicators [EXTRACTED]:** ${doc.preview || na}`,
+    `**Quantified Exposure [EXTRACTED]:** ${na}`,
+    `**High-Risk Jurisdictions [EXTRACTED]:** ${na}`,
+    `**High-Risk Entities [EXTRACTED]:** ${na}`,
+    `**Typologies Identified [EXTRACTED]:** ${na}`,
+    `**Required Actions [EXTRACTED]:** ${na} Review source document for explicit action items.`,
+    `**Escalations & Deadlines [EXTRACTED]:** ${doc.meta.deadline || na}`,
+    `**Source Traceability [EXTRACTED]:** Source: ${doc.title}. Full document available in Knowledge Vault.`,
   ].join('\n');
 }
 
@@ -912,32 +1145,79 @@ async function generateVaultSummary(doc) {
   const key = process.env.GROQ_API_KEY;
   if (!key) return vaultTemplateSummary(doc);
 
-  const emailPrompt =
-    `You are a senior Compliance analyst summarizing an internal email for CRO leadership.\n` +
-    `Use ONLY the content below. Do not invent any information.\n` +
-    `If a field is absent, say "Not available in source document."\n\n` +
-    `EMAIL CONTENT:\n${doc.content}\n\n` +
-    `Return ONLY a structured summary using exactly these bold labels (one per line):\n` +
-    `**Sender:**\n**Recipients:**\n**Subject:**\n**Date:**\n**Main Message:**\n` +
-    `**Required Actions:**\n**Deadline:**\n**Impacted Customers / Jurisdictions:**\n**Escalation Required:**`;
+  const truncated = doc.content.length > 4000 ? doc.content.substring(0, 4000) + '\n...[content truncated to fit context window]' : doc.content;
 
-  const docPrompt =
-    `You are a senior Risk & Compliance analyst preparing an executive brief for CRO leadership.\n` +
-    `Use ONLY the document content below. Do not invent any information.\n` +
-    `If a field is absent, say "Not available in source document."\n\n` +
-    `DOCUMENT CONTENT:\n${doc.content}\n\n` +
-    `Return ONLY a structured summary using exactly these bold labels (one per line):\n` +
-    `**Executive Summary:**\n**Key Findings:**\n**Risk / Regulatory Impact:**\n` +
-    `**Required Actions:**\n**Deadlines:**\n**Owners / Teams Mentioned:**\n**Leadership Attention Required:**`;
+  const systemPrompt =
+    `You are an enterprise intelligence extraction platform producing governance-safe structured summaries for regulatory and CRO review. ` +
+    `Extraction rules: ` +
+    `(1) Extract ONLY what is explicitly stated in the source document. Do not infer, expand, or speculate beyond the content. ` +
+    `(2) Preserve all numeric values, dates, entity names, and thresholds exactly as they appear. ` +
+    `(3) Tag each section with [EXTRACTED] if content is directly stated in the source, or [INFERRED] if synthesised from multiple parts. ` +
+    `(4) If information is absent, state exactly: "Not available in source document." ` +
+    `(5) Reference source section headings in parentheses where identifiable, e.g., (Source: Section 2.1). ` +
+    `Tone rules: Do not say "our analysis", "we recommend", or "leadership should". ` +
+    `Do not generate speculative conclusions or unsupported attributions. ` +
+    `Do not rewrite paragraphs — extract and structure factual content only. ` +
+    `Use quantified intelligence language: "47 transactions exceeded threshold", "14 entities identified", not "many" or "significant". ` +
+    `Forbidden: "our analysis", "we recommend", "leadership should", "this demonstrates significant", "criminal exposure", "major risk", "sanctions evasion confirmed".`;
+
+  const isEmail      = doc.isEmail || doc.section === 'emails';
+  const isRegulatory = doc.section === 'regulatory';
+
+  const emailPrompt =
+    `SOURCE TYPE: Internal Email\n\n` +
+    `DOCUMENT CONTENT:\n${truncated}\n\n` +
+    `Return ONLY a structured intelligence extraction using EXACTLY these bold labels with confidence tags (one per line):\n\n` +
+    `**Document Overview [EXTRACTED]:** [Title | Date | From | To — extract from headers only]\n` +
+    `**Main Message [EXTRACTED]:** [Direct extract of the core message — do not paraphrase]\n` +
+    `**Required Actions [EXTRACTED]:** [List each explicit action item numbered. If none: "Not available in source document."]\n` +
+    `**Deadlines [EXTRACTED]:** [Extract all explicit dates and timelines. If absent: "Not available in source document."]\n` +
+    `**Impacted Customers / Jurisdictions [EXTRACTED]:** [Named customers, jurisdictions, countries from document. If absent: "Not available in source document."]\n` +
+    `**Policy / Regulatory Changes [EXTRACTED]:** [Explicit policy or regulatory references stated. If absent: "Not available in source document."]\n` +
+    `**Escalation Requirements [EXTRACTED]:** [Explicit escalation instructions from document. If absent: "Not available in source document."]\n` +
+    `**Source Traceability [EXTRACTED]:** Source: ${doc.title}. Reference section headings where visible in the source content.`;
+
+  const regulatoryPrompt =
+    `SOURCE TYPE: Regulatory Document\n\n` +
+    `DOCUMENT CONTENT:\n${truncated}\n\n` +
+    `Return ONLY a structured intelligence extraction using EXACTLY these bold labels with confidence tags (one per line):\n\n` +
+    `**Document Overview [EXTRACTED]:** [Title | Date | Author | Classification — from document headers]\n` +
+    `**Regulation / Change Description [EXTRACTED]:** [Name and description of regulation or policy change as stated. No paraphrase.]\n` +
+    `**Effective Date [EXTRACTED]:** [Exact date stated. If absent: "Not available in source document."]\n` +
+    `**Impacted Business Areas [EXTRACTED]:** [Named business areas, desks, or functions from document. If absent: "Not available in source document."]\n` +
+    `**Capital / Liquidity / Control Impact [INFERRED]:** [Quantified impact values if stated; otherwise synthesise from explicit figures. If none: "Not available in source document."]\n` +
+    `**Required Implementation Actions [EXTRACTED]:** [Numbered list of explicit required actions. If absent: "Not available in source document."]\n` +
+    `**Deadlines [EXTRACTED]:** [Extract all compliance deadlines and dates. If absent: "Not available in source document."]\n` +
+    `**Regulatory Authority [EXTRACTED]:** [Named regulatory body, regulator, or issuing authority. If absent: "Not available in source document."]\n` +
+    `**Source Traceability [EXTRACTED]:** Source: ${doc.title}. Reference section headings where visible.`;
+
+  const riskPrompt =
+    `SOURCE TYPE: Risk Analysis Document\n\n` +
+    `DOCUMENT CONTENT:\n${truncated}\n\n` +
+    `Return ONLY a structured intelligence extraction using EXACTLY these bold labels with confidence tags (one per line):\n\n` +
+    `**Document Overview [EXTRACTED]:** [Title | Date | Author | Classification — from document headers]\n` +
+    `**Key Risk Indicators [EXTRACTED]:** [List stated risk indicators using exact language from source. Preserve quantities: "47 transactions", "14 chains", "87 counterparties".]\n` +
+    `**Quantified Exposure [EXTRACTED]:** [Extract all numeric exposure values, transaction counts, thresholds exactly as stated. If absent: "Not available in source document."]\n` +
+    `**High-Risk Jurisdictions [EXTRACTED]:** [Named jurisdictions, countries, or corridors from source. If absent: "Not available in source document."]\n` +
+    `**High-Risk Entities [EXTRACTED]:** [Named counterparties, institutions, or entities from source. Preserve exact names. If absent: "Not available in source document."]\n` +
+    `**Typologies Identified [EXTRACTED]:** [Named risk typologies or patterns from source. If absent: "Not available in source document."]\n` +
+    `**Required Actions [EXTRACTED]:** [Numbered list of explicit required actions from document. If absent: "Not available in source document."]\n` +
+    `**Escalations & Deadlines [EXTRACTED]:** [Explicit escalation requirements and dates. If absent: "Not available in source document."]\n` +
+    `**Source Traceability [EXTRACTED]:** Source: ${doc.title}. Reference section headings where visible in the source content.`;
+
+  const userPrompt = isEmail ? emailPrompt : isRegulatory ? regulatoryPrompt : riskPrompt;
 
   try {
     const res = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
       {
         model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
-        messages: [{ role: 'user', content: doc.isEmail ? emailPrompt : docPrompt }],
-        max_tokens: 1400,
-        temperature: 0.15
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user',   content: userPrompt }
+        ],
+        max_tokens: 1600,
+        temperature: 0.1
       },
       { headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' } }
     );
@@ -1269,6 +1549,232 @@ Risk Intelligence Platform`;
   } catch (err) {
     console.error('Groq email error:', err.message);
     res.json({ email: `Failed to generate email: ${err.message}` });
+  }
+});
+
+// ─── Scenario Intelligence Module ────────────────────────────────────────────
+
+const SCENARIO_DIR = path.join(__dirname, 'data', 'scenario');
+
+function loadScenarioChartData() {
+  if (!fs.existsSync(SCENARIO_DIR)) return {};
+  const files = fs.readdirSync(SCENARIO_DIR).filter(f => /\.xlsx?$/i.test(f));
+  if (!files.length) return {};
+  const result = {};
+  try {
+    const wb = XLSX.readFile(path.join(SCENARIO_DIR, files[0]));
+    console.log('Scenario Excel sheets:', wb.SheetNames);
+    for (const sheet of wb.SheetNames) {
+      const ws  = wb.Sheets[sheet];
+      const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+      // Find first non-empty row
+      const firstNonEmpty = raw.find(r => r.some(c => c !== '')) || [];
+
+      // Decide if first non-empty row is a header row (contains at least one non-numeric string cell)
+      // or a pure data row (all cells are numbers or empty)
+      const nonEmptyCells = firstNonEmpty.filter(c => c !== '');
+      const stringCount   = nonEmptyCells.filter(c => typeof c === 'string' && isNaN(Number(c))).length;
+      const hasHeaders    = stringCount >= 1;
+
+      let rows;
+      if (hasHeaders) {
+        // Skip to that row as the header
+        const headerIdx = raw.indexOf(firstNonEmpty);
+        rows = XLSX.utils.sheet_to_json(ws, { defval: null, range: headerIdx });
+        rows = rows.map(row => { const r = {}; for (const [k, v] of Object.entries(row)) r[String(k).trim()] = v; return r; });
+      } else {
+        // No headers — read raw arrays and assign generic column names
+        const dataRows = raw.filter(r => r.some(c => c !== ''));
+        const maxCols  = Math.max(...dataRows.map(r => r.length));
+        const colNames = Array.from({ length: maxCols }, (_, i) => i === 0 ? 'Label' : `Value${i}`);
+        rows = dataRows.map(r => {
+          const obj = {};
+          colNames.forEach((name, i) => { obj[name] = r[i] !== undefined ? r[i] : null; });
+          return obj;
+        });
+      }
+
+      result[sheet] = rows.filter(r => Object.values(r).some(v => v !== null && v !== '' && v !== undefined));
+    }
+  } catch (err) {
+    console.error('Scenario Excel error:', err.message);
+  }
+  return result;
+}
+
+async function loadScenarioDocument() {
+  if (!mammoth) return null;
+  if (!fs.existsSync(SCENARIO_DIR)) return null;
+  const files = fs.readdirSync(SCENARIO_DIR).filter(f => /\.docx?$/i.test(f));
+  if (!files.length) return null;
+  try {
+    const { value } = await mammoth.extractRawText({ path: path.join(SCENARIO_DIR, files[0]) });
+    return value;
+  } catch (err) {
+    console.error('Scenario doc error:', err.message);
+    return null;
+  }
+}
+
+function extractScenarioExecutiveSummary(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+  // Pass 1: look for explicit "Executive Summary" heading
+  let collecting = false;
+  const collected = [];
+  for (const line of lines) {
+    if (/executive\s+summary/i.test(line)) { collecting = true; continue; }
+    if (collecting) {
+      if (/^(first.?order|second.?order|scope|model.?limit|regulatory|action|section\s+\d|table\s+\d|\d+\.\s+[A-Z])/i.test(line) && collected.length > 2) break;
+      if (line.length > 5) collected.push(line);
+      if (collected.length >= 20) break;
+    }
+  }
+  if (collected.length) return collected.join(' ').trim();
+
+  // Pass 2: return the first few substantial paragraphs (>50 chars) as the summary
+  const paras = lines.filter(l => l.length > 50).slice(0, 8);
+  return paras.join(' ').trim();
+}
+
+function extractQuantificationValues(text) {
+  const result = {};
+  const METRICS = {
+    'Trading VaR Breach':   /(?:trading\s+)?var\s+breach[:\s]+([£$€\d.,\s%MBKmbn]+)/i,
+    'PVBP Spike':           /pvbp\s+(?:spike|increase|change)[:\s]+([£$€\d.,\s%MBKmbn]+)/i,
+    'CS01 Widening':        /cs01\s+(?:widening|spike|change)[:\s]+([£$€\d.,\s%MBKmbn]+)/i,
+    'FX Net Short':         /fx\s+net\s+short[:\s]+([£$€\d.,\s%MBKmbn]+)/i,
+    'Margin Call Volumes':  /margin\s+call\s+(?:volumes?|amount)[:\s]+([£$€\d.,\s%MBKmbn]+)/i,
+    'Asset Liquidity':      /asset\s+liquidity[:\s]+([£$€\d.,\s%MBKmbn]+)/i,
+    'Survival Horizon':     /survival\s+horizon[:\s]+([£$€\d.,\s%MBKmbn]+)/i,
+  };
+  for (const [key, regex] of Object.entries(METRICS)) {
+    const m = text.match(regex);
+    const val = m ? m[1].trim().replace(/\s+/g, ' ') : null;
+    // Only include if it doesn't look like a placeholder (xx, yy, $z, n/a)
+    result[key] = (val && !/^(xx|yy|zz|\$[xyz]|n\/a|tbc|tbd|\?+)$/i.test(val)) ? val : null;
+  }
+  return result;
+}
+
+app.get('/api/scenario/data', async (req, res) => {
+  const docFiles   = fs.existsSync(SCENARIO_DIR) ? fs.readdirSync(SCENARIO_DIR).filter(f => /\.docx?$/i.test(f)) : [];
+  const excelFiles = fs.existsSync(SCENARIO_DIR) ? fs.readdirSync(SCENARIO_DIR).filter(f => /\.xlsx?$/i.test(f)) : [];
+
+  if (!docFiles.length && !excelFiles.length) {
+    return res.json({ available: false, message: 'Scenario files not found. Please place Scenario_Analysis_Module.docx and Scenario_Analysis_ChartData.xlsx in /data/scenario/.' });
+  }
+
+  const text = await loadScenarioDocument();
+  const executiveSummary   = text ? extractScenarioExecutiveSummary(text) : '';
+  const quantification     = text ? extractQuantificationValues(text)     : {};
+  res.json({ available: true, executiveSummary, quantification, hasDoc: !!docFiles.length, hasExcel: !!excelFiles.length });
+});
+
+app.get('/api/scenario/chart-data', (req, res) => {
+  const excelFiles = fs.existsSync(SCENARIO_DIR) ? fs.readdirSync(SCENARIO_DIR).filter(f => /\.xlsx?$/i.test(f)) : [];
+  if (!excelFiles.length) {
+    return res.json({ available: false, message: 'Scenario chart data not found. Please place Scenario_Analysis_ChartData.xlsx in /data/scenario/.' });
+  }
+
+  const raw = loadScenarioChartData();
+  if (!Object.keys(raw).length) {
+    return res.json({ available: false, message: 'Chart data not available in uploaded Excel file.' });
+  }
+
+  const SHEET_CFG = {
+    '1_VaR_Breach_Timeline':  { type: 'line',          title: 'Trading VaR Escalation' },
+    '2_Unhedged_Sensitivity': { type: 'bar',            title: 'Unhedged Sensitivity Build-Up' },
+    '3_Liquidity_Impact':     { type: 'bar',            title: 'Liquidity / LCR / Survival Horizon Impact' },
+    '4_PnL_Impact':           { type: 'bar',            title: 'Daily P&L Impact by Desk' },
+    '5_RWA_Capital_Impact':   { type: 'bar',            title: 'RWA and Capital Impact' },
+    '6_Margin_Collateral':    { type: 'horizontalBar',  title: 'Trapped Margin and Collateral Impact' },
+    '7_Risk_Stripe_Heatmap':  { type: 'heatmap',        title: 'Risk Stripe Severity Heatmap' },
+  };
+
+  const charts = {};
+  for (const [sheet, rows] of Object.entries(raw)) {
+    if (sheet === '0_Chart_Guide') continue;
+    const cfg  = SHEET_CFG[sheet];
+    if (!cfg) continue;
+    if (!rows.length) { charts[sheet] = { ...cfg, available: false }; continue; }
+
+    const cols = Object.keys(rows[0]);
+
+    if (cfg.type === 'heatmap') {
+      charts[sheet] = { ...cfg, available: true, rows, columns: cols };
+      continue;
+    }
+
+    const labelCol  = cols[0];
+    const valueCols = cols.slice(1).filter(c =>
+      rows.some(r => r[c] !== null && r[c] !== undefined && !isNaN(parseFloat(r[c])))
+    );
+
+    if (!valueCols.length) { charts[sheet] = { ...cfg, available: false }; continue; }
+
+    if (valueCols.length === 1) {
+      charts[sheet] = {
+        ...cfg, available: true,
+        chart_data: {
+          labels: rows.map(r => String(r[labelCol] ?? '')),
+          values: rows.map(r => parseFloat(r[valueCols[0]]) || 0)
+        }
+      };
+    } else {
+      charts[sheet] = {
+        ...cfg, available: true, multi: true,
+        chart_data: {
+          labels:   rows.map(r => String(r[labelCol] ?? '')),
+          datasets: valueCols.map(col => ({
+            label:  col,
+            values: rows.map(r => parseFloat(r[col]) || 0)
+          }))
+        }
+      };
+    }
+  }
+
+  res.json({ available: true, charts });
+});
+
+app.post('/api/scenario/briefing', async (req, res) => {
+  const { type = 'cro' } = req.body || {};
+  const key = process.env.GROQ_API_KEY;
+  if (!key) return res.json({ briefing: 'Groq API key is not configured. Please add GROQ_API_KEY to environment variables.' });
+
+  const text = await loadScenarioDocument();
+  if (!text) return res.json({ briefing: 'Scenario document not found. Please place Scenario_Analysis_Module.docx in /data/scenario/.' });
+
+  const truncated = text.length > 5000 ? text.substring(0, 5000) + '\n[Content truncated]' : text;
+
+  const FORMATS = {
+    cro: `Generate a CRO Briefing with these numbered sections:\n1. Situation Overview\n2. Why This Matters\n3. Risk Stripes Activated\n4. Financial / Capital Impact\n5. Liquidity / Survival Horizon Considerations\n6. Regulatory Notifications\n7. Immediate Decisions Required\n8. Recommended Management Actions\n9. Open Data Gaps`,
+    board: `Generate a Board Update with these numbered sections:\n1. Event Summary\n2. Key Risk Concerns\n3. Financial Impact\n4. Required Board Awareness\n5. Decisions / Approvals Required`,
+    regulator: `Generate a Regulator Update with these numbered sections:\n1. Incident Description\n2. Timeline\n3. Bank Impact\n4. Client / Market Impact\n5. Controls Activated\n6. Further Updates`,
+    actions: `Generate a concise executive Action Playbook Summary covering:\n1. Critical Immediate Priorities (0–4 Hours)\n2. Key Short-Term Actions (4–24 Hours)\n3. Ongoing Management Requirements\n4. Ownership and Governance\n5. Escalation Triggers\nFocus on the most critical decisions required from CRO leadership. Be direct and action-oriented.`
+  };
+
+  const prompt =
+    `You are an executive risk intelligence assistant for a CRO dashboard.\n` +
+    `Use ONLY the source data provided. Do not use external knowledge or invent facts, figures, legal obligations, or exposures.\n` +
+    `If information is missing, state: "Not available in source document."\n` +
+    `Write in concise senior leadership language. Keep the tone board-ready, factual, and risk-focused.\n\n` +
+    `SCENARIO: CME Exchange Failure — Closure of an Exchange due to Cyber Attack\n\n` +
+    `SOURCE DOCUMENT:\n${truncated}\n\n` +
+    (FORMATS[type] || FORMATS.cro);
+
+  try {
+    const response = await axios.post(
+      'https://api.groq.com/openai/v1/chat/completions',
+      { model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant', messages: [{ role: 'user', content: prompt }], max_tokens: 1500, temperature: 0.2 },
+      { headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' } }
+    );
+    res.json({ briefing: response.data.choices?.[0]?.message?.content || 'Unable to generate briefing.' });
+  } catch (err) {
+    console.error('Scenario briefing error:', err.message);
+    res.json({ briefing: `Failed to generate briefing: ${err.message}` });
   }
 });
 
