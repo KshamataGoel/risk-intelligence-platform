@@ -29,28 +29,28 @@
   --primary:        #8B1C1C;
   --primary-dark:   #6B1515;
   --primary-hover:  #9e2020;
-  --primary-light:  rgba(139,28,28,0.08);
-  --sidebar-bg:     #0F172A;
+  --primary-light:  rgba(139,28,28,0.15);
+  --sidebar-bg:     #060A12;
   --sidebar-border: rgba(255,255,255,0.07);
   --sidebar-text:   #94A3B8;
   --sidebar-hover:  rgba(255,255,255,0.07);
-  --bg:             #F1F5F9;
-  --surface:        #FFFFFF;
-  --border:         #E2E8F0;
-  --text:           #0F172A;
-  --text-2:         #475569;
-  --text-3:         #94A3B8;
-  --success-bg:     #ECFDF5;
-  --success-text:   #065F46;
-  --warning-bg:     #FFFBEB;
-  --warning-text:   #92400E;
-  --danger-bg:      #FEF2F2;
-  --danger-text:    #991B1B;
+  --bg:             #070B13;
+  --surface:        #0D1321;
+  --border:         rgba(255,255,255,0.08);
+  --text:           #E2E8F0;
+  --text-2:         #94A3B8;
+  --text-3:         #64748B;
+  --success-bg:     rgba(5,150,105,0.15);
+  --success-text:   #6EE7B7;
+  --warning-bg:     rgba(245,158,11,0.12);
+  --warning-text:   #FCD34D;
+  --danger-bg:      rgba(239,68,68,0.12);
+  --danger-text:    #FCA5A5;
   --radius:         10px;
   --radius-sm:      6px;
-  --shadow:         0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.05);
-  --shadow-md:      0 4px 12px rgba(0,0,0,0.08);
-  --shadow-lg:      0 10px 25px rgba(0,0,0,0.1);
+  --shadow:         0 1px 4px rgba(0,0,0,0.4),0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md:      0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg:      0 10px 32px rgba(0,0,0,0.6);
 }
 
 html, body, #root { height: 100%; }
@@ -1662,6 +1662,130 @@ tbody tr:last-child td { border-bottom: none; }
 .quant-popover-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-3); margin-bottom:3px; }
 .quant-popover-val { font-size:12.5px; color:var(--text-2); line-height:1.6; }
 .quant-popover-evidence { background:#fff; border:1px solid var(--border); border-left:2px solid var(--primary); border-radius:var(--radius-sm); padding:8px 10px; font-size:12px; color:var(--text-2); line-height:1.6; font-style:italic; margin-top:4px; }
+
+/* ══════════════════════════════════════════════════════════════
+   GLOBAL DARK THEME OVERRIDES
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Body & Page Shell ── */
+body { background: var(--bg); color: var(--text); }
+
+/* ── TopNav ── */
+.topnav { background: #080D18; box-shadow: 0 1px 0 rgba(255,255,255,0.06); }
+
+/* ── Inputs, Selects, Textareas ── */
+input, select, textarea,
+.input-box, .search-input, .filter-select {
+  background: rgba(255,255,255,0.04) !important;
+  color: var(--text) !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+input::placeholder, textarea::placeholder { color: var(--text-3) !important; }
+input:focus, select:focus, textarea:focus {
+  background: rgba(255,255,255,0.07) !important;
+  border-color: rgba(139,28,28,0.6) !important;
+  outline: none;
+}
+
+/* ── Chip / ds-chip ── */
+.ds-chip { background: rgba(255,255,255,0.05) !important; }
+
+/* ── Module card icons ── */
+.module-card-icon.green  { background: rgba(21,128,61,0.18) !important; color: #4ade80 !important; }
+.module-card-icon.purple { background: rgba(109,40,217,0.18) !important; color: #a78bfa !important; }
+.module-card-icon.red    { background: rgba(139,28,28,0.22) !important; color: #fca5a5 !important; }
+.module-card-icon.amber  { background: rgba(217,119,6,0.18) !important; color: #fcd34d !important; }
+
+/* ── Badge Soon ── */
+.badge-soon { background: rgba(255,255,255,0.07) !important; color: var(--text-3) !important; }
+
+/* ── Summary sections ── */
+.summary-section.section-orange { background: rgba(249,115,22,0.10) !important; border-left-color: #f97316 !important; }
+.summary-section.section-purple { background: rgba(139,92,246,0.10) !important; border-left-color: #8b5cf6 !important; }
+.summary-section.section-teal   { background: rgba(20,184,166,0.10) !important; border-left-color: #14b8a6 !important; }
+.summary-section.section-gray   { background: rgba(148,163,184,0.08) !important; border-left-color: #64748b !important; }
+
+/* ── General tables ── */
+tbody tr:hover td                 { background: rgba(255,255,255,0.04) !important; }
+.anomaly-table thead th           { background: rgba(255,255,255,0.05) !important; }
+.anomaly-table tbody tr:hover td  { background: rgba(255,255,255,0.04) !important; }
+.anomaly-table .expand-row td     { background: rgba(255,255,255,0.03) !important; }
+.anomaly-table .expand-row td:hover { background: rgba(255,255,255,0.03) !important; }
+.impact-table th                  { background: rgba(255,255,255,0.05) !important; }
+.impact-table tr:hover td         { background: rgba(255,255,255,0.03) !important; }
+
+/* ── Risk pills ── */
+.risk-pill.high   { background: rgba(239,68,68,0.15) !important;   color: #fca5a5 !important; }
+.risk-pill.medium { background: rgba(245,158,11,0.15) !important;  color: #fcd34d !important; }
+.risk-pill.low    { background: rgba(34,197,94,0.15) !important;   color: #86efac !important; }
+
+/* ── Status pills ── */
+.status-pill            { background: rgba(255,255,255,0.07) !important; color: var(--text-2) !important; }
+.status-pill.escalated  { background: rgba(239,68,68,0.15) !important;  color: #fca5a5 !important; }
+.status-pill.invest     { background: rgba(245,158,11,0.15) !important; color: #fcd34d !important; }
+
+/* ── Severity pills ── */
+.sev-critical { background: rgba(239,68,68,0.15) !important;  color: #fca5a5 !important; border-color: rgba(239,68,68,0.3) !important; }
+.sev-high     { background: rgba(249,115,22,0.15) !important; color: #fb923c !important; border-color: rgba(249,115,22,0.3) !important; }
+.sev-medium   { background: rgba(245,158,11,0.12) !important; color: #fcd34d !important; border-color: rgba(245,158,11,0.3) !important; }
+.sev-low      { background: rgba(34,197,94,0.12) !important;  color: #86efac !important; border-color: rgba(34,197,94,0.25) !important; }
+
+/* ── Anomaly narrative sections ── */
+.anomaly-narrative-section.anv-drivers { background: rgba(139,92,246,0.10) !important; border-left-color: #8b5cf6 !important; }
+.anomaly-narrative-section.anv-risk    { background: rgba(249,115,22,0.10) !important; border-left-color: #f97316 !important; }
+.anomaly-narrative-section.anv-status  { background: rgba(148,163,184,0.08) !important; border-left-color: #64748b !important; }
+.anomaly-narrative-section.anv-review  { background: rgba(34,197,94,0.10) !important;  border-left-color: #22c55e !important; }
+
+/* ── Feature tags ── */
+.feat-tag          { background: rgba(255,255,255,0.06) !important; color: var(--text-3) !important; }
+.feat-risk.high    { background: rgba(239,68,68,0.15) !important;  color: #fca5a5 !important; border-color: rgba(239,68,68,0.3) !important; }
+.feat-risk.medium  { background: rgba(245,158,11,0.12) !important; color: #fcd34d !important; border-color: rgba(245,158,11,0.3) !important; }
+.feat-risk.low     { background: rgba(34,197,94,0.12) !important;  color: #86efac !important; border-color: rgba(34,197,94,0.25) !important; }
+
+/* ── Cluster desc card ── */
+.cluster-desc-card { background: rgba(255,255,255,0.04) !important; }
+
+/* ── Vault card icons ── */
+.vault-card-icon.risk    { background: rgba(139,28,28,0.22) !important; }
+.vault-card-icon.emails  { background: rgba(109,40,217,0.22) !important; color: #a78bfa !important; }
+
+/* ── Vault meta tags ── */
+.vault-meta-tag.classif-confidential { background: rgba(239,68,68,0.12) !important; color: #fca5a5 !important; border-color: rgba(239,68,68,0.25) !important; }
+.vault-meta-tag.classif-internal     { background: rgba(245,158,11,0.12) !important; color: #fcd34d !important; border-color: rgba(245,158,11,0.25) !important; }
+.vault-meta-tag.classif-restricted   { background: rgba(249,115,22,0.12) !important; color: #fb923c !important; border-color: rgba(249,115,22,0.25) !important; }
+.vault-meta-tag.classif-public       { background: rgba(34,197,94,0.12) !important;  color: #86efac !important; border-color: rgba(34,197,94,0.2) !important; }
+.vault-meta-tag.status-active        { background: rgba(34,197,94,0.12) !important;  color: #86efac !important; border-color: rgba(34,197,94,0.2) !important; }
+.vault-meta-tag.status-review        { background: rgba(245,158,11,0.12) !important; color: #fcd34d !important; border-color: rgba(245,158,11,0.25) !important; }
+
+/* ── Misc cards & popovers ── */
+.quant-popover           { background: #111827 !important; }
+.quant-popover-evidence  { background: rgba(255,255,255,0.04) !important; }
+.model-warning-card      { background: rgba(245,158,11,0.10) !important; border-color: rgba(245,158,11,0.25) !important; border-left-color: #d97706 !important; }
+.action-why-block        { background: rgba(245,158,11,0.10) !important; border-color: rgba(245,158,11,0.2) !important; border-left-color: #d97706 !important; color: var(--text-2) !important; }
+.source-drawer-evidence  { background: rgba(255,255,255,0.04) !important; }
+.flow-view-source-btn:hover { background: rgba(139,28,28,0.2) !important; }
+
+/* ── Tables (general thead + td borders) ── */
+thead th { background: rgba(255,255,255,0.05) !important; }
+tbody td  { border-bottom-color: rgba(255,255,255,0.06) !important; }
+
+/* ── Concentration / info banners ── */
+.concentration-banner { background: rgba(245,158,11,0.10) !important; border-color: rgba(245,158,11,0.25) !important; border-left-color: #f59e0b !important; color: #fcd34d !important; }
+.concentration-banner i { color: #f59e0b !important; }
+.quality-note { background: rgba(255,255,255,0.04) !important; border-color: rgba(255,255,255,0.08) !important; }
+.info-row { background: rgba(255,255,255,0.04) !important; border-color: rgba(255,255,255,0.08) !important; }
+.axis-selectors { background: rgba(255,255,255,0.04) !important; }
+
+/* ── Vault card footer ── */
+.vault-card-footer { background: rgba(255,255,255,0.03) !important; }
+
+/* ── Report source card selected ── */
+.report-source-card.selected { background: rgba(139,28,28,0.12) !important; }
+
+/* ── Print override stays light ── */
+@media print {
+  body { background: #fff !important; color: #000 !important; }
+}
 </style>
 </head>
 <body>
