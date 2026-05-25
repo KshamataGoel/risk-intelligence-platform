@@ -304,17 +304,27 @@ body {
   min-height: 100vh;
   background: #070B13;
   background-image:
-    radial-gradient(ellipse at 15% 0%,   rgba(139,28,28,0.14)  0%, transparent 48%),
-    radial-gradient(ellipse at 85% 100%, rgba(59,130,246,0.07) 0%, transparent 52%);
+    radial-gradient(ellipse at 20% 10%,  rgba(250,204,21,0.07) 0%, transparent 48%),
+    radial-gradient(ellipse at 80% 90%,  rgba(59,130,246,0.06) 0%, transparent 52%);
   display: flex; flex-direction: column; color: #fff;
 }
 .home-header {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:0 52px; height:60px; flex-shrink:0;
+  display:flex; align-items:center;
+  padding:0 52px; height:62px; flex-shrink:0; gap:0;
   border-bottom:1px solid rgba(255,255,255,0.06);
-  background:rgba(7,11,19,0.92); backdrop-filter:blur(10px);
+  background:rgba(7,11,19,0.94); backdrop-filter:blur(12px);
   position:sticky; top:0; z-index:100;
 }
+.home-nav { flex:1; display:flex; align-items:center; justify-content:center; gap:4px; }
+.home-nav-item {
+  display:flex; align-items:center; gap:7px;
+  padding:7px 16px; border-radius:8px; border:none; cursor:pointer;
+  background:transparent; color:rgba(255,255,255,0.45);
+  font-size:12.5px; font-family:inherit; font-weight:500;
+  letter-spacing:-0.1px; transition:all 0.18s; white-space:nowrap;
+}
+.home-nav-item:hover { background:rgba(255,255,255,0.07); color:#fff; }
+.home-nav-item i { font-size:12px; opacity:0.8; }
 .home-brand { display:flex; align-items:center; gap:10px; }
 .home-brand-icon {
   width:28px; height:28px; background:var(--primary); border-radius:7px;
@@ -369,22 +379,39 @@ body {
 
 /* Hero */
 .home-hero-wrap {
-  display:flex; flex-direction:column; align-items:center; text-align:center;
-  padding:42px 52px 28px; flex-shrink:0;
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; text-align:center; padding:60px 52px 80px;
 }
 .home-eyebrow {
-  font-size:10.5px; font-weight:700; letter-spacing:2.5px;
-  text-transform:uppercase; color:rgba(255,255,255,0.28); margin-bottom:12px;
+  font-size:10.5px; font-weight:700; letter-spacing:3px;
+  text-transform:uppercase; color:rgba(255,255,255,0.28); margin-bottom:18px;
 }
 .home-title {
-  font-size:50px; font-weight:800; line-height:1.04;
-  letter-spacing:-2.5px; color:#fff; margin-bottom:12px;
+  font-size:76px; font-weight:800; line-height:1.0;
+  letter-spacing:-4px; color:#fff; margin-bottom:20px;
 }
 .home-title span {
-  background:linear-gradient(135deg,#ef4444 0%,#8B1C1C 100%);
+  background:linear-gradient(135deg,#facc15 0%,#d97706 100%);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
 }
-.home-sub { font-size:14px; color:rgba(255,255,255,0.36); line-height:1.72; max-width:520px; }
+.home-sub { font-size:15px; color:rgba(255,255,255,0.36); line-height:1.78; max-width:560px; margin-bottom:42px; }
+.home-hero-ctas { display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:center; }
+.home-cta-btn {
+  display:flex; align-items:center; gap:8px;
+  padding:11px 22px; border-radius:10px; cursor:pointer;
+  font-size:13px; font-weight:600; font-family:inherit;
+  transition:all 0.2s; border:none; letter-spacing:-0.1px;
+}
+.home-cta-btn.primary {
+  background:linear-gradient(135deg,#facc15,#d97706);
+  color:#0a0a0a;
+}
+.home-cta-btn.primary:hover { opacity:0.88; transform:translateY(-1px); box-shadow:0 8px 24px rgba(250,204,21,0.3); }
+.home-cta-btn.secondary {
+  background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.7);
+  border:1px solid rgba(255,255,255,0.1);
+}
+.home-cta-btn.secondary:hover { background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.2); }
 
 /* 2×2 Module tiles */
 .home-modules-section {
@@ -1972,79 +1999,10 @@ function HomePage({ setPage }) {
     { icon:'fa-triangle-exclamation',label:'Risk Alerts', value:'12', sub:'flagged' },
   ];
 
-  const GRAPHICS = {
-    insights: (
-      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
-        <line x1="0" y1="22" x2="240" y2="22" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
-        <line x1="0" y1="44" x2="240" y2="44" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
-        <line x1="0" y1="68" x2="240" y2="68" stroke="rgba(255,255,255,0.05)" strokeWidth="1"/>
-        <rect x="14"  y="16" width="28" height="52" rx="4" fill="rgba(239,68,68,0.55)"/>
-        <rect x="54"  y="32" width="28" height="36" rx="4" fill="rgba(239,68,68,0.38)"/>
-        <rect x="94"  y="6"  width="28" height="62" rx="4" fill="rgba(239,68,68,0.72)"/>
-        <rect x="134" y="24" width="28" height="44" rx="4" fill="rgba(239,68,68,0.48)"/>
-        <rect x="174" y="10" width="28" height="58" rx="4" fill="rgba(239,68,68,0.62)"/>
-        <rect x="210" y="38" width="22" height="30" rx="4" fill="rgba(239,68,68,0.32)"/>
-        <circle cx="94"  cy="6"  r="3.5" fill="rgba(239,68,68,0.9)"/>
-        <circle cx="174" cy="10" r="3"   fill="rgba(239,68,68,0.75)"/>
-      </svg>
-    ),
-    vault: (
-      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
-        <rect x="58" y="24" width="148" height="44" rx="5" fill="rgba(5,150,105,0.07)" stroke="rgba(5,150,105,0.14)" strokeWidth="1"/>
-        <rect x="44" y="15" width="148" height="44" rx="5" fill="rgba(5,150,105,0.10)" stroke="rgba(5,150,105,0.20)" strokeWidth="1"/>
-        <rect x="30" y="6"  width="148" height="44" rx="5" fill="rgba(5,150,105,0.15)" stroke="rgba(5,150,105,0.32)" strokeWidth="1"/>
-        <path d="M 160 6 L 178 6 L 178 22 L 160 22 Z" fill="rgba(5,150,105,0.22)"/>
-        <path d="M 160 6 L 178 22 L 160 22 Z" fill="rgba(5,150,105,0.12)"/>
-        <rect x="42" y="20" width="96"  height="3"   rx="1.5"  fill="rgba(110,231,183,0.4)"/>
-        <rect x="42" y="29" width="72"  height="2.5" rx="1.25" fill="rgba(110,231,183,0.24)"/>
-        <rect x="42" y="37" width="88"  height="2.5" rx="1.25" fill="rgba(110,231,183,0.20)"/>
-        <rect x="42" y="45" width="58"  height="2.5" rx="1.25" fill="rgba(110,231,183,0.16)"/>
-      </svg>
-    ),
-    analysis: (
-      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
-        <line x1="25"  y1="53" x2="62"  y2="26" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
-        <line x1="62"  y1="26" x2="106" y2="42" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
-        <line x1="106" y1="42" x2="142" y2="15" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
-        <line x1="142" y1="15" x2="184" y2="35" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
-        <line x1="184" y1="35" x2="215" y2="56" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
-        <line x1="62"  y1="26" x2="90"  y2="9"  stroke="rgba(139,92,246,0.14)" strokeWidth="0.8"/>
-        <line x1="106" y1="42" x2="78"  y2="60" stroke="rgba(139,92,246,0.14)" strokeWidth="0.8"/>
-        <line x1="142" y1="15" x2="168" y2="53" stroke="rgba(139,92,246,0.14)" strokeWidth="0.8"/>
-        <path d="M 14 62 Q 120 13 226 33" stroke="rgba(139,92,246,0.48)" strokeWidth="1.5" strokeDasharray="5 3" fill="none"/>
-        <circle cx="25"  cy="53" r="4.5" fill="rgba(139,92,246,0.68)"/>
-        <circle cx="62"  cy="26" r="6.5" fill="rgba(139,92,246,0.8)"/>
-        <circle cx="90"  cy="9"  r="3.5" fill="rgba(139,92,246,0.55)"/>
-        <circle cx="106" cy="42" r="5"   fill="rgba(139,92,246,0.7)"/>
-        <circle cx="78"  cy="60" r="3"   fill="rgba(139,92,246,0.5)"/>
-        <circle cx="142" cy="15" r="8"   fill="rgba(167,139,250,0.88)"/>
-        <circle cx="168" cy="53" r="3.5" fill="rgba(139,92,246,0.58)"/>
-        <circle cx="184" cy="35" r="4.5" fill="rgba(139,92,246,0.7)"/>
-        <circle cx="215" cy="56" r="3"   fill="rgba(139,92,246,0.48)"/>
-      </svg>
-    ),
-    scenario: (
-      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
-        <line x1="0" y1="52" x2="240" y2="52" stroke="rgba(255,255,255,0.07)" strokeWidth="1"/>
-        <line x1="0" y1="34" x2="240" y2="34" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
-        <path d="M 0 52 L 50 52 C 65 52 68 38 76 24 C 84 10 92 4 102 5 C 112 6 116 12 124 25 C 132 38 136 52 154 52 L 240 52 Z" fill="rgba(217,119,6,0.1)"/>
-        <path d="M 0 52 L 50 52 C 65 52 68 38 76 24 C 84 10 92 4 102 5 C 112 6 116 12 124 25 C 132 38 136 52 154 52 L 240 52" stroke="#f59e0b" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-        <circle cx="102" cy="5"  r="4.5" fill="#f59e0b" opacity="0.9"/>
-        <circle cx="102" cy="5"  r="9"   fill="rgba(245,158,11,0.18)"/>
-        <rect x="72" y="0" width="60" height="13" rx="3" fill="rgba(217,119,6,0.15)" stroke="rgba(217,119,6,0.3)" strokeWidth="0.8"/>
-        <text x="102" y="9.5" textAnchor="middle" fill="rgba(245,158,11,0.9)" fontSize="7" fontWeight="700" fontFamily="Inter,sans-serif">STRESS PEAK</text>
-        <circle cx="50"  cy="52" r="3" fill="rgba(245,158,11,0.5)"/>
-        <circle cx="154" cy="52" r="3" fill="rgba(245,158,11,0.5)"/>
-        <line x1="50"  y1="52" x2="50"  y2="44" stroke="rgba(245,158,11,0.3)" strokeWidth="1" strokeDasharray="2 2"/>
-        <line x1="154" y1="52" x2="154" y2="44" stroke="rgba(245,158,11,0.3)" strokeWidth="1" strokeDasharray="2 2"/>
-      </svg>
-    ),
-  };
-
   return (
     <div className="home-page">
 
-      {/* Header */}
+      {/* Header with centred nav */}
       <header className="home-header">
         <div className="home-brand">
           <div className="home-brand-icon"><i className="fa-solid fa-shield-halved"></i></div>
@@ -2052,6 +2010,16 @@ function HomePage({ setPage }) {
           <div className="home-live-dot"></div>
           <span className="home-live-label">LIVE</span>
         </div>
+
+        <nav className="home-nav">
+          {NAV.filter(n => n.id !== 'home').map(item => (
+            <button key={item.id} className="home-nav-item" onClick={() => setPage(item.id)}>
+              <i className={`fa-solid ${item.icon}`}></i>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
         <div className="home-header-right">
           <span className="home-confidential">Internal · Confidential</span>
           <span className="home-date"><i className="fa-regular fa-calendar" style={{marginRight:5}}></i>{today}</span>
@@ -2075,37 +2043,25 @@ function HomePage({ setPage }) {
         </div>
       </div>
 
-      {/* Hero */}
+      {/* Full-screen hero */}
       <div className="home-hero-wrap">
         <div className="home-eyebrow">Chief Risk &amp; Compliance Officer</div>
         <h1 className="home-title">CRCO <span>Cockpit</span></h1>
         <p className="home-sub">Unified risk insights, knowledge management, advanced analytics, and scenario analysis — in one platform.</p>
-      </div>
-
-      {/* 2×2 Module tiles */}
-      <div className="home-modules-section">
-        {MODULES.map(m => (
-          <div key={m.id} className={`home-mod-tile mod-${m.iconClass}`} onClick={() => setPage(m.id)}>
-            <div className="home-mod-content">
-              <div className="home-mod-top">
-                <div className="home-mod-icon">
-                  <i className={`fa-solid ${m.icon}`}></i>
-                </div>
-                <div>
-                  <div className="home-mod-name">{m.label}</div>
-                  <div className="home-mod-tag">{m.tag}</div>
-                </div>
-              </div>
-              <div className="home-mod-desc">{m.desc}</div>
-              <div className="home-mod-cta">
-                Open Module <i className="fa-solid fa-arrow-right" style={{fontSize:9}}></i>
-              </div>
-            </div>
-            <div className="home-mod-graphic">
-              {GRAPHICS[m.id]}
-            </div>
-          </div>
-        ))}
+        <div className="home-hero-ctas">
+          <button className="home-cta-btn primary" onClick={() => setPage('insights')}>
+            <i className="fa-solid fa-chart-bar"></i> Intelligence Centre
+          </button>
+          <button className="home-cta-btn secondary" onClick={() => setPage('vault')}>
+            <i className="fa-solid fa-vault"></i> Knowledge Vault
+          </button>
+          <button className="home-cta-btn secondary" onClick={() => setPage('analysis')}>
+            <i className="fa-solid fa-magnifying-glass-chart"></i> Analytics Lab
+          </button>
+          <button className="home-cta-btn secondary" onClick={() => setPage('scenario')}>
+            <i className="fa-solid fa-radiation"></i> Scenario Analysis
+          </button>
+        </div>
       </div>
 
       <footer className="home-footer">
