@@ -379,16 +379,16 @@ body {
 
 /* Hero */
 .home-hero-wrap {
-  flex:1; display:flex; flex-direction:column; align-items:center;
-  justify-content:center; text-align:center; padding:60px 52px 80px;
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center; padding:44px 52px 28px; flex-shrink:0;
 }
 .home-eyebrow {
   font-size:10.5px; font-weight:700; letter-spacing:3px;
   text-transform:uppercase; color:rgba(255,255,255,0.28); margin-bottom:18px;
 }
 .home-title {
-  font-size:76px; font-weight:800; line-height:1.0;
-  letter-spacing:-4px; color:#fff; margin-bottom:20px;
+  font-size:54px; font-weight:800; line-height:1.02;
+  letter-spacing:-2.5px; color:#fff; margin-bottom:14px;
 }
 .home-title span {
   background:linear-gradient(135deg,#facc15 0%,#d97706 100%);
@@ -1992,12 +1992,74 @@ const MODULES = [
 function HomePage({ setPage }) {
   const today = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 
-  const KPIS = [
-    { icon:'fa-database',            label:'Datasets',    value:'5',  sub:'loaded' },
-    { icon:'fa-file-lines',          label:'Documents',   value:'47', sub:'in vault' },
-    { icon:'fa-radiation',           label:'Scenarios',   value:'8',  sub:'models' },
-    { icon:'fa-triangle-exclamation',label:'Risk Alerts', value:'12', sub:'flagged' },
-  ];
+  const GRAPHICS = {
+    insights: (
+      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
+        <line x1="0" y1="22" x2="240" y2="22" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
+        <line x1="0" y1="44" x2="240" y2="44" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
+        <line x1="0" y1="68" x2="240" y2="68" stroke="rgba(255,255,255,0.05)" strokeWidth="1"/>
+        <rect x="14"  y="16" width="28" height="52" rx="4" fill="rgba(239,68,68,0.55)"/>
+        <rect x="54"  y="32" width="28" height="36" rx="4" fill="rgba(239,68,68,0.38)"/>
+        <rect x="94"  y="6"  width="28" height="62" rx="4" fill="rgba(239,68,68,0.72)"/>
+        <rect x="134" y="24" width="28" height="44" rx="4" fill="rgba(239,68,68,0.48)"/>
+        <rect x="174" y="10" width="28" height="58" rx="4" fill="rgba(239,68,68,0.62)"/>
+        <rect x="210" y="38" width="22" height="30" rx="4" fill="rgba(239,68,68,0.32)"/>
+        <circle cx="94"  cy="6"  r="3.5" fill="rgba(239,68,68,0.9)"/>
+        <circle cx="174" cy="10" r="3"   fill="rgba(239,68,68,0.75)"/>
+      </svg>
+    ),
+    vault: (
+      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
+        <rect x="58" y="24" width="148" height="44" rx="5" fill="rgba(5,150,105,0.07)" stroke="rgba(5,150,105,0.14)" strokeWidth="1"/>
+        <rect x="44" y="15" width="148" height="44" rx="5" fill="rgba(5,150,105,0.10)" stroke="rgba(5,150,105,0.20)" strokeWidth="1"/>
+        <rect x="30" y="6"  width="148" height="44" rx="5" fill="rgba(5,150,105,0.15)" stroke="rgba(5,150,105,0.32)" strokeWidth="1"/>
+        <path d="M 160 6 L 178 6 L 178 22 L 160 22 Z" fill="rgba(5,150,105,0.22)"/>
+        <path d="M 160 6 L 178 22 L 160 22 Z" fill="rgba(5,150,105,0.12)"/>
+        <rect x="42" y="20" width="96"  height="3"   rx="1.5"  fill="rgba(110,231,183,0.4)"/>
+        <rect x="42" y="29" width="72"  height="2.5" rx="1.25" fill="rgba(110,231,183,0.24)"/>
+        <rect x="42" y="37" width="88"  height="2.5" rx="1.25" fill="rgba(110,231,183,0.20)"/>
+        <rect x="42" y="45" width="58"  height="2.5" rx="1.25" fill="rgba(110,231,183,0.16)"/>
+      </svg>
+    ),
+    analysis: (
+      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
+        <line x1="25"  y1="53" x2="62"  y2="26" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
+        <line x1="62"  y1="26" x2="106" y2="42" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
+        <line x1="106" y1="42" x2="142" y2="15" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
+        <line x1="142" y1="15" x2="184" y2="35" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
+        <line x1="184" y1="35" x2="215" y2="56" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
+        <line x1="62"  y1="26" x2="90"  y2="9"  stroke="rgba(139,92,246,0.14)" strokeWidth="0.8"/>
+        <line x1="106" y1="42" x2="78"  y2="60" stroke="rgba(139,92,246,0.14)" strokeWidth="0.8"/>
+        <line x1="142" y1="15" x2="168" y2="53" stroke="rgba(139,92,246,0.14)" strokeWidth="0.8"/>
+        <path d="M 14 62 Q 120 13 226 33" stroke="rgba(139,92,246,0.48)" strokeWidth="1.5" strokeDasharray="5 3" fill="none"/>
+        <circle cx="25"  cy="53" r="4.5" fill="rgba(139,92,246,0.68)"/>
+        <circle cx="62"  cy="26" r="6.5" fill="rgba(139,92,246,0.8)"/>
+        <circle cx="90"  cy="9"  r="3.5" fill="rgba(139,92,246,0.55)"/>
+        <circle cx="106" cy="42" r="5"   fill="rgba(139,92,246,0.7)"/>
+        <circle cx="78"  cy="60" r="3"   fill="rgba(139,92,246,0.5)"/>
+        <circle cx="142" cy="15" r="8"   fill="rgba(167,139,250,0.88)"/>
+        <circle cx="168" cy="53" r="3.5" fill="rgba(139,92,246,0.58)"/>
+        <circle cx="184" cy="35" r="4.5" fill="rgba(139,92,246,0.7)"/>
+        <circle cx="215" cy="56" r="3"   fill="rgba(139,92,246,0.48)"/>
+      </svg>
+    ),
+    scenario: (
+      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
+        <line x1="0" y1="52" x2="240" y2="52" stroke="rgba(255,255,255,0.07)" strokeWidth="1"/>
+        <line x1="0" y1="34" x2="240" y2="34" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
+        <path d="M 0 52 L 50 52 C 65 52 68 38 76 24 C 84 10 92 4 102 5 C 112 6 116 12 124 25 C 132 38 136 52 154 52 L 240 52 Z" fill="rgba(217,119,6,0.1)"/>
+        <path d="M 0 52 L 50 52 C 65 52 68 38 76 24 C 84 10 92 4 102 5 C 112 6 116 12 124 25 C 132 38 136 52 154 52 L 240 52" stroke="#f59e0b" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="102" cy="5"  r="4.5" fill="#f59e0b" opacity="0.9"/>
+        <circle cx="102" cy="5"  r="9"   fill="rgba(245,158,11,0.18)"/>
+        <rect x="72" y="0" width="60" height="13" rx="3" fill="rgba(217,119,6,0.15)" stroke="rgba(217,119,6,0.3)" strokeWidth="0.8"/>
+        <text x="102" y="9.5" textAnchor="middle" fill="rgba(245,158,11,0.9)" fontSize="7" fontWeight="700" fontFamily="Inter,sans-serif">STRESS PEAK</text>
+        <circle cx="50"  cy="52" r="3" fill="rgba(245,158,11,0.5)"/>
+        <circle cx="154" cy="52" r="3" fill="rgba(245,158,11,0.5)"/>
+        <line x1="50"  y1="52" x2="50"  y2="44" stroke="rgba(245,158,11,0.3)" strokeWidth="1" strokeDasharray="2 2"/>
+        <line x1="154" y1="52" x2="154" y2="44" stroke="rgba(245,158,11,0.3)" strokeWidth="1" strokeDasharray="2 2"/>
+      </svg>
+    ),
+  };
 
   return (
     <div className="home-page">
@@ -2026,42 +2088,37 @@ function HomePage({ setPage }) {
         </div>
       </header>
 
-      {/* KPI strip */}
-      <div className="home-kpi-strip">
-        {KPIS.map((k,i) => (
-          <div key={i} className="home-kpi">
-            <div className="home-kpi-icon"><i className={`fa-solid ${k.icon}`}></i></div>
-            <div>
-              <div className="home-kpi-value">{k.value}</div>
-              <div className="home-kpi-label">{k.label} <span className="home-kpi-sub">{k.sub}</span></div>
-            </div>
-          </div>
-        ))}
-        <div className="home-kpi-status">
-          <div className="home-status-dot"></div>
-          <span>All systems operational</span>
-        </div>
-      </div>
-
-      {/* Full-screen hero */}
+      {/* Hero */}
       <div className="home-hero-wrap">
         <div className="home-eyebrow">Chief Risk &amp; Compliance Officer</div>
         <h1 className="home-title">CRCO <span>Cockpit</span></h1>
         <p className="home-sub">Unified risk insights, knowledge management, advanced analytics, and scenario analysis — in one platform.</p>
-        <div className="home-hero-ctas">
-          <button className="home-cta-btn primary" onClick={() => setPage('insights')}>
-            <i className="fa-solid fa-chart-bar"></i> Intelligence Centre
-          </button>
-          <button className="home-cta-btn secondary" onClick={() => setPage('vault')}>
-            <i className="fa-solid fa-vault"></i> Knowledge Vault
-          </button>
-          <button className="home-cta-btn secondary" onClick={() => setPage('analysis')}>
-            <i className="fa-solid fa-magnifying-glass-chart"></i> Analytics Lab
-          </button>
-          <button className="home-cta-btn secondary" onClick={() => setPage('scenario')}>
-            <i className="fa-solid fa-radiation"></i> Scenario Analysis
-          </button>
-        </div>
+      </div>
+
+      {/* 2×2 Module tiles with static charts */}
+      <div className="home-modules-section">
+        {MODULES.map(m => (
+          <div key={m.id} className={`home-mod-tile mod-${m.iconClass}`} onClick={() => setPage(m.id)}>
+            <div className="home-mod-content">
+              <div className="home-mod-top">
+                <div className="home-mod-icon">
+                  <i className={`fa-solid ${m.icon}`}></i>
+                </div>
+                <div>
+                  <div className="home-mod-name">{m.label}</div>
+                  <div className="home-mod-tag">{m.tag}</div>
+                </div>
+              </div>
+              <div className="home-mod-desc">{m.desc}</div>
+              <div className="home-mod-cta">
+                Open Module <i className="fa-solid fa-arrow-right" style={{fontSize:9}}></i>
+              </div>
+            </div>
+            <div className="home-mod-graphic">
+              {GRAPHICS[m.id]}
+            </div>
+          </div>
+        ))}
       </div>
 
       <footer className="home-footer">
