@@ -367,88 +367,71 @@ body {
 }
 .home-status-dot { width:7px; height:7px; background:#10b981; border-radius:50%; box-shadow:0 0 6px #10b981; }
 
-/* Main grid */
-.home-grid {
-  flex:1; display:grid;
-  grid-template-columns:1fr 370px;
-  gap:0; max-width:1420px; width:100%; align-self:center;
-  padding:50px 52px 44px; box-sizing:border-box;
+/* Hero */
+.home-hero-wrap {
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  padding:42px 52px 28px; flex-shrink:0;
 }
-.home-left { padding-right:54px; display:flex; flex-direction:column; }
-.home-hero { margin-bottom:42px; }
 .home-eyebrow {
-  font-size:10.5px; font-weight:600; letter-spacing:2.5px;
-  text-transform:uppercase; color:rgba(255,255,255,0.28); margin-bottom:14px;
+  font-size:10.5px; font-weight:700; letter-spacing:2.5px;
+  text-transform:uppercase; color:rgba(255,255,255,0.28); margin-bottom:12px;
 }
 .home-title {
-  font-size:56px; font-weight:800; line-height:1.04;
-  letter-spacing:-2.5px; color:#fff; margin-bottom:18px;
+  font-size:50px; font-weight:800; line-height:1.04;
+  letter-spacing:-2.5px; color:#fff; margin-bottom:12px;
 }
 .home-title span {
   background:linear-gradient(135deg,#ef4444 0%,#8B1C1C 100%);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
 }
-.home-sub { font-size:14.5px; color:rgba(255,255,255,0.42); line-height:1.75; max-width:500px; }
+.home-sub { font-size:14px; color:rgba(255,255,255,0.36); line-height:1.72; max-width:520px; }
 
-/* 2×2 Module grid */
-.home-module-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:auto; }
-.home-module-card {
-  display:flex; align-items:flex-start; gap:16px;
-  padding:22px 20px; border-radius:14px; cursor:pointer;
-  background:rgba(255,255,255,0.022);
-  border:1px solid rgba(255,255,255,0.07);
-  transition:all 0.22s; position:relative; overflow:hidden;
+/* 2×2 Module tiles */
+.home-modules-section {
+  flex:1; display:grid; grid-template-columns:1fr 1fr;
+  gap:18px; padding:0 52px 44px;
+  max-width:1180px; width:100%; align-self:center; box-sizing:border-box;
 }
-.home-module-card::before {
-  content:''; position:absolute; inset:0; opacity:0;
-  transition:opacity 0.22s; border-radius:14px; pointer-events:none;
+.home-mod-tile {
+  display:flex; flex-direction:column; border-radius:20px; cursor:pointer;
+  overflow:hidden; position:relative; transition:all 0.25s; min-height:286px;
 }
-.home-module-card.mod-red::before    { background:radial-gradient(ellipse at 0% 0%,rgba(139,28,28,0.22),transparent 65%); }
-.home-module-card.mod-green::before  { background:radial-gradient(ellipse at 0% 0%,rgba(5,150,105,0.18),transparent 65%); }
-.home-module-card.mod-purple::before { background:radial-gradient(ellipse at 0% 0%,rgba(124,58,237,0.18),transparent 65%); }
-.home-module-card.mod-amber::before  { background:radial-gradient(ellipse at 0% 0%,rgba(217,119,6,0.18),transparent 65%); }
-.home-module-card:hover { transform:translateY(-3px); }
-.home-module-card:hover::before { opacity:1; }
-.home-module-card.mod-red:hover    { border-color:rgba(139,28,28,0.45);  box-shadow:0 16px 36px rgba(139,28,28,0.22); }
-.home-module-card.mod-green:hover  { border-color:rgba(5,150,105,0.38);  box-shadow:0 16px 36px rgba(5,150,105,0.15); }
-.home-module-card.mod-purple:hover { border-color:rgba(124,58,237,0.38); box-shadow:0 16px 36px rgba(124,58,237,0.15); }
-.home-module-card.mod-amber:hover  { border-color:rgba(217,119,6,0.38);  box-shadow:0 16px 36px rgba(217,119,6,0.15); }
+.home-mod-tile.mod-red    { background:linear-gradient(150deg,rgba(139,28,28,0.24) 0%,rgba(7,11,19,0.97) 52%); border:1px solid rgba(139,28,28,0.3); }
+.home-mod-tile.mod-green  { background:linear-gradient(150deg,rgba(5,150,105,0.18) 0%,rgba(7,11,19,0.97) 52%); border:1px solid rgba(5,150,105,0.25); }
+.home-mod-tile.mod-purple { background:linear-gradient(150deg,rgba(124,58,237,0.18) 0%,rgba(7,11,19,0.97) 52%); border:1px solid rgba(124,58,237,0.25); }
+.home-mod-tile.mod-amber  { background:linear-gradient(150deg,rgba(217,119,6,0.18) 0%,rgba(7,11,19,0.97) 52%); border:1px solid rgba(217,119,6,0.25); }
+.home-mod-tile:hover { transform:translateY(-4px); }
+.home-mod-tile.mod-red:hover    { border-color:rgba(139,28,28,0.58); box-shadow:0 22px 52px rgba(139,28,28,0.3); }
+.home-mod-tile.mod-green:hover  { border-color:rgba(5,150,105,0.52);  box-shadow:0 22px 52px rgba(5,150,105,0.2); }
+.home-mod-tile.mod-purple:hover { border-color:rgba(124,58,237,0.52); box-shadow:0 22px 52px rgba(124,58,237,0.22); }
+.home-mod-tile.mod-amber:hover  { border-color:rgba(217,119,6,0.52);  box-shadow:0 22px 52px rgba(217,119,6,0.22); }
 
-.home-module-icon {
-  width:44px; height:44px; border-radius:11px; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center; font-size:18px;
+.home-mod-content { padding:26px 26px 16px; flex:1; display:flex; flex-direction:column; }
+.home-mod-top { display:flex; align-items:center; gap:14px; margin-bottom:12px; }
+.home-mod-icon {
+  width:48px; height:48px; border-radius:13px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:20px;
 }
-.mod-red    .home-module-icon { background:rgba(139,28,28,0.28);  color:#FCA5A5; border:1px solid rgba(139,28,28,0.4); }
-.mod-green  .home-module-icon { background:rgba(5,150,105,0.22);  color:#6EE7B7; border:1px solid rgba(5,150,105,0.35); }
-.mod-purple .home-module-icon { background:rgba(124,58,237,0.22); color:#C4B5FD; border:1px solid rgba(124,58,237,0.35); }
-.mod-amber  .home-module-icon { background:rgba(217,119,6,0.22);  color:#FCD34D; border:1px solid rgba(217,119,6,0.35); }
-.home-module-body { flex:1; min-width:0; position:relative; z-index:1; }
-.home-module-title { font-size:13px; font-weight:700; color:#fff; margin-bottom:5px; }
-.home-module-desc  { font-size:11.5px; color:rgba(255,255,255,0.36); line-height:1.5; }
-.home-module-arrow { color:rgba(255,255,255,0.14); font-size:13px; transition:all 0.2s; margin-top:2px; flex-shrink:0; position:relative; z-index:1; }
-.home-module-card:hover .home-module-arrow { color:rgba(255,255,255,0.65); transform:translateX(4px); }
-
-/* Charts panel */
-.home-charts-panel {
-  border-left:1px solid rgba(255,255,255,0.06);
-  padding-left:42px; display:flex; flex-direction:column; gap:16px;
+.mod-red    .home-mod-icon { background:rgba(139,28,28,0.32);  color:#FCA5A5; border:1px solid rgba(139,28,28,0.48); }
+.mod-green  .home-mod-icon { background:rgba(5,150,105,0.26);  color:#6EE7B7; border:1px solid rgba(5,150,105,0.42); }
+.mod-purple .home-mod-icon { background:rgba(124,58,237,0.26); color:#C4B5FD; border:1px solid rgba(124,58,237,0.42); }
+.mod-amber  .home-mod-icon { background:rgba(217,119,6,0.26);  color:#FCD34D; border:1px solid rgba(217,119,6,0.42); }
+.home-mod-name { font-size:16px; font-weight:800; color:#fff; letter-spacing:-0.4px; line-height:1.15; }
+.home-mod-tag  { font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-top:3px; }
+.mod-red    .home-mod-tag { color:rgba(252,165,165,0.62); }
+.mod-green  .home-mod-tag { color:rgba(110,231,183,0.62); }
+.mod-purple .home-mod-tag { color:rgba(196,181,253,0.62); }
+.mod-amber  .home-mod-tag { color:rgba(252,211,77,0.62); }
+.home-mod-desc { font-size:12.5px; color:rgba(255,255,255,0.37); line-height:1.65; margin-bottom:14px; flex:1; }
+.home-mod-cta {
+  display:inline-flex; align-items:center; gap:7px;
+  font-size:11px; font-weight:700; color:rgba(255,255,255,0.35);
+  letter-spacing:0.4px; text-transform:uppercase; transition:all 0.2s;
 }
-.home-charts-header {
-  display:flex; align-items:baseline; justify-content:space-between; margin-bottom:2px;
-}
-.home-charts-title { font-size:12.5px; font-weight:700; color:rgba(255,255,255,0.85); letter-spacing:0.1px; }
-.home-charts-sub   { font-size:10px; color:rgba(255,255,255,0.22); }
-.home-chart-widget {
-  background:rgba(255,255,255,0.022);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:12px; padding:16px 18px;
-}
-.home-chart-widget-title {
-  font-size:10.5px; font-weight:700; color:rgba(255,255,255,0.5);
-  margin-bottom:12px; text-transform:uppercase; letter-spacing:0.7px;
-}
-.home-chart-divider {
-  height:1px; background:rgba(255,255,255,0.05); margin:2px 0 14px;
+.home-mod-tile:hover .home-mod-cta { color:rgba(255,255,255,0.82); gap:11px; }
+.home-mod-graphic {
+  border-top:1px solid rgba(255,255,255,0.055);
+  padding:16px 22px 20px; flex-shrink:0;
 }
 
 /* Footer */
@@ -1955,107 +1938,32 @@ function Sidebar({ page, setPage }) {
 const MODULES = [
   {
     id: 'insights', label: 'Intelligence Centre', icon: 'fa-chart-bar', iconClass: 'red',
+    tag: 'Natural Language Intelligence',
     desc: 'Ask natural language questions across approved Risk & Compliance datasets. Get instant charts and executive summaries.',
     active: true
   },
   {
     id: 'vault', label: 'Knowledge Vault', icon: 'fa-vault', iconClass: 'green',
+    tag: 'Document Intelligence',
     desc: 'Search and retrieve policy documents, regulatory guidance, email intelligence, and insights data. Generate executive reports across all sources.',
     active: true
   },
   {
     id: 'analysis', label: 'Analytics Lab', icon: 'fa-magnifying-glass-chart', iconClass: 'purple',
+    tag: 'ML Clustering & Analytics',
     desc: 'Perform deeper model-assisted analysis, clustering, and regulatory impact assessment.',
     active: true
   },
   {
     id: 'scenario', label: 'Scenario Analysis', icon: 'fa-radiation', iconClass: 'amber',
+    tag: 'Stress Testing & Simulation',
     desc: 'Stress simulation and CRO war-room dashboards. Explore named stress scenarios and generate executive briefings.',
     active: true
   }
 ];
 
 function HomePage({ setPage }) {
-  const riskRef  = React.useRef(null);
-  const trendRef = React.useRef(null);
-  const partyRef = React.useRef(null);
-
   const today = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-
-  React.useEffect(() => {
-    const instances = [];
-    const dark = { color:'rgba(255,255,255,0.42)', borderColor:'rgba(255,255,255,0.06)' };
-    Chart.defaults.color        = dark.color;
-    Chart.defaults.borderColor  = dark.borderColor;
-
-    if (riskRef.current) {
-      instances.push(new Chart(riskRef.current, {
-        type: 'bar',
-        data: {
-          labels: ['Critical', 'High', 'Medium', 'Low'],
-          datasets: [{
-            data: [3, 18, 45, 34],
-            backgroundColor: ['#7f1d1d','#ef4444','#f59e0b','#10b981'],
-            borderRadius: 5, borderWidth: 0,
-          }]
-        },
-        options: {
-          indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:{duration:1200},
-          plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.x}%`}} },
-          scales:{
-            x:{ grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.4)',font:{size:10},callback:v=>v+'%'}, border:{color:'transparent'}, max:55 },
-            y:{ grid:{display:false}, ticks:{color:'rgba(255,255,255,0.6)',font:{size:11,weight:'600'}}, border:{color:'transparent'} }
-          }
-        }
-      }));
-    }
-
-    if (trendRef.current) {
-      instances.push(new Chart(trendRef.current, {
-        type: 'line',
-        data: {
-          labels: ['Jan','Feb','Mar','Apr','May','Jun'],
-          datasets: [{
-            data: [2.1,2.8,2.4,3.2,2.9,3.6],
-            borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.1)',
-            fill:true, tension:0.42,
-            pointRadius:3, pointBackgroundColor:'#ef4444', pointBorderColor:'#070B13', pointBorderWidth:1, borderWidth:2,
-          }]
-        },
-        options: {
-          responsive:true, maintainAspectRatio:false, animation:{duration:1400},
-          plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` £${c.parsed.y}M`}} },
-          scales:{
-            x:{ grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.4)',font:{size:10}}, border:{color:'transparent'} },
-            y:{ grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.4)',font:{size:10},callback:v=>'£'+v+'M'}, border:{color:'transparent'} }
-          }
-        }
-      }));
-    }
-
-    if (partyRef.current) {
-      instances.push(new Chart(partyRef.current, {
-        type: 'doughnut',
-        data: {
-          labels: ['Corporate','Individual','Financial Inst.','Other'],
-          datasets: [{
-            data: [42,31,18,9],
-            backgroundColor: ['#3b82f6','#8b5cf6','#10b981','#f59e0b'],
-            borderColor: '#070B13', borderWidth: 2,
-          }]
-        },
-        options: {
-          responsive:true, maintainAspectRatio:false, cutout:'68%', animation:{duration:1600},
-          plugins:{
-            legend:{ position:'bottom', labels:{ boxWidth:9, font:{size:10}, color:'rgba(255,255,255,0.5)', padding:10 } },
-            tooltip:{ callbacks:{ label:c=>` ${c.parsed}%` } }
-          }
-        }
-      }));
-    }
-
-    return () => instances.forEach(c => c.destroy());
-  }, []);
 
   const KPIS = [
     { icon:'fa-database',            label:'Datasets',    value:'5',  sub:'loaded' },
@@ -2063,6 +1971,75 @@ function HomePage({ setPage }) {
     { icon:'fa-radiation',           label:'Scenarios',   value:'8',  sub:'models' },
     { icon:'fa-triangle-exclamation',label:'Risk Alerts', value:'12', sub:'flagged' },
   ];
+
+  const GRAPHICS = {
+    insights: (
+      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
+        <line x1="0" y1="22" x2="240" y2="22" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
+        <line x1="0" y1="44" x2="240" y2="44" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
+        <line x1="0" y1="68" x2="240" y2="68" stroke="rgba(255,255,255,0.05)" strokeWidth="1"/>
+        <rect x="14"  y="16" width="28" height="52" rx="4" fill="rgba(239,68,68,0.55)"/>
+        <rect x="54"  y="32" width="28" height="36" rx="4" fill="rgba(239,68,68,0.38)"/>
+        <rect x="94"  y="6"  width="28" height="62" rx="4" fill="rgba(239,68,68,0.72)"/>
+        <rect x="134" y="24" width="28" height="44" rx="4" fill="rgba(239,68,68,0.48)"/>
+        <rect x="174" y="10" width="28" height="58" rx="4" fill="rgba(239,68,68,0.62)"/>
+        <rect x="210" y="38" width="22" height="30" rx="4" fill="rgba(239,68,68,0.32)"/>
+        <circle cx="94"  cy="6"  r="3.5" fill="rgba(239,68,68,0.9)"/>
+        <circle cx="174" cy="10" r="3"   fill="rgba(239,68,68,0.75)"/>
+      </svg>
+    ),
+    vault: (
+      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
+        <rect x="58" y="24" width="148" height="44" rx="5" fill="rgba(5,150,105,0.07)" stroke="rgba(5,150,105,0.14)" strokeWidth="1"/>
+        <rect x="44" y="15" width="148" height="44" rx="5" fill="rgba(5,150,105,0.10)" stroke="rgba(5,150,105,0.20)" strokeWidth="1"/>
+        <rect x="30" y="6"  width="148" height="44" rx="5" fill="rgba(5,150,105,0.15)" stroke="rgba(5,150,105,0.32)" strokeWidth="1"/>
+        <path d="M 160 6 L 178 6 L 178 22 L 160 22 Z" fill="rgba(5,150,105,0.22)"/>
+        <path d="M 160 6 L 178 22 L 160 22 Z" fill="rgba(5,150,105,0.12)"/>
+        <rect x="42" y="20" width="96"  height="3"   rx="1.5"  fill="rgba(110,231,183,0.4)"/>
+        <rect x="42" y="29" width="72"  height="2.5" rx="1.25" fill="rgba(110,231,183,0.24)"/>
+        <rect x="42" y="37" width="88"  height="2.5" rx="1.25" fill="rgba(110,231,183,0.20)"/>
+        <rect x="42" y="45" width="58"  height="2.5" rx="1.25" fill="rgba(110,231,183,0.16)"/>
+      </svg>
+    ),
+    analysis: (
+      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
+        <line x1="25"  y1="53" x2="62"  y2="26" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
+        <line x1="62"  y1="26" x2="106" y2="42" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
+        <line x1="106" y1="42" x2="142" y2="15" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
+        <line x1="142" y1="15" x2="184" y2="35" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
+        <line x1="184" y1="35" x2="215" y2="56" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
+        <line x1="62"  y1="26" x2="90"  y2="9"  stroke="rgba(139,92,246,0.14)" strokeWidth="0.8"/>
+        <line x1="106" y1="42" x2="78"  y2="60" stroke="rgba(139,92,246,0.14)" strokeWidth="0.8"/>
+        <line x1="142" y1="15" x2="168" y2="53" stroke="rgba(139,92,246,0.14)" strokeWidth="0.8"/>
+        <path d="M 14 62 Q 120 13 226 33" stroke="rgba(139,92,246,0.48)" strokeWidth="1.5" strokeDasharray="5 3" fill="none"/>
+        <circle cx="25"  cy="53" r="4.5" fill="rgba(139,92,246,0.68)"/>
+        <circle cx="62"  cy="26" r="6.5" fill="rgba(139,92,246,0.8)"/>
+        <circle cx="90"  cy="9"  r="3.5" fill="rgba(139,92,246,0.55)"/>
+        <circle cx="106" cy="42" r="5"   fill="rgba(139,92,246,0.7)"/>
+        <circle cx="78"  cy="60" r="3"   fill="rgba(139,92,246,0.5)"/>
+        <circle cx="142" cy="15" r="8"   fill="rgba(167,139,250,0.88)"/>
+        <circle cx="168" cy="53" r="3.5" fill="rgba(139,92,246,0.58)"/>
+        <circle cx="184" cy="35" r="4.5" fill="rgba(139,92,246,0.7)"/>
+        <circle cx="215" cy="56" r="3"   fill="rgba(139,92,246,0.48)"/>
+      </svg>
+    ),
+    scenario: (
+      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
+        <line x1="0" y1="52" x2="240" y2="52" stroke="rgba(255,255,255,0.07)" strokeWidth="1"/>
+        <line x1="0" y1="34" x2="240" y2="34" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
+        <path d="M 0 52 L 50 52 C 65 52 68 38 76 24 C 84 10 92 4 102 5 C 112 6 116 12 124 25 C 132 38 136 52 154 52 L 240 52 Z" fill="rgba(217,119,6,0.1)"/>
+        <path d="M 0 52 L 50 52 C 65 52 68 38 76 24 C 84 10 92 4 102 5 C 112 6 116 12 124 25 C 132 38 136 52 154 52 L 240 52" stroke="#f59e0b" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="102" cy="5"  r="4.5" fill="#f59e0b" opacity="0.9"/>
+        <circle cx="102" cy="5"  r="9"   fill="rgba(245,158,11,0.18)"/>
+        <rect x="72" y="0" width="60" height="13" rx="3" fill="rgba(217,119,6,0.15)" stroke="rgba(217,119,6,0.3)" strokeWidth="0.8"/>
+        <text x="102" y="9.5" textAnchor="middle" fill="rgba(245,158,11,0.9)" fontSize="7" fontWeight="700" fontFamily="Inter,sans-serif">STRESS PEAK</text>
+        <circle cx="50"  cy="52" r="3" fill="rgba(245,158,11,0.5)"/>
+        <circle cx="154" cy="52" r="3" fill="rgba(245,158,11,0.5)"/>
+        <line x1="50"  y1="52" x2="50"  y2="44" stroke="rgba(245,158,11,0.3)" strokeWidth="1" strokeDasharray="2 2"/>
+        <line x1="154" y1="52" x2="154" y2="44" stroke="rgba(245,158,11,0.3)" strokeWidth="1" strokeDasharray="2 2"/>
+      </svg>
+    ),
+  };
 
   return (
     <div className="home-page">
@@ -2098,64 +2075,37 @@ function HomePage({ setPage }) {
         </div>
       </div>
 
-      {/* 2-column layout */}
-      <div className="home-grid">
+      {/* Hero */}
+      <div className="home-hero-wrap">
+        <div className="home-eyebrow">Chief Risk &amp; Compliance Officer</div>
+        <h1 className="home-title">CRCO <span>Cockpit</span></h1>
+        <p className="home-sub">Unified risk insights, knowledge management, advanced analytics, and scenario analysis — in one platform.</p>
+      </div>
 
-        {/* Left — hero + module cards */}
-        <div className="home-left">
-          <div className="home-hero">
-            <div className="home-eyebrow">Chief Risk &amp; Compliance Officer</div>
-            <h1 className="home-title">Intelligence<br/><span>Platform</span></h1>
-            <p className="home-sub">
-              Unified risk insights, reporting, knowledge management, scenario analysis, and advanced analytics — in one cockpit.
-            </p>
-          </div>
-
-          <div className="home-module-grid">
-            {MODULES.map(m => (
-              <div key={m.id} className={`home-module-card mod-${m.iconClass}`} onClick={() => setPage(m.id)}>
-                <div className="home-module-icon">
+      {/* 2×2 Module tiles */}
+      <div className="home-modules-section">
+        {MODULES.map(m => (
+          <div key={m.id} className={`home-mod-tile mod-${m.iconClass}`} onClick={() => setPage(m.id)}>
+            <div className="home-mod-content">
+              <div className="home-mod-top">
+                <div className="home-mod-icon">
                   <i className={`fa-solid ${m.icon}`}></i>
                 </div>
-                <div className="home-module-body">
-                  <div className="home-module-title">{m.label}</div>
-                  <div className="home-module-desc">{m.desc}</div>
+                <div>
+                  <div className="home-mod-name">{m.label}</div>
+                  <div className="home-mod-tag">{m.tag}</div>
                 </div>
-                <div className="home-module-arrow"><i className="fa-solid fa-arrow-right"></i></div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Right — charts */}
-        <div className="home-charts-panel">
-          <div className="home-charts-header">
-            <div className="home-charts-title">
-              <i className="fa-solid fa-chart-mixed" style={{marginRight:7,color:'#ef4444'}}></i>
-              Portfolio Snapshot
+              <div className="home-mod-desc">{m.desc}</div>
+              <div className="home-mod-cta">
+                Open Module <i className="fa-solid fa-arrow-right" style={{fontSize:9}}></i>
+              </div>
             </div>
-            <span className="home-charts-sub">Illustrative · Aggregated</span>
-          </div>
-
-          <div className="home-chart-widget">
-            <div className="home-chart-widget-title">Risk Rating Distribution</div>
-            <div style={{height:128,position:'relative'}}><canvas ref={riskRef}></canvas></div>
-          </div>
-
-          <div className="home-chart-widget">
-            <div className="home-chart-widget-title">
-              Monthly Transaction Volume
-              <span style={{color:'rgba(255,255,255,0.3)',fontWeight:400,fontSize:9.5,marginLeft:5}}>(£M · Jan–Jun)</span>
+            <div className="home-mod-graphic">
+              {GRAPHICS[m.id]}
             </div>
-            <div style={{height:118,position:'relative'}}><canvas ref={trendRef}></canvas></div>
           </div>
-
-          <div className="home-chart-widget">
-            <div className="home-chart-widget-title">Customer Portfolio Mix</div>
-            <div style={{height:162,position:'relative'}}><canvas ref={partyRef}></canvas></div>
-          </div>
-        </div>
-
+        ))}
       </div>
 
       <footer className="home-footer">
