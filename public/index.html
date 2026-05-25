@@ -299,52 +299,163 @@ body {
 .topnav-item:not(.active) .nav-badge { background:var(--primary-light); color:var(--primary); }
 
 /* ── Dark landing page (home) ─────────────────────────────────────── */
-.landing-page { min-height:100vh; background:#0F172A; display:flex; flex-direction:column; }
-.landing-header {
+/* ── Home Page — Dark Cockpit ──────────────────────────────────── */
+.home-page {
+  min-height: 100vh;
+  background: #070B13;
+  background-image:
+    radial-gradient(ellipse at 15% 0%,   rgba(139,28,28,0.14)  0%, transparent 48%),
+    radial-gradient(ellipse at 85% 100%, rgba(59,130,246,0.07) 0%, transparent 52%);
+  display: flex; flex-direction: column; color: #fff;
+}
+.home-header {
   display:flex; align-items:center; justify-content:space-between;
-  padding:0 52px; height:64px;
-  border-bottom:1px solid rgba(255,255,255,0.07);
-  background:rgba(15,23,42,0.95);
+  padding:0 52px; height:60px; flex-shrink:0;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  background:rgba(7,11,19,0.92); backdrop-filter:blur(10px);
   position:sticky; top:0; z-index:100;
 }
-.landing-brand { display:flex; align-items:center; gap:14px; }
-.landing-divider { width:1px; height:22px; background:rgba(255,255,255,0.15); }
-.landing-cockpit { display:flex; align-items:center; gap:8px; color:#fff; font-size:13.5px; font-weight:700; letter-spacing:-0.2px; }
-.landing-cockpit-icon { width:26px; height:26px; background:var(--primary); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; }
-.landing-header-meta { display:flex; align-items:center; gap:16px; }
-.landing-header-date { color:rgba(255,255,255,0.35); font-size:12px; }
-.landing-confidential {
-  background:rgba(139,28,28,0.3); color:#FCA5A5;
-  border:1px solid rgba(139,28,28,0.4); border-radius:20px;
+.home-brand { display:flex; align-items:center; gap:10px; }
+.home-brand-icon {
+  width:28px; height:28px; background:var(--primary); border-radius:7px;
+  display:flex; align-items:center; justify-content:center; font-size:13px; color:#fff; flex-shrink:0;
+}
+.home-brand-name { font-size:14px; font-weight:700; letter-spacing:-0.3px; color:#fff; }
+.home-live-dot {
+  width:7px; height:7px; background:#10b981; border-radius:50%;
+  box-shadow:0 0 6px #10b981;
+  animation:homeLivePulse 2.2s ease-in-out infinite;
+}
+@keyframes homeLivePulse {
+  0%,100% { opacity:1; box-shadow:0 0 6px #10b981; }
+  50%     { opacity:0.5; box-shadow:0 0 14px #10b981; }
+}
+.home-live-label { font-size:10px; font-weight:700; color:#10b981; letter-spacing:1.2px; }
+.home-header-right { display:flex; align-items:center; gap:16px; }
+.home-confidential {
+  background:rgba(139,28,28,0.2); color:#FCA5A5;
+  border:1px solid rgba(139,28,28,0.35); border-radius:20px;
   font-size:10px; font-weight:600; padding:2px 10px; letter-spacing:0.4px;
 }
-.landing-main { flex:1; display:flex; flex-direction:column; align-items:center; padding:80px 40px 60px; }
-.landing-hero { text-align:center; max-width:600px; margin-bottom:64px; }
-.landing-eyebrow { color:rgba(255,255,255,0.35); font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; margin-bottom:16px; }
-.landing-title { color:#fff; font-size:52px; font-weight:800; letter-spacing:-2px; margin-bottom:18px; line-height:1.05; }
-.landing-title span { color:var(--primary); }
-.landing-sub { color:rgba(255,255,255,0.5); font-size:15px; line-height:1.65; max-width:480px; margin:0 auto; }
-.landing-modules { display:flex; flex-direction:column; gap:10px; width:100%; max-width:700px; }
-.landing-card {
-  display:flex; align-items:center; gap:18px; padding:18px 22px;
-  background:rgba(255,255,255,0.035); border:1px solid rgba(255,255,255,0.07);
-  border-radius:12px; cursor:pointer; transition:all 0.18s;
+.home-date { color:rgba(255,255,255,0.28); font-size:11.5px; }
+
+/* KPI Strip */
+.home-kpi-strip {
+  display:flex; align-items:center; gap:0;
+  padding:0 52px;
+  background:rgba(255,255,255,0.018);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  flex-shrink:0; overflow-x:auto;
 }
-.landing-card:hover { background:rgba(255,255,255,0.07); border-color:rgba(255,255,255,0.14); transform:translateX(5px); }
-.landing-card-icon { width:46px; height:46px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0; }
-.landing-card-icon.red    { background:rgba(139,28,28,0.3);  color:#FCA5A5; }
-.landing-card-icon.blue   { background:rgba(30,58,95,0.45);  color:#93C5FD; }
-.landing-card-icon.green  { background:rgba(5,150,105,0.3);  color:#6EE7B7; }
-.landing-card-icon.purple { background:rgba(124,58,237,0.3); color:#C4B5FD; }
-.landing-card-body { flex:1; min-width:0; }
-.landing-card-title { color:#fff; font-size:14px; font-weight:600; margin-bottom:3px; }
-.landing-card-desc  { color:rgba(255,255,255,0.42); font-size:12.5px; line-height:1.45; }
-.landing-card-arrow { color:rgba(255,255,255,0.2); font-size:14px; transition:all 0.18s; flex-shrink:0; }
-.landing-card:hover .landing-card-arrow { color:var(--primary); transform:translateX(4px); }
-.landing-footer {
+.home-kpi {
+  display:flex; align-items:center; gap:12px;
+  padding:13px 32px 13px 0; margin-right:32px;
+  border-right:1px solid rgba(255,255,255,0.05);
+}
+.home-kpi:last-of-type { border-right:none; }
+.home-kpi-icon {
+  width:34px; height:34px; border-radius:9px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:13px;
+  background:rgba(139,28,28,0.18); border:1px solid rgba(139,28,28,0.28); color:#FCA5A5;
+}
+.home-kpi-value { font-size:21px; font-weight:800; color:#fff; line-height:1; }
+.home-kpi-label { font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px; }
+.home-kpi-sub { color:rgba(255,255,255,0.22); font-size:10.5px; }
+.home-kpi-status {
+  display:flex; align-items:center; gap:7px; margin-left:auto;
+  color:rgba(255,255,255,0.3); font-size:11.5px; flex-shrink:0;
+}
+.home-status-dot { width:7px; height:7px; background:#10b981; border-radius:50%; box-shadow:0 0 6px #10b981; }
+
+/* Main grid */
+.home-grid {
+  flex:1; display:grid;
+  grid-template-columns:1fr 370px;
+  gap:0; max-width:1420px; width:100%; align-self:center;
+  padding:50px 52px 44px; box-sizing:border-box;
+}
+.home-left { padding-right:54px; display:flex; flex-direction:column; }
+.home-hero { margin-bottom:42px; }
+.home-eyebrow {
+  font-size:10.5px; font-weight:600; letter-spacing:2.5px;
+  text-transform:uppercase; color:rgba(255,255,255,0.28); margin-bottom:14px;
+}
+.home-title {
+  font-size:56px; font-weight:800; line-height:1.04;
+  letter-spacing:-2.5px; color:#fff; margin-bottom:18px;
+}
+.home-title span {
+  background:linear-gradient(135deg,#ef4444 0%,#8B1C1C 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.home-sub { font-size:14.5px; color:rgba(255,255,255,0.42); line-height:1.75; max-width:500px; }
+
+/* 2×2 Module grid */
+.home-module-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:auto; }
+.home-module-card {
+  display:flex; align-items:flex-start; gap:16px;
+  padding:22px 20px; border-radius:14px; cursor:pointer;
+  background:rgba(255,255,255,0.022);
+  border:1px solid rgba(255,255,255,0.07);
+  transition:all 0.22s; position:relative; overflow:hidden;
+}
+.home-module-card::before {
+  content:''; position:absolute; inset:0; opacity:0;
+  transition:opacity 0.22s; border-radius:14px; pointer-events:none;
+}
+.home-module-card.mod-red::before    { background:radial-gradient(ellipse at 0% 0%,rgba(139,28,28,0.22),transparent 65%); }
+.home-module-card.mod-green::before  { background:radial-gradient(ellipse at 0% 0%,rgba(5,150,105,0.18),transparent 65%); }
+.home-module-card.mod-purple::before { background:radial-gradient(ellipse at 0% 0%,rgba(124,58,237,0.18),transparent 65%); }
+.home-module-card.mod-amber::before  { background:radial-gradient(ellipse at 0% 0%,rgba(217,119,6,0.18),transparent 65%); }
+.home-module-card:hover { transform:translateY(-3px); }
+.home-module-card:hover::before { opacity:1; }
+.home-module-card.mod-red:hover    { border-color:rgba(139,28,28,0.45);  box-shadow:0 16px 36px rgba(139,28,28,0.22); }
+.home-module-card.mod-green:hover  { border-color:rgba(5,150,105,0.38);  box-shadow:0 16px 36px rgba(5,150,105,0.15); }
+.home-module-card.mod-purple:hover { border-color:rgba(124,58,237,0.38); box-shadow:0 16px 36px rgba(124,58,237,0.15); }
+.home-module-card.mod-amber:hover  { border-color:rgba(217,119,6,0.38);  box-shadow:0 16px 36px rgba(217,119,6,0.15); }
+
+.home-module-icon {
+  width:44px; height:44px; border-radius:11px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:18px;
+}
+.mod-red    .home-module-icon { background:rgba(139,28,28,0.28);  color:#FCA5A5; border:1px solid rgba(139,28,28,0.4); }
+.mod-green  .home-module-icon { background:rgba(5,150,105,0.22);  color:#6EE7B7; border:1px solid rgba(5,150,105,0.35); }
+.mod-purple .home-module-icon { background:rgba(124,58,237,0.22); color:#C4B5FD; border:1px solid rgba(124,58,237,0.35); }
+.mod-amber  .home-module-icon { background:rgba(217,119,6,0.22);  color:#FCD34D; border:1px solid rgba(217,119,6,0.35); }
+.home-module-body { flex:1; min-width:0; position:relative; z-index:1; }
+.home-module-title { font-size:13px; font-weight:700; color:#fff; margin-bottom:5px; }
+.home-module-desc  { font-size:11.5px; color:rgba(255,255,255,0.36); line-height:1.5; }
+.home-module-arrow { color:rgba(255,255,255,0.14); font-size:13px; transition:all 0.2s; margin-top:2px; flex-shrink:0; position:relative; z-index:1; }
+.home-module-card:hover .home-module-arrow { color:rgba(255,255,255,0.65); transform:translateX(4px); }
+
+/* Charts panel */
+.home-charts-panel {
+  border-left:1px solid rgba(255,255,255,0.06);
+  padding-left:42px; display:flex; flex-direction:column; gap:16px;
+}
+.home-charts-header {
+  display:flex; align-items:baseline; justify-content:space-between; margin-bottom:2px;
+}
+.home-charts-title { font-size:12.5px; font-weight:700; color:rgba(255,255,255,0.85); letter-spacing:0.1px; }
+.home-charts-sub   { font-size:10px; color:rgba(255,255,255,0.22); }
+.home-chart-widget {
+  background:rgba(255,255,255,0.022);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:12px; padding:16px 18px;
+}
+.home-chart-widget-title {
+  font-size:10.5px; font-weight:700; color:rgba(255,255,255,0.5);
+  margin-bottom:12px; text-transform:uppercase; letter-spacing:0.7px;
+}
+.home-chart-divider {
+  height:1px; background:rgba(255,255,255,0.05); margin:2px 0 14px;
+}
+
+/* Footer */
+.home-footer {
   display:flex; align-items:center; justify-content:space-between;
-  padding:14px 52px; border-top:1px solid rgba(255,255,255,0.06);
-  color:rgba(255,255,255,0.22); font-size:11px;
+  padding:13px 52px; border-top:1px solid rgba(255,255,255,0.05);
+  color:rgba(255,255,255,0.16); font-size:10.5px; flex-shrink:0;
 }
 
 /* ── Insights Page ────────────────────────────────────────────────── */
@@ -1858,55 +1969,196 @@ const MODULES = [
     active: true
   },
   {
-    id: 'scenario', label: 'Scenario Analysis', icon: 'fa-radiation', iconClass: 'red',
+    id: 'scenario', label: 'Scenario Analysis', icon: 'fa-radiation', iconClass: 'amber',
     desc: 'Stress simulation and CRO war-room dashboards. Explore named stress scenarios and generate executive briefings.',
     active: true
   }
 ];
 
 function HomePage({ setPage }) {
+  const riskRef  = React.useRef(null);
+  const trendRef = React.useRef(null);
+  const partyRef = React.useRef(null);
+
   const today = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  React.useEffect(() => {
+    const instances = [];
+    const dark = { color:'rgba(255,255,255,0.42)', borderColor:'rgba(255,255,255,0.06)' };
+    Chart.defaults.color        = dark.color;
+    Chart.defaults.borderColor  = dark.borderColor;
+
+    if (riskRef.current) {
+      instances.push(new Chart(riskRef.current, {
+        type: 'bar',
+        data: {
+          labels: ['Critical', 'High', 'Medium', 'Low'],
+          datasets: [{
+            data: [3, 18, 45, 34],
+            backgroundColor: ['#7f1d1d','#ef4444','#f59e0b','#10b981'],
+            borderRadius: 5, borderWidth: 0,
+          }]
+        },
+        options: {
+          indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:{duration:1200},
+          plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.x}%`}} },
+          scales:{
+            x:{ grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.4)',font:{size:10},callback:v=>v+'%'}, border:{color:'transparent'}, max:55 },
+            y:{ grid:{display:false}, ticks:{color:'rgba(255,255,255,0.6)',font:{size:11,weight:'600'}}, border:{color:'transparent'} }
+          }
+        }
+      }));
+    }
+
+    if (trendRef.current) {
+      instances.push(new Chart(trendRef.current, {
+        type: 'line',
+        data: {
+          labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+          datasets: [{
+            data: [2.1,2.8,2.4,3.2,2.9,3.6],
+            borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.1)',
+            fill:true, tension:0.42,
+            pointRadius:3, pointBackgroundColor:'#ef4444', pointBorderColor:'#070B13', pointBorderWidth:1, borderWidth:2,
+          }]
+        },
+        options: {
+          responsive:true, maintainAspectRatio:false, animation:{duration:1400},
+          plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` £${c.parsed.y}M`}} },
+          scales:{
+            x:{ grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.4)',font:{size:10}}, border:{color:'transparent'} },
+            y:{ grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.4)',font:{size:10},callback:v=>'£'+v+'M'}, border:{color:'transparent'} }
+          }
+        }
+      }));
+    }
+
+    if (partyRef.current) {
+      instances.push(new Chart(partyRef.current, {
+        type: 'doughnut',
+        data: {
+          labels: ['Corporate','Individual','Financial Inst.','Other'],
+          datasets: [{
+            data: [42,31,18,9],
+            backgroundColor: ['#3b82f6','#8b5cf6','#10b981','#f59e0b'],
+            borderColor: '#070B13', borderWidth: 2,
+          }]
+        },
+        options: {
+          responsive:true, maintainAspectRatio:false, cutout:'68%', animation:{duration:1600},
+          plugins:{
+            legend:{ position:'bottom', labels:{ boxWidth:9, font:{size:10}, color:'rgba(255,255,255,0.5)', padding:10 } },
+            tooltip:{ callbacks:{ label:c=>` ${c.parsed}%` } }
+          }
+        }
+      }));
+    }
+
+    return () => instances.forEach(c => c.destroy());
+  }, []);
+
+  const KPIS = [
+    { icon:'fa-database',            label:'Datasets',    value:'5',  sub:'loaded' },
+    { icon:'fa-file-lines',          label:'Documents',   value:'47', sub:'in vault' },
+    { icon:'fa-radiation',           label:'Scenarios',   value:'8',  sub:'models' },
+    { icon:'fa-triangle-exclamation',label:'Risk Alerts', value:'12', sub:'flagged' },
+  ];
+
   return (
-    <div className="landing-page">
-      <header className="landing-header">
-        <div className="landing-brand">
-          <div className="landing-cockpit">
-            <div className="landing-cockpit-icon"><i className="fa-solid fa-shield-halved"></i></div>
-            CRCO Cockpit
-          </div>
+    <div className="home-page">
+
+      {/* Header */}
+      <header className="home-header">
+        <div className="home-brand">
+          <div className="home-brand-icon"><i className="fa-solid fa-shield-halved"></i></div>
+          <span className="home-brand-name">CRCO Cockpit</span>
+          <div className="home-live-dot"></div>
+          <span className="home-live-label">LIVE</span>
         </div>
-        <div className="landing-header-meta">
-          <span className="landing-confidential">Internal · Confidential</span>
-          <span className="landing-header-date"><i className="fa-regular fa-calendar" style={{marginRight:5}}></i>{today}</span>
+        <div className="home-header-right">
+          <span className="home-confidential">Internal · Confidential</span>
+          <span className="home-date"><i className="fa-regular fa-calendar" style={{marginRight:5}}></i>{today}</span>
         </div>
       </header>
 
-      <main className="landing-main">
-        <div className="landing-hero">
-          <div className="landing-eyebrow">Chief Risk &amp; Compliance Officer</div>
-          <h1 className="landing-title">CRCO <span>Cockpit</span></h1>
-          <p className="landing-sub">
-            A unified intelligence platform for risk insights, reporting, knowledge management, scenario analysis, and advanced analytics.
-          </p>
-        </div>
-
-        <div className="landing-modules">
-          {MODULES.map(m => (
-            <div key={m.id} className="landing-card" onClick={() => setPage(m.id)}>
-              <div className={`landing-card-icon ${m.iconClass}`}>
-                <i className={`fa-solid ${m.icon}`}></i>
-              </div>
-              <div className="landing-card-body">
-                <div className="landing-card-title">{m.label}</div>
-                <div className="landing-card-desc">{m.desc}</div>
-              </div>
-              <div className="landing-card-arrow"><i className="fa-solid fa-arrow-right"></i></div>
+      {/* KPI strip */}
+      <div className="home-kpi-strip">
+        {KPIS.map((k,i) => (
+          <div key={i} className="home-kpi">
+            <div className="home-kpi-icon"><i className={`fa-solid ${k.icon}`}></i></div>
+            <div>
+              <div className="home-kpi-value">{k.value}</div>
+              <div className="home-kpi-label">{k.label} <span className="home-kpi-sub">{k.sub}</span></div>
             </div>
-          ))}
+          </div>
+        ))}
+        <div className="home-kpi-status">
+          <div className="home-status-dot"></div>
+          <span>All systems operational</span>
         </div>
-      </main>
+      </div>
 
-      <footer className="landing-footer">
+      {/* 2-column layout */}
+      <div className="home-grid">
+
+        {/* Left — hero + module cards */}
+        <div className="home-left">
+          <div className="home-hero">
+            <div className="home-eyebrow">Chief Risk &amp; Compliance Officer</div>
+            <h1 className="home-title">Intelligence<br/><span>Platform</span></h1>
+            <p className="home-sub">
+              Unified risk insights, reporting, knowledge management, scenario analysis, and advanced analytics — in one cockpit.
+            </p>
+          </div>
+
+          <div className="home-module-grid">
+            {MODULES.map(m => (
+              <div key={m.id} className={`home-module-card mod-${m.iconClass}`} onClick={() => setPage(m.id)}>
+                <div className="home-module-icon">
+                  <i className={`fa-solid ${m.icon}`}></i>
+                </div>
+                <div className="home-module-body">
+                  <div className="home-module-title">{m.label}</div>
+                  <div className="home-module-desc">{m.desc}</div>
+                </div>
+                <div className="home-module-arrow"><i className="fa-solid fa-arrow-right"></i></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right — charts */}
+        <div className="home-charts-panel">
+          <div className="home-charts-header">
+            <div className="home-charts-title">
+              <i className="fa-solid fa-chart-mixed" style={{marginRight:7,color:'#ef4444'}}></i>
+              Portfolio Snapshot
+            </div>
+            <span className="home-charts-sub">Illustrative · Aggregated</span>
+          </div>
+
+          <div className="home-chart-widget">
+            <div className="home-chart-widget-title">Risk Rating Distribution</div>
+            <div style={{height:128,position:'relative'}}><canvas ref={riskRef}></canvas></div>
+          </div>
+
+          <div className="home-chart-widget">
+            <div className="home-chart-widget-title">
+              Monthly Transaction Volume
+              <span style={{color:'rgba(255,255,255,0.3)',fontWeight:400,fontSize:9.5,marginLeft:5}}>(£M · Jan–Jun)</span>
+            </div>
+            <div style={{height:118,position:'relative'}}><canvas ref={trendRef}></canvas></div>
+          </div>
+
+          <div className="home-chart-widget">
+            <div className="home-chart-widget-title">Customer Portfolio Mix</div>
+            <div style={{height:162,position:'relative'}}><canvas ref={partyRef}></canvas></div>
+          </div>
+        </div>
+
+      </div>
+
+      <footer className="home-footer">
         <span>v1.0 · CRCO Cockpit</span>
         <span>Internal Use Only · Not for External Distribution</span>
       </footer>
