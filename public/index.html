@@ -1785,6 +1785,75 @@ tbody td  { border-bottom-color: rgba(255,255,255,0.06) !important; }
 /* ── Report source card selected ── */
 .report-source-card.selected { background: rgba(217,119,6,0.12) !important; }
 
+/* ── Summary card (Intelligence Brief) ── */
+.summary-card {
+  background: linear-gradient(135deg, rgba(217,119,6,0.07) 0%, rgba(13,19,33,0.98) 100%) !important;
+  border-color: rgba(217,119,6,0.3) !important;
+}
+
+/* ── Summary section backgrounds + label colors ── */
+.summary-section.section-blue   { background: rgba(59,130,246,0.10) !important; border-left-color: #3b82f6 !important; }
+.summary-section.section-blue   .summary-section-label { color: #93c5fd !important; }
+.summary-section.section-orange .summary-section-label { color: #fb923c !important; }
+.summary-section.section-purple .summary-section-label { color: #a78bfa !important; }
+.summary-section.section-teal   .summary-section-label { color: #2dd4bf !important; }
+.summary-section.section-gray   .summary-section-label { color: #94a3b8 !important; }
+.summary-section-content { color: var(--text) !important; }
+
+/* ── Cards (chart card, data card wrappers) ── */
+.card { background: var(--surface) !important; color: var(--text) !important; }
+.card-title { color: var(--text) !important; }
+
+/* ── Page wrapper & module page backgrounds ── */
+.page, .module-page, .page-inner, .page-body,
+.insights-page, .vault-page, .analysis-page, .scenario-page {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+/* ── Page title & subtitle ── */
+.page-title, .page-subtitle, .page-header { color: var(--text) !important; }
+
+/* ── Metric cards ── */
+.metric-card { background: var(--surface) !important; }
+.metric-label { color: var(--text-3) !important; }
+.metric-value { color: var(--text) !important; }
+
+/* ── Follow-up question buttons ── */
+.followup-btn { background: rgba(255,255,255,0.04) !important; color: var(--text-2) !important; }
+.followup-btn:hover { background: rgba(255,255,255,0.08) !important; color: var(--text) !important; }
+
+/* ── Preview toggle ── */
+.preview-toggle { background: rgba(255,255,255,0.04) !important; color: var(--text-2) !important; }
+.preview-toggle:hover { background: rgba(255,255,255,0.07) !important; color: var(--text) !important; }
+
+/* ── Module card icon: blue ── */
+.module-card-icon.blue { background: rgba(29,78,216,0.18) !important; color: #93c5fd !important; }
+
+/* ── Status pill: monitor ── */
+.status-pill.monitor { background: rgba(59,130,246,0.15) !important; color: #93c5fd !important; }
+
+/* ── Anomaly narrative: pattern + label colors ── */
+.anomaly-narrative-section.anv-pattern { background: rgba(59,130,246,0.10) !important; border-left-color: #3b82f6 !important; }
+.anomaly-narrative-section.anv-pattern .anomaly-narrative-label { color: #93c5fd !important; }
+.anomaly-narrative-section.anv-review  .anomaly-narrative-label { color: #86efac !important; }
+.anomaly-narrative-section            .anomaly-narrative-text   { color: var(--text) !important; }
+
+/* ── Vault card icons: all types ── */
+.vault-card-icon.regulatory { background: rgba(59,130,246,0.18) !important; color: #93c5fd !important; }
+.vault-card-icon.insights   { background: rgba(5,150,105,0.18) !important;  color: #6ee7b7 !important; }
+
+/* ── Vault confidence pills ── */
+.vault-confidence-pill.extracted { background: rgba(5,150,105,0.15) !important; color: #6ee7b7 !important; border-color: rgba(5,150,105,0.3) !important; }
+.vault-confidence-pill.inferred  { background: rgba(59,130,246,0.15) !important; color: #93c5fd !important; border-color: rgba(59,130,246,0.3) !important; }
+
+/* ── Vault card body text ── */
+.vault-card-title, .vault-card-desc, .vault-card-footer-info { color: var(--text) !important; }
+.vault-card-title { color: var(--text) !important; }
+
+/* ── Scenario / scenario table ── */
+.scenario-meta-value { color: var(--text) !important; }
+
 /* ── Print override stays light ── */
 @media print {
   body { background: #fff !important; color: #000 !important; }
