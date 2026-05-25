@@ -280,8 +280,9 @@ body {
 .topnav-genpact { display:flex; align-items:center; }
 .topnav-divider { width:1px; height:24px; background:var(--border); margin:0 16px; flex-shrink:0; }
 .topnav-cockpit { display:flex; align-items:center; gap:8px; color:var(--text); font-size:13.5px; font-weight:700; letter-spacing:-0.2px; white-space:nowrap; }
-.topnav-cockpit-icon { width:26px; height:26px; background:transparent; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.topnav-cockpit-icon img { width:26px; height:26px; object-fit:contain; }
+.topnav-cockpit-icon { display:none; }
+.topnav-logo-right { display:flex; align-items:center; margin-left:20px; flex-shrink:0; }
+.topnav-logo-right img { width:46px; height:46px; object-fit:contain; }
 .topnav-nav { display:flex; align-items:center; gap:2px; margin-left:auto; overflow-x:auto; }
 .topnav-item {
   display:flex; align-items:center; gap:6px; padding:6px 11px;
@@ -328,10 +329,10 @@ body {
 .home-nav-item i { font-size:12px; opacity:0.8; }
 .home-brand { display:flex; align-items:center; gap:10px; }
 .home-brand-icon {
-  width:44px; height:44px; background:transparent;
+  width:54px; height:54px; background:transparent;
   display:flex; align-items:center; justify-content:center; flex-shrink:0;
 }
-.home-brand-icon img { width:44px; height:44px; object-fit:contain; }
+.home-brand-icon img { width:54px; height:54px; object-fit:contain; }
 .home-brand-name { font-size:14px; font-weight:700; letter-spacing:-0.3px; color:#fff; }
 .home-live-dot {
   width:7px; height:7px; background:#10b981; border-radius:50%;
@@ -2193,8 +2194,6 @@ function HomePage({ setPage }) {
       {/* Header */}
       <header className="home-header">
         <div className="home-brand">
-          <div className="home-brand-icon"><img src="/Genpactlogo.png" alt="logo" /></div>
-          <span className="home-brand-name">CRCO Cockpit</span>
           <div className="home-live-dot"></div>
           <span className="home-live-label">LIVE</span>
         </div>
@@ -2202,6 +2201,7 @@ function HomePage({ setPage }) {
         <div className="home-header-right">
           <span className="home-confidential">Internal · Confidential</span>
           <span className="home-date"><i className="fa-regular fa-calendar" style={{marginRight:5}}></i>{today}</span>
+          <div className="home-brand-icon"><img src="/Genpactlogo.png" alt="logo" /></div>
         </div>
       </header>
 
@@ -2252,7 +2252,6 @@ function TopNav({ page, setPage }) {
     <header className="topnav">
       <div className="topnav-brand">
         <div className="topnav-cockpit">
-          <div className="topnav-cockpit-icon"><img src="/Genpactlogo.png" alt="logo" /></div>
           CRCO Cockpit
         </div>
       </div>
@@ -2269,6 +2268,9 @@ function TopNav({ page, setPage }) {
           </button>
         ))}
       </nav>
+      <div className="topnav-logo-right">
+        <img src="/Genpactlogo.png" alt="logo" />
+      </div>
     </header>
   );
 }
