@@ -328,10 +328,10 @@ body {
 .home-nav-item i { font-size:12px; opacity:0.8; }
 .home-brand { display:flex; align-items:center; gap:10px; }
 .home-brand-icon {
-  width:32px; height:32px; background:transparent;
+  width:44px; height:44px; background:transparent;
   display:flex; align-items:center; justify-content:center; flex-shrink:0;
 }
-.home-brand-icon img { width:32px; height:32px; object-fit:contain; }
+.home-brand-icon img { width:44px; height:44px; object-fit:contain; }
 .home-brand-name { font-size:14px; font-weight:700; letter-spacing:-0.3px; color:#fff; }
 .home-live-dot {
   width:7px; height:7px; background:#10b981; border-radius:50%;
@@ -2190,7 +2190,7 @@ function HomePage({ setPage }) {
   return (
     <div className="home-page">
 
-      {/* Header with centred nav */}
+      {/* Header */}
       <header className="home-header">
         <div className="home-brand">
           <div className="home-brand-icon"><img src="/Genpactlogo.png" alt="logo" /></div>
@@ -2198,15 +2198,6 @@ function HomePage({ setPage }) {
           <div className="home-live-dot"></div>
           <span className="home-live-label">LIVE</span>
         </div>
-
-        <nav className="home-nav">
-          {NAV.filter(n => n.id !== 'home').map(item => (
-            <button key={item.id} className="home-nav-item" onClick={() => setPage(item.id)}>
-              <i className={`fa-solid ${item.icon}`}></i>
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </nav>
 
         <div className="home-header-right">
           <span className="home-confidential">Internal · Confidential</span>
