@@ -915,6 +915,7 @@ tbody tr:last-child td { border-bottom: none; }
 .vault-card-icon.risk  { background: #FEF2F2; color: var(--primary); }
 .vault-card-icon.regulatory { background: #EFF6FF; color: #1D4ED8; }
 .vault-card-icon.emails { background: #F5F3FF; color: #6D28D9; }
+.vault-card-icon.insights { background: #ECFDF5; color: #059669; }
 
 .vault-card-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.35; }
 
@@ -1802,7 +1803,6 @@ function DataTable({ columns, preview }) {
 const NAV = [
   { id: 'home',     label: 'Home',                icon: 'fa-house' },
   { id: 'insights', label: 'Intelligence Center', icon: 'fa-chart-bar' },
-  { id: 'reports',  label: 'Insight Composer',    icon: 'fa-file-lines' },
   { id: 'vault',    label: 'Knowledge Vault',     icon: 'fa-vault' },
   { id: 'analysis', label: 'Analytics Lab',       icon: 'fa-magnifying-glass-chart' },
   { id: 'scenario', label: 'Scenario Analysis',   icon: 'fa-radiation' }
@@ -1848,13 +1848,8 @@ const MODULES = [
     active: true
   },
   {
-    id: 'reports', label: 'Insight Composer', icon: 'fa-file-lines', iconClass: 'blue',
-    desc: 'Generate leadership-ready board packs and committee reports from structured risk data.',
-    active: true
-  },
-  {
     id: 'vault', label: 'Knowledge Vault', icon: 'fa-vault', iconClass: 'green',
-    desc: 'Search and retrieve approved policy documents, regulatory guidance, and knowledge assets.',
+    desc: 'Search and retrieve policy documents, regulatory guidance, email intelligence, and insights data. Generate executive reports across all sources.',
     active: true
   },
   {
@@ -3547,7 +3542,6 @@ function App() {
       case 'home':     return <HomePage setPage={setPage} />;
       case 'insights': return <InsightsPage />;
       case 'reports':
-        return <ReportsPage />;
       case 'vault':
         return <VaultPage />;
       case 'analysis':
@@ -3958,10 +3952,13 @@ function AnomalySection({ anomalies, allAnomalies, highRiskCount, escalatedCount
 // ── Vault Page ────────────────────────────────────────────────────────────────
 
 const VAULT_TABS = [
-  { key: 'risk',       label: 'Risk Analysis', icon: 'fa-shield-halved' },
-  { key: 'regulatory', label: 'Regulatory',    icon: 'fa-gavel' },
-  { key: 'emails',     label: 'Emails',        icon: 'fa-envelope' },
+  { key: 'risk',       label: 'Risk Analysis',   icon: 'fa-shield-halved' },
+  { key: 'regulatory', label: 'Regulatory',      icon: 'fa-gavel' },
+  { key: 'emails',     label: 'Emails',          icon: 'fa-envelope' },
+  { key: 'insights',   label: 'Insights Data',   icon: 'fa-database' },
+  { key: 'report',     label: 'Generate Report', icon: 'fa-file-lines' },
 ];
+const VAULT_DOC_TABS = new Set(['risk', 'regulatory', 'emails']);
 
 const VAULT_DOC_ICONS = {
   risk:       { icon: 'fa-shield-halved', cls: 'risk' },
@@ -4116,6 +4113,59 @@ function VaultSummaryPanel({ doc, summary, loading, source, onClose }) {
   );
 }
 
+function InsightsDataTab() {
+  const [datasets, setDatasets] = useState(null);
+  const [loading,  setLoading]  = useState(true);
+
+  useEffect(() => {
+    fetch('/api/catalogue')
+      .then(r => r.json())
+      .then(d => { setDatasets(d.datasets || []); setLoading(false); })
+      .catch(() => { setDatasets([]); setLoading(false); });
+  }, []);
+
+  if (loading) return (
+    <div className="spinner-wrap"><div className="spinner"></div><span>Loading datasets…</span></div>
+  );
+
+  if (!datasets.length) return (
+    <div className="vault-empty-state">
+      <div className="vault-empty-icon"><i className="fa-solid fa-database"></i></div>
+      <div className="vault-empty-title">No datasets available</div>
+      <div className="vault-empty-sub">Upload an Excel dataset via the Intelligence Centre to populate this view.</div>
+    </div>
+  );
+
+  return (
+    <div className="vault-grid">
+      {datasets.map((ds, i) => (
+        <div key={i} className="vault-card">
+          <div className="vault-card-top">
+            <div className="vault-card-icon insights">
+              <i className="fa-solid fa-database"></i>
+            </div>
+            <div style={{flex:1, minWidth:0}}>
+              <div className="vault-card-title">{ds.name}</div>
+              <div className="vault-meta-row">
+                <span className="vault-meta-tag"><i className="fa-solid fa-table-cells"></i>{ds.rows != null ? Number(ds.rows).toLocaleString() : '—'} rows</span>
+                <span className="vault-meta-tag"><i className="fa-solid fa-table-columns"></i>{ds.columns?.length || '—'} columns</span>
+              </div>
+            </div>
+          </div>
+          {ds.columns?.length > 0 && (
+            <div className="vault-card-preview">
+              {ds.columns.slice(0, 6).join(' · ')}{ds.columns.length > 6 ? ` +${ds.columns.length - 6} more` : ''}
+            </div>
+          )}
+          <div className="vault-card-footer">
+            <span className="vault-card-footer-info"><i className="fa-solid fa-file-excel" style={{marginRight:4}}></i>Excel Dataset</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function VaultDocCard({ doc, selected, onGenerate }) {
   const { icon, cls } = VAULT_DOC_ICONS[doc.section] || VAULT_DOC_ICONS.risk;
   const tabLabel = VAULT_TABS.find(t => t.key === doc.section)?.label;
@@ -4233,61 +4283,70 @@ function VaultPage() {
           {/* Tabs */}
           <div className="vault-tabs">
             {VAULT_TABS.map(t => {
-              const count = docs?.[t.key]?.length || 0;
+              const isDocTab = VAULT_DOC_TABS.has(t.key);
+              const count = isDocTab ? (docs?.[t.key]?.length || 0) : null;
               return (
                 <button key={t.key} className={`vault-tab${activeTab === t.key ? ' active' : ''}`}
                   onClick={() => { setActiveTab(t.key); setSearch(''); }}>
                   <i className={`fa-solid ${t.icon}`}></i>
                   {t.label}
-                  <span className="vault-tab-count">{count}</span>
+                  {count != null && <span className="vault-tab-count">{count}</span>}
                 </button>
               );
             })}
           </div>
 
-          {/* Search */}
-          <div className="vault-search">
-            <input className="input-box" style={{maxWidth:320,fontSize:13,padding:'8px 12px'}}
-              placeholder={`Search ${VAULT_TABS.find(t=>t.key===activeTab)?.label}…`}
-              value={search} onChange={e => setSearch(e.target.value)} />
-            {search && (
-              <button onClick={() => setSearch('')} style={{background:'none',border:'none',cursor:'pointer',color:'var(--text-3)',fontSize:14}}>
-                <i className="fa-solid fa-xmark"></i>
-              </button>
-            )}
-          </div>
+          {/* Search — only for document tabs */}
+          {VAULT_DOC_TABS.has(activeTab) && (
+            <div className="vault-search">
+              <input className="input-box" style={{maxWidth:320,fontSize:13,padding:'8px 12px'}}
+                placeholder={`Search ${VAULT_TABS.find(t=>t.key===activeTab)?.label}…`}
+                value={search} onChange={e => setSearch(e.target.value)} />
+              {search && (
+                <button onClick={() => setSearch('')} style={{background:'none',border:'none',cursor:'pointer',color:'var(--text-3)',fontSize:14}}>
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+              )}
+            </div>
+          )}
 
-          {/* Document grid */}
-          <div className="vault-layout">
-            <div>
-              {(() => {
-                const tabDocs = (docs?.[activeTab] || []).filter(d =>
-                  !search || d.title.toLowerCase().includes(search.toLowerCase()) ||
-                  d.preview.toLowerCase().includes(search.toLowerCase())
-                );
-                if (!tabDocs.length) {
-                  return (
-                    <div className="vault-empty-state">
-                      <div className="vault-empty-icon"><i className="fa-solid fa-folder-open"></i></div>
-                      <div className="vault-empty-title">{search ? 'No results found' : 'No documents in this section'}</div>
-                      <div className="vault-empty-sub">
-                        {search ? `No documents match "${search}".` : 'Place the vault Word document in data/vault/ and restart the server.'}
+          {/* Tab content */}
+          {activeTab === 'insights' ? (
+            <InsightsDataTab />
+          ) : activeTab === 'report' ? (
+            <ReportGeneratorTab />
+          ) : (
+            <div className="vault-layout">
+              <div>
+                {(() => {
+                  const tabDocs = (docs?.[activeTab] || []).filter(d =>
+                    !search || d.title.toLowerCase().includes(search.toLowerCase()) ||
+                    d.preview.toLowerCase().includes(search.toLowerCase())
+                  );
+                  if (!tabDocs.length) {
+                    return (
+                      <div className="vault-empty-state">
+                        <div className="vault-empty-icon"><i className="fa-solid fa-folder-open"></i></div>
+                        <div className="vault-empty-title">{search ? 'No results found' : 'No documents in this section'}</div>
+                        <div className="vault-empty-sub">
+                          {search ? `No documents match "${search}".` : 'Place the vault Word document in data/vault/ and restart the server.'}
+                        </div>
                       </div>
+                    );
+                  }
+                  return (
+                    <div className="vault-grid">
+                      {tabDocs.map((doc, i) => (
+                        <VaultDocCard key={i} doc={doc}
+                          selected={false}
+                          onGenerate={generateSummary} />
+                      ))}
                     </div>
                   );
-                }
-                return (
-                  <div className="vault-grid">
-                    {tabDocs.map((doc, i) => (
-                      <VaultDocCard key={i} doc={doc}
-                        selected={false}
-                        onGenerate={generateSummary} />
-                    ))}
-                  </div>
-                );
-              })()}
+                })()}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Summary child window (modal overlay) */}
           {selectedDoc && (
@@ -4474,7 +4533,7 @@ function EmailPreviewWindow({ emailText, onClose }) {
   );
 }
 
-function ReportsPage() {
+function ReportGeneratorTab() {
   const [sources,        setSources]       = useState(null);
   const [selected,       setSelected]      = useState({ risk: true, regulatory: true, emails: true, insights: true });
   const [fromDate,       setFromDate]      = useState('');
@@ -4526,7 +4585,7 @@ function ReportsPage() {
   };
 
   return (
-    <div className="page" style={{maxWidth:1080}}>
+    <div style={{maxWidth:1080, margin:'0 auto'}}>
 
       {/* Centred header */}
       <div className="report-page-header">
@@ -4647,6 +4706,10 @@ function ReportsPage() {
       {emailText && <EmailPreviewWindow emailText={emailText} onClose={() => setEmailText(null)} />}
     </div>
   );
+}
+
+function ReportsPage() {
+  return <div className="page" style={{maxWidth:1080}}><ReportGeneratorTab /></div>;
 }
 
 // ── Analysis Page ─────────────────────────────────────────────────────────────
