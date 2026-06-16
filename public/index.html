@@ -4987,38 +4987,64 @@ function ReportGeneratorTab() {
   const [emailText,      setEmailText]     = useState(null);
   const [error,          setError]         = useState(null);
 
-  const printReport = React.useCallback((rpt) => {
-    const win = window.open('', '_blank', 'width=900,height=700');
+  const printReport = React.useCallback((rpt, ref) => {
+    const node = ref?.current;
+    if (!node) return;
+
+    // Clone the DOM so we can mutate without affecting the page
+    const clone = node.cloneNode(true);
+
+    // Remove the Export PDF button from the clone
+    clone.querySelectorAll('.report-print-btn').forEach(el => el.remove());
+
+    // Convert every <canvas> to an <img> with its pixel data
+    const origCanvases = node.querySelectorAll('canvas');
+    const cloneCanvases = clone.querySelectorAll('canvas');
+    origCanvases.forEach((cv, i) => {
+      try {
+        const img = document.createElement('img');
+        img.src = cv.toDataURL('image/png');
+        img.style.cssText = `width:100%;max-width:${cv.width}px;height:auto;display:block;`;
+        cloneCanvases[i]?.parentNode?.replaceChild(img, cloneCanvases[i]);
+      } catch(e) {}
+    });
+
+    const win = window.open('', '_blank', 'width=960,height=800');
     if (!win) return;
-    const sectionIcons = { 'executive summary':'★', 'key risk themes':'▲', 'regulatory developments':'⚑', 'customer & transaction insights':'≡', 'email intelligence':'✉', 'required actions':'●', 'deadlines':'◷', 'ownership & teams mentioned':'⚙' };
-    const sectionsHtml = rpt.sections.map(sec => `
-      <div class="section">
-        <div class="section-title">${sectionIcons[sec.title.toLowerCase()] || '•'} ${sec.title.toUpperCase()}</div>
-        <div class="section-content">${sec.content.replace(/\n/g,'<br/>')}</div>
-      </div>`).join('');
     win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"/>
       <title>Executive Intelligence Report</title>
       <style>
-        @page { size: A4; margin: 18mm 16mm; }
+        @page { size: A4; margin: 15mm 14mm; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #111; background: #fff; }
-        .header { background: #1e293b; color: #fff; padding: 18px 24px; margin-bottom: 24px; }
-        .header-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
-        .header-meta { font-size: 11px; color: rgba(255,255,255,0.55); }
-        .section { margin-bottom: 24px; page-break-inside: avoid; }
-        .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #FFAD28; margin-bottom: 8px; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px; }
-        .section-content { font-size: 13px; line-height: 1.8; color: #222; }
+        /* Report header */
+        .report-output-header { background: #1e293b !important; color: #fff; padding: 18px 24px; margin-bottom: 24px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .report-output-title  { font-size: 17px; font-weight: 700; margin-bottom: 4px; color: #fff; }
+        .report-output-meta   { font-size: 11px; color: rgba(255,255,255,0.6); }
+        /* Sections */
+        .report-body { padding: 0 4px; }
+        .report-section { margin-bottom: 22px; page-break-inside: avoid; }
+        .report-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+          color: #FFAD28 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+          border-bottom: 1px solid #e5e7eb; padding-bottom: 5px; margin-bottom: 9px;
+          display: flex; align-items: center; gap: 7px; }
+        .report-section-title i { display: none; }
+        .report-section-content { font-size: 13px; line-height: 1.8; color: #222; white-space: pre-wrap; }
+        /* Charts grid */
+        .report-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+        .report-chart-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; page-break-inside: avoid; }
+        .report-chart-title { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 10px; }
+        .metric-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 14px; margin-bottom: 10px; }
+        .metric-label { font-size: 10px; text-transform: uppercase; color: #6b7280; margin-bottom: 3px; }
+        .metric-value { font-size: 20px; font-weight: 700; color: #111; }
+        /* Info banners */
+        .report-output { border: none !important; }
+        img { max-width: 100%; height: auto; }
       </style>
-    </head><body>
-      <div class="header">
-        <div class="header-title">Executive Intelligence Report</div>
-        <div class="header-meta">${rpt.metadata?.docsIncluded} sources · Generated ${new Date(rpt.metadata?.generatedAt).toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'})}</div>
-      </div>
-      ${sectionsHtml}
-    </body></html>`);
+    </head><body>${clone.outerHTML}</body></html>`);
     win.document.close();
     win.focus();
-    setTimeout(() => { win.print(); win.close(); }, 400);
+    setTimeout(() => { win.print(); }, 600);
   }, []);
   const reportRef = React.useRef(null);
 
@@ -5157,7 +5183,7 @@ function ReportGeneratorTab() {
                 {(fromDate || toDate) && ` · ${fromDate || 'All'} → ${toDate || 'Present'}`}
               </div>
             </div>
-            <button className="report-print-btn" onClick={() => printReport(report)}>
+            <button className="report-print-btn" onClick={() => printReport(report, reportRef)}>
               <i className="fa-solid fa-print"></i>Export PDF
             </button>
           </div>
