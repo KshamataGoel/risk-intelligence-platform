@@ -5032,8 +5032,11 @@ function ReportGeneratorTab() {
     //    cv._chartInst is the Chart instance stored by ReportChart on the canvas element
     const origCanvases = Array.from(node.querySelectorAll('canvas'));
     const cloneCanvases = Array.from(clone.querySelectorAll('canvas'));
+    let debugLines = ['Canvases found: ' + origCanvases.length + ' (clone: ' + cloneCanvases.length + ')'];
     origCanvases.forEach((cv, i) => {
       try {
+        debugLines.push('#' + i + ': width=' + cv.width + ' height=' + cv.height + ' hasInst=' + !!cv._chartInst + ' hasPrintUrl=' + !!cv._printDataUrl + ' printUrlLen=' + (cv._printDataUrl ? cv._printDataUrl.length : 0));
+
         // Method A: pre-captured snapshot from the afterRender plugin (white bg guaranteed)
         let dataUrl = (cv._printDataUrl && cv._printDataUrl.length > 100)
           ? cv._printDataUrl
@@ -5050,9 +5053,12 @@ function ReportGeneratorTab() {
           ctx2.fillRect(0, 0, w, h);
           ctx2.drawImage(cv, 0, 0);
           dataUrl = off.toDataURL('image/png');
+          debugLines.push('#' + i + ': used Method B, resultLen=' + dataUrl.length);
+        } else {
+          debugLines.push('#' + i + ': used Method A (printDataUrl)');
         }
 
-        if (!dataUrl || dataUrl.length < 100) return; // genuinely blank
+        if (!dataUrl || dataUrl.length < 100) { debugLines.push('#' + i + ': SKIPPED - blank'); return; }
 
         const img = document.createElement('img');
         img.src = dataUrl;
@@ -5066,8 +5072,9 @@ function ReportGeneratorTab() {
           wrapper.style.overflow = 'visible';
           wrapper.replaceChild(img, target);
         }
-      } catch(e) { console.warn('chart capture:', e); }
+      } catch(e) { debugLines.push('#' + i + ': ERROR ' + e.message); }
     });
+    alert(debugLines.join('\n'));
 
     // 3. Inject portal into the SAME page (avoids cross-window canvas issues)
     document.getElementById('__print_portal__')?.remove();
