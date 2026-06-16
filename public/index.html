@@ -1066,7 +1066,7 @@ tbody tr:last-child td { border-bottom: none; }
 .vault-card-preview {
   font-size: 12.5px; color: var(--text-2); line-height: 1.6;
   padding: 0 20px; margin-bottom: 14px;
-  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
@@ -1317,13 +1317,29 @@ tbody tr:last-child td { border-bottom: none; }
 .email-body-line-text    { color: var(--text); font-size: 13.5px; line-height: 1.65; }
 
 @media print {
+  /* Hide all chrome except the report */
   .sidebar, .topbar, .report-actions, .report-page-header, .report-sources-grid,
-  .report-date-section, .report-print-btn, .vault-tabs, .page-header { display: none !important; }
-  body { background: #fff !important; }
-  .report-output { border: none; margin: 0; box-shadow: none; }
-  .report-output-header { background: #1e293b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .page { padding: 0 !important; max-width: none !important; }
-  .report-body { padding: 16px !important; }
+  .report-date-section, .report-print-btn, .vault-tabs, .page-header,
+  .topnav, .home-header, nav, .vault-tabs-bar { display: none !important; }
+
+  /* Reset page shell */
+  html, body { background: #fff !important; color: #000 !important; margin: 0; padding: 0; height: auto !important; overflow: visible !important; }
+  #root, .page, .page-inner { height: auto !important; overflow: visible !important; padding: 0 !important; max-width: none !important; }
+
+  /* Report container — remove clip, let it flow */
+  .report-output { border: none !important; margin: 0 !important; box-shadow: none !important; overflow: visible !important; height: auto !important; }
+  .report-output-header { background: #1e293b !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .report-body { padding: 16px 20px !important; height: auto !important; overflow: visible !important; }
+
+  /* Section text readable on white */
+  .report-section-content { color: #111 !important; font-size: 13px !important; line-height: 1.75 !important; }
+  .report-section-title { color: #FFAD28 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* Keep sections together where possible, allow page breaks between */
+  .report-section { page-break-inside: avoid; margin-bottom: 20px !important; }
+
+  /* Page size */
+  @page { size: A4; margin: 18mm 16mm; }
 }
 
 /* ── Scenario Intelligence Module ───────────────────────────────────── */
