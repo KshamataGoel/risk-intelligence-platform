@@ -5028,21 +5028,18 @@ function ReportGeneratorTab() {
     const clone = node.cloneNode(true);
     clone.querySelectorAll('.report-print-btn').forEach(el => el.remove());
 
-    // 2. Capture every Chart.js canvas using Chart.js's own export method
-    //    cv._chartInst is the Chart instance stored by ReportChart on the canvas element
+    // 2. Capture every Chart.js canvas using the afterRender snapshot (white bg guaranteed)
+    //    cv._chartInst is the Chart instance, cv._printDataUrl is set by the snapshotForPrint plugin
     const origCanvases = Array.from(node.querySelectorAll('canvas'));
     const cloneCanvases = Array.from(clone.querySelectorAll('canvas'));
-    let debugLines = ['Canvases found: ' + origCanvases.length + ' (clone: ' + cloneCanvases.length + ')'];
     origCanvases.forEach((cv, i) => {
       try {
-        debugLines.push('#' + i + ': width=' + cv.width + ' height=' + cv.height + ' hasInst=' + !!cv._chartInst + ' hasPrintUrl=' + !!cv._printDataUrl + ' printUrlLen=' + (cv._printDataUrl ? cv._printDataUrl.length : 0));
-
-        // Method A: pre-captured snapshot from the afterRender plugin (white bg guaranteed)
+        // Method A: pre-captured snapshot from the afterRender plugin
         let dataUrl = (cv._printDataUrl && cv._printDataUrl.length > 100)
           ? cv._printDataUrl
           : null;
 
-        // Method B: offscreen composite with explicit white fill
+        // Method B: offscreen composite with explicit white fill (fallback)
         if (!dataUrl || dataUrl === 'data:,' || dataUrl.length < 100) {
           const w = cv.width || 700;
           const h = cv.height || 280;
@@ -5053,12 +5050,9 @@ function ReportGeneratorTab() {
           ctx2.fillRect(0, 0, w, h);
           ctx2.drawImage(cv, 0, 0);
           dataUrl = off.toDataURL('image/png');
-          debugLines.push('#' + i + ': used Method B, resultLen=' + dataUrl.length);
-        } else {
-          debugLines.push('#' + i + ': used Method A (printDataUrl)');
         }
 
-        if (!dataUrl || dataUrl.length < 100) { debugLines.push('#' + i + ': SKIPPED - blank'); return; }
+        if (!dataUrl || dataUrl.length < 100) return;
 
         const img = document.createElement('img');
         img.src = dataUrl;
@@ -5072,24 +5066,8 @@ function ReportGeneratorTab() {
           wrapper.style.overflow = 'visible';
           wrapper.replaceChild(img, target);
         }
-      } catch(e) { debugLines.push('#' + i + ': ERROR ' + e.message); }
+      } catch(e) {}
     });
-
-    // TEMP DEBUG: show captured chart images + log directly on the live page (no blocking alert)
-    document.getElementById('__debug_img_preview__')?.remove();
-    const previewBox = document.createElement('div');
-    previewBox.id = '__debug_img_preview__';
-    previewBox.style.cssText = 'position:fixed;top:10px;right:10px;z-index:99999;background:#fff;border:4px solid red;padding:10px;max-width:380px;max-height:90vh;overflow:auto;font-family:monospace;font-size:11px;color:#000;';
-    let previewHtml = '<div style="font-weight:bold;margin-bottom:8px;display:flex;justify-content:space-between;"><span>DEBUG PREVIEW</span><button id="__debug_close__" style="cursor:pointer;">X close</button></div>';
-    previewHtml += '<pre style="white-space:pre-wrap;background:#eee;padding:6px;margin-bottom:10px;">' + debugLines.join('\n') + '</pre>';
-    origCanvases.forEach(function(cv, idx) {
-      if (cv._printDataUrl) {
-        previewHtml += '<div style="margin-bottom:4px;">chart #' + idx + ':</div><img src="' + cv._printDataUrl + '" style="width:100%;display:block;margin-bottom:14px;border:1px solid #ccc;" />';
-      }
-    });
-    previewBox.innerHTML = previewHtml;
-    document.body.appendChild(previewBox);
-    document.getElementById('__debug_close__').onclick = function() { previewBox.remove(); };
 
     // 3. Inject portal into the SAME page (avoids cross-window canvas issues)
     document.getElementById('__print_portal__')?.remove();
@@ -5130,14 +5108,19 @@ function ReportGeneratorTab() {
     `;
     document.head.appendChild(style);
 
-    // 5. Print then clean up
-    window.print();
+    // 5. Wait for layout/paint of the newly injected portal before printing (avoids
+    //    a race condition where window.print() fires before images are laid out)
     const cleanup = () => {
       document.getElementById('__print_portal__')?.remove();
       document.getElementById('__print_style__')?.remove();
     };
-    window.addEventListener('afterprint', cleanup, { once: true });
-    setTimeout(cleanup, 8000); // fallback if afterprint doesn't fire
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.print();
+        window.addEventListener('afterprint', cleanup, { once: true });
+        setTimeout(cleanup, 8000); // fallback if afterprint doesn't fire
+      });
+    });
   }, []);
   const reportRef = React.useRef(null);
 
