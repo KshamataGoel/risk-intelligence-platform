@@ -4986,6 +4986,40 @@ function ReportGeneratorTab() {
   const [insightsData,   setInsightsData]  = useState(null);
   const [emailText,      setEmailText]     = useState(null);
   const [error,          setError]         = useState(null);
+
+  const printReport = React.useCallback((rpt) => {
+    const win = window.open('', '_blank', 'width=900,height=700');
+    if (!win) return;
+    const sectionIcons = { 'executive summary':'★', 'key risk themes':'▲', 'regulatory developments':'⚑', 'customer & transaction insights':'≡', 'email intelligence':'✉', 'required actions':'●', 'deadlines':'◷', 'ownership & teams mentioned':'⚙' };
+    const sectionsHtml = rpt.sections.map(sec => `
+      <div class="section">
+        <div class="section-title">${sectionIcons[sec.title.toLowerCase()] || '•'} ${sec.title.toUpperCase()}</div>
+        <div class="section-content">${sec.content.replace(/\n/g,'<br/>')}</div>
+      </div>`).join('');
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"/>
+      <title>Executive Intelligence Report</title>
+      <style>
+        @page { size: A4; margin: 18mm 16mm; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #111; background: #fff; }
+        .header { background: #1e293b; color: #fff; padding: 18px 24px; margin-bottom: 24px; }
+        .header-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+        .header-meta { font-size: 11px; color: rgba(255,255,255,0.55); }
+        .section { margin-bottom: 24px; page-break-inside: avoid; }
+        .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #FFAD28; margin-bottom: 8px; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px; }
+        .section-content { font-size: 13px; line-height: 1.8; color: #222; }
+      </style>
+    </head><body>
+      <div class="header">
+        <div class="header-title">Executive Intelligence Report</div>
+        <div class="header-meta">${rpt.metadata?.docsIncluded} sources · Generated ${new Date(rpt.metadata?.generatedAt).toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'})}</div>
+      </div>
+      ${sectionsHtml}
+    </body></html>`);
+    win.document.close();
+    win.focus();
+    setTimeout(() => { win.print(); win.close(); }, 400);
+  }, []);
   const reportRef = React.useRef(null);
 
   useEffect(() => {
@@ -5123,7 +5157,7 @@ function ReportGeneratorTab() {
                 {(fromDate || toDate) && ` · ${fromDate || 'All'} → ${toDate || 'Present'}`}
               </div>
             </div>
-            <button className="report-print-btn" onClick={() => window.print()}>
+            <button className="report-print-btn" onClick={() => printReport(report)}>
               <i className="fa-solid fa-print"></i>Export PDF
             </button>
           </div>
