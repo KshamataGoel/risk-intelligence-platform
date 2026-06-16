@@ -4846,12 +4846,19 @@ function ReportChart({ chartData, chartType, title, metrics }) {
         }]
       },
       plugins: [{
-        id: 'whiteBg',
-        beforeDraw: chart => {
-          const ctx = chart.canvas.getContext('2d');
-          ctx.save(); ctx.globalCompositeOperation = 'destination-over';
-          ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,chart.width,chart.height);
-          ctx.restore();
+        id: 'snapshotForPrint',
+        afterRender: chart => {
+          try {
+            const cv = chart.canvas;
+            const w = cv.width || 700, h = cv.height || 280;
+            const off = document.createElement('canvas');
+            off.width = w; off.height = h;
+            const c = off.getContext('2d');
+            c.fillStyle = '#ffffff';
+            c.fillRect(0, 0, w, h);
+            c.drawImage(cv, 0, 0);
+            cv._printDataUrl = off.toDataURL('image/png');
+          } catch(e) {}
         }
       }],
       options: {
@@ -5011,25 +5018,28 @@ function ReportGeneratorTab() {
     const cloneCanvases = Array.from(clone.querySelectorAll('canvas'));
     origCanvases.forEach((cv, i) => {
       try {
-        // Method A: Chart.js toBase64Image() — renders chart on white bg natively
-        let dataUrl = cv._chartInst?.toBase64Image
-          ? cv._chartInst.toBase64Image('image/png', 1)
-          : null;
+        // Method A: afterRender snapshot (captured with white bg after each Chart.js draw)
+        let dataUrl = (cv._printDataUrl && cv._printDataUrl.length > 200)
+          ? cv._printDataUrl : null;
 
-        // Method B: offscreen composite with explicit white fill
-        if (!dataUrl || dataUrl === 'data:,' || dataUrl.length < 100) {
-          const w = cv.width || 700;
-          const h = cv.height || 280;
+        // Method B: toBase64Image on Chart instance
+        if (!dataUrl) {
+          dataUrl = cv._chartInst?.toBase64Image?.('image/png', 1) || null;
+        }
+
+        // Method C: offscreen composite fallback
+        if (!dataUrl || dataUrl.length < 200) {
+          const w = cv.width || 700, h = cv.height || 280;
           const off = document.createElement('canvas');
           off.width = w; off.height = h;
-          const ctx2 = off.getContext('2d');
-          ctx2.fillStyle = '#ffffff';
-          ctx2.fillRect(0, 0, w, h);
-          ctx2.drawImage(cv, 0, 0);
+          const c2 = off.getContext('2d');
+          c2.fillStyle = '#ffffff';
+          c2.fillRect(0, 0, w, h);
+          c2.drawImage(cv, 0, 0);
           dataUrl = off.toDataURL('image/png');
         }
 
-        if (!dataUrl || dataUrl.length < 100) return; // genuinely blank
+        if (!dataUrl || dataUrl.length < 200) return;
 
         const img = document.createElement('img');
         img.src = dataUrl;
