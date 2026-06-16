@@ -5000,18 +5000,26 @@ function ReportGeneratorTab() {
     const cloneCanvases = Array.from(clone.querySelectorAll('canvas'));
     origCanvases.forEach((cv, i) => {
       try {
+        const w = cv.width  || cv.offsetWidth  || 700;
+        const h = cv.height || cv.offsetHeight || 280;
         const off = document.createElement('canvas');
-        off.width  = cv.width  || 700;
-        off.height = cv.height || 320;
+        off.width = w; off.height = h;
         const ctx = off.getContext('2d');
         ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, off.width, off.height);
-        ctx.drawImage(cv, 0, 0);
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(cv, 0, 0, w, h);
         const img = document.createElement('img');
         img.src = off.toDataURL('image/png');
-        img.style.cssText = 'width:100%;height:auto;display:block;margin:6px 0;';
+        img.style.cssText = 'width:100%;height:auto;display:block;margin:4px 0;';
         const target = cloneCanvases[i];
-        if (target?.parentNode) target.parentNode.replaceChild(img, target);
+        if (target?.parentNode) {
+          // Reset the fixed-height wrapper so img is not clipped
+          const wrapper = target.parentNode;
+          wrapper.style.position = 'static';
+          wrapper.style.height   = 'auto';
+          wrapper.style.overflow = 'visible';
+          wrapper.replaceChild(img, target);
+        }
       } catch(e) {}
     });
 
