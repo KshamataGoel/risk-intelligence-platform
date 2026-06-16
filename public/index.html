@@ -1322,9 +1322,16 @@ tbody tr:last-child td { border-bottom: none; }
   .report-date-section, .report-print-btn, .vault-tabs, .page-header,
   .topnav, .home-header, nav, .vault-tabs-bar { display: none !important; }
 
-  /* Reset page shell */
+  /* Reset page shell — release ALL scroll containers so Chrome paginates properly */
   html, body { background: #fff !important; color: #000 !important; margin: 0; padding: 0; height: auto !important; overflow: visible !important; }
-  #root, .page, .page-inner { height: auto !important; overflow: visible !important; padding: 0 !important; max-width: none !important; }
+  #root, .main, .page, .page-inner, .page-body,
+  .vault-page, .insights-page, .analysis-page, .scenario-page {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    flex: none !important;
+  }
 
   /* Report container — remove clip, let it flow */
   .report-output { border: none !important; margin: 0 !important; box-shadow: none !important; overflow: visible !important; height: auto !important; }
