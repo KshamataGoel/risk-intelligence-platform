@@ -4861,12 +4861,20 @@ function ReportChart({ chartData, chartType, title, metrics }) {
         }]
       },
       plugins: [{
-        id: 'whiteBg',
-        beforeDraw: chart => {
-          const ctx = chart.canvas.getContext('2d');
-          ctx.save(); ctx.globalCompositeOperation = 'destination-over';
-          ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,chart.width,chart.height);
-          ctx.restore();
+        id: 'snapshotForPrint',
+        afterRender: function(chart) {
+          try {
+            var cv2 = chart.canvas;
+            var w2 = cv2.width || 700;
+            var h2 = cv2.height || 280;
+            var off2 = document.createElement('canvas');
+            off2.width = w2; off2.height = h2;
+            var c2 = off2.getContext('2d');
+            c2.fillStyle = '#ffffff';
+            c2.fillRect(0, 0, w2, h2);
+            c2.drawImage(cv2, 0, 0);
+            cv2._printDataUrl = off2.toDataURL('image/png');
+          } catch(snapErr) {}
         }
       }],
       options: {
@@ -5026,9 +5034,9 @@ function ReportGeneratorTab() {
     const cloneCanvases = Array.from(clone.querySelectorAll('canvas'));
     origCanvases.forEach((cv, i) => {
       try {
-        // Method A: Chart.js toBase64Image() — renders chart on white bg natively
-        let dataUrl = cv._chartInst?.toBase64Image
-          ? cv._chartInst.toBase64Image('image/png', 1)
+        // Method A: pre-captured snapshot from the afterRender plugin (white bg guaranteed)
+        let dataUrl = (cv._printDataUrl && cv._printDataUrl.length > 100)
+          ? cv._printDataUrl
           : null;
 
         // Method B: offscreen composite with explicit white fill
