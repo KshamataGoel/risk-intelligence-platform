@@ -4845,11 +4845,13 @@ function ReportChart({ chartData, chartType, title, metrics }) {
           borderRadius: isDoughnut ? 0 : 4,
         }]
       },
-      plugins: [{
-        id: 'snapshotForPrint',
-        afterRender: chart => {
+      options: {
+        indexAxis: isHBar ? 'y' : 'x',
+        responsive: true, maintainAspectRatio: false,
+        animation: { duration: 400, onComplete: () => {
           try {
-            const cv = chart.canvas;
+            const cv = canvasRef.current;
+            if (!cv) return;
             const w = cv.width || 700, h = cv.height || 280;
             const off = document.createElement('canvas');
             off.width = w; off.height = h;
@@ -4859,12 +4861,7 @@ function ReportChart({ chartData, chartType, title, metrics }) {
             c.drawImage(cv, 0, 0);
             cv._printDataUrl = off.toDataURL('image/png');
           } catch(e) {}
-        }
-      }],
-      options: {
-        indexAxis: isHBar ? 'y' : 'x',
-        responsive: true, maintainAspectRatio: false,
-        animation: { duration: 400 },
+        }},
         plugins: {
           legend: { display: isDoughnut, position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, color: '#E2E8F0' } },
           tooltip: { callbacks: { label: ctx => { const v = ctx.parsed[isHBar ? 'x' : 'y']; return (title.includes('Volume') || title.includes('Exposure')) ? ` £${Number(v).toLocaleString()}` : ` ${Number(v).toLocaleString()}`; } } }
