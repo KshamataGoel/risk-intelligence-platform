@@ -5008,103 +5008,7 @@ function ReportGeneratorTab() {
   const [emailText,      setEmailText]     = useState(null);
   const [error,          setError]         = useState(null);
 
-  const printReport = React.useCallback((rpt, ref) => {
-    const node = ref?.current;
-    if (!node) return;
-
-    // 1. Clone the live report DOM (same document = CSS vars + canvas access works)
-    const clone = node.cloneNode(true);
-    clone.querySelectorAll('.report-print-btn').forEach(el => el.remove());
-
-    // 2. Capture every Chart.js canvas using Chart.js's own export method
-    //    cv._chartInst is the Chart instance stored by ReportChart on the canvas element
-    const origCanvases = Array.from(node.querySelectorAll('canvas'));
-    const cloneCanvases = Array.from(clone.querySelectorAll('canvas'));
-    origCanvases.forEach((cv, i) => {
-      try {
-        // Method A: Chart.js toBase64Image() — renders chart on white bg natively
-        let dataUrl = cv._chartInst?.toBase64Image
-          ? cv._chartInst.toBase64Image('image/png', 1)
-          : null;
-
-        // Method B: offscreen composite with explicit white fill
-        if (!dataUrl || dataUrl === 'data:,' || dataUrl.length < 100) {
-          const w = cv.width || 700;
-          const h = cv.height || 280;
-          const off = document.createElement('canvas');
-          off.width = w; off.height = h;
-          const ctx2 = off.getContext('2d');
-          ctx2.fillStyle = '#ffffff';
-          ctx2.fillRect(0, 0, w, h);
-          ctx2.drawImage(cv, 0, 0);
-          dataUrl = off.toDataURL('image/png');
-        }
-
-        if (!dataUrl || dataUrl.length < 100) return; // genuinely blank
-
-        const img = document.createElement('img');
-        img.src = dataUrl;
-        img.style.cssText = 'width:100%;height:auto;display:block;margin:4px 0;background:#fff;border-radius:4px;';
-
-        const target = cloneCanvases[i];
-        if (target?.parentNode) {
-          const wrapper = target.parentNode;
-          wrapper.style.position = 'static';
-          wrapper.style.height   = 'auto';
-          wrapper.style.overflow = 'visible';
-          wrapper.replaceChild(img, target);
-        }
-      } catch(e) { console.warn('chart capture:', e); }
-    });
-
-    // 3. Inject portal into the SAME page (avoids cross-window canvas issues)
-    document.getElementById('__print_portal__')?.remove();
-    document.getElementById('__print_style__')?.remove();
-
-    const portal = document.createElement('div');
-    portal.id = '__print_portal__';
-    portal.appendChild(clone);
-    document.body.appendChild(portal);
-
-    // 4. Print CSS: hide everything except portal, force white bg & readable colours
-    const style = document.createElement('style');
-    style.id = '__print_style__';
-    style.textContent = `
-      @media print {
-        @page { size: A4; margin: 14mm 13mm; }
-        body > *:not(#__print_portal__) { display: none !important; }
-        #__print_portal__ {
-          display: block !important; position: static !important;
-          background: #fff !important; padding: 0; margin: 0;
-        }
-        #__print_portal__ * { color: #222 !important; background: transparent !important; box-shadow: none !important; }
-        #__print_portal__ .report-output-header,
-        #__print_portal__ .report-output-header * { background: #1e293b !important; color: #fff !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-        #__print_portal__ .report-section-title,
-        #__print_portal__ .report-section-title * { color: #FFAD28 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-        #__print_portal__ .report-section-content { white-space: pre-wrap; line-height: 1.75; }
-        #__print_portal__ .report-section { page-break-inside: avoid; margin-bottom: 20px; }
-        #__print_portal__ .report-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        #__print_portal__ .report-chart-card { border: 1px solid #e5e7eb !important; border-radius: 6px; padding: 12px; page-break-inside: avoid; }
-        #__print_portal__ .report-chart-title { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
-        #__print_portal__ .metric-card { border: 1px solid #e5e7eb !important; border-radius: 4px; padding: 8px 12px; }
-        #__print_portal__ canvas { display: none !important; }
-        #__print_portal__ img { max-width: 100% !important; height: auto !important; display: block; }
-        #__print_portal__ .report-output { border: none !important; overflow: visible !important; }
-        #__print_portal__ .report-body { overflow: visible !important; }
-      }
-    `;
-    document.head.appendChild(style);
-
-    // 5. Print then clean up
-    window.print();
-    const cleanup = () => {
-      document.getElementById('__print_portal__')?.remove();
-      document.getElementById('__print_style__')?.remove();
-    };
-    window.addEventListener('afterprint', cleanup, { once: true });
-    setTimeout(cleanup, 8000); // fallback if afterprint doesn't fire
-  }, []);
+  const printReport = React.useCallback(() => { window.print(); }, []);
   const reportRef = React.useRef(null);
 
   useEffect(() => {
@@ -5242,7 +5146,7 @@ function ReportGeneratorTab() {
                 {(fromDate || toDate) && ` · ${fromDate || 'All'} → ${toDate || 'Present'}`}
               </div>
             </div>
-            <button className="report-print-btn" onClick={() => printReport(report, reportRef)}>
+            <button className="report-print-btn" onClick={() => printReport()}>
               <i className="fa-solid fa-print"></i>Export PDF
             </button>
           </div>
