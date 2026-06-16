@@ -4997,16 +4997,24 @@ function ReportGeneratorTab() {
     // Remove the Export PDF button from the clone
     clone.querySelectorAll('.report-print-btn').forEach(el => el.remove());
 
-    // Convert every <canvas> to an <img> with its pixel data
-    const origCanvases = node.querySelectorAll('canvas');
-    const cloneCanvases = clone.querySelectorAll('canvas');
+    // Convert every <canvas> to an <img> — draw onto white bg first so chart is visible on print
+    const origCanvases = Array.from(node.querySelectorAll('canvas'));
+    const cloneCanvases = Array.from(clone.querySelectorAll('canvas'));
     origCanvases.forEach((cv, i) => {
       try {
+        const off = document.createElement('canvas');
+        off.width  = cv.width  || 600;
+        off.height = cv.height || 300;
+        const ctx = off.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, off.width, off.height);
+        ctx.drawImage(cv, 0, 0);
         const img = document.createElement('img');
-        img.src = cv.toDataURL('image/png');
-        img.style.cssText = `width:100%;max-width:${cv.width}px;height:auto;display:block;`;
-        cloneCanvases[i]?.parentNode?.replaceChild(img, cloneCanvases[i]);
-      } catch(e) {}
+        img.src = off.toDataURL('image/png');
+        img.style.cssText = `width:100%;height:auto;display:block;margin:8px 0;border-radius:6px;`;
+        const target = cloneCanvases[i];
+        if (target && target.parentNode) target.parentNode.replaceChild(img, target);
+      } catch(e) { console.warn('canvas capture failed', e); }
     });
 
     const win = window.open('', '_blank', 'width=960,height=800');
@@ -5032,14 +5040,19 @@ function ReportGeneratorTab() {
         .report-section-content { font-size: 13px; line-height: 1.8; color: #222; white-space: pre-wrap; }
         /* Charts grid */
         .report-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
-        .report-chart-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; page-break-inside: avoid; }
+        .report-chart-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; page-break-inside: avoid; background: #fff; }
         .report-chart-title { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 10px; }
-        .metric-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 14px; margin-bottom: 10px; }
+        .metrics-row { display: grid; grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); gap: 8px; margin-bottom: 10px; }
+        .metric-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 14px; }
         .metric-label { font-size: 10px; text-transform: uppercase; color: #6b7280; margin-bottom: 3px; }
-        .metric-value { font-size: 20px; font-weight: 700; color: #111; }
-        /* Info banners */
+        .metric-value { font-size: 18px; font-weight: 700; color: #111; }
+        /* All elements readable */
         .report-output { border: none !important; }
-        img { max-width: 100%; height: auto; }
+        img { max-width: 100% !important; height: auto !important; display: block; }
+        /* Hide dark-theme-only elements */
+        [style*="color:var"], [style*="background:var"] { color: #222 !important; background: transparent !important; }
+        .chart-container { position: relative; height: auto !important; }
+        canvas { display: none !important; }
       </style>
     </head><body>${clone.outerHTML}</body></html>`);
     win.document.close();
