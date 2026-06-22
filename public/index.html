@@ -1350,6 +1350,21 @@ tbody tr:last-child td { border-bottom: none; }
 }
 
 /* ── Scenario Intelligence Module ───────────────────────────────────── */
+/* ── Risk Transmission Map ───────────────────────────────────────────────── */
+.rtm-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px 20px 20px; margin-bottom:24px; box-shadow:var(--shadow); }
+.rtm-title { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.7px; color:var(--text-3); margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+.rtm-canvas-wrap { position:relative; width:100%; overflow:hidden; }
+.rtm-canvas-wrap svg { display:block; width:100%; height:auto; }
+.rtm-row-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; fill:var(--text-3,#8a9099); }
+.rtm-node rect { rx:6; transition:filter 0.2s; }
+.rtm-node:hover rect { filter:brightness(1.15); cursor:default; }
+.rtm-node text { font-family:inherit; pointer-events:none; }
+.rtm-edge { fill:none; stroke:#c0392b; stroke-width:1.4; opacity:0; }
+.rtm-edge.visible { opacity:0.55; }
+.rtm-trigger-badge { fill:#991b1b; rx:8; }
+@keyframes rtm-dash { to { stroke-dashoffset: -20; } }
+.rtm-edge.animated { stroke-dasharray:5 4; animation: rtm-dash 0.9s linear infinite; opacity:0.7; }
+
 .scenario-alert-banner {
   background: linear-gradient(135deg,#7f1d1d,#991b1b);
   color:#fff; border-radius:var(--radius); padding:14px 20px;
@@ -3469,6 +3484,225 @@ function SourceDrawer({ step, onClose }) {
   );
 }
 
+// ── Risk Transmission Map ────────────────────────────────────────────────────
+function RtmEdge({ x1, y1, x2, y2 }) {
+  const d = `M${x1},${y1} C${x1},${y1+22} ${x2},${y2-22} ${x2},${y2}`;
+  return (
+    <path d={d} fill="none" stroke="#c0392b" strokeWidth={1.3} opacity={0.65}
+      strokeDasharray="5 4"
+      style={{ animation: 'rtm-dash 0.9s linear infinite' }} />
+  );
+}
+
+function RtmBox({ x, y, w, h, fill, stroke, textFill, t, t2, fs }) {
+  const fz = fs || 10.5;
+  return (
+    <g>
+      <rect x={x} y={y} width={w} height={h} rx={5} fill={fill} stroke={stroke} strokeWidth={1.5} />
+      {t2 ? (
+        <>
+          <text x={x+w/2} y={y+h/2-6} textAnchor="middle" dominantBaseline="middle" fontSize={fz} fontWeight="600" fill={textFill} fontFamily="inherit">{t}</text>
+          <text x={x+w/2} y={y+h/2+7} textAnchor="middle" dominantBaseline="middle" fontSize={fz} fontWeight="600" fill={textFill} fontFamily="inherit">{t2}</text>
+        </>
+      ) : (
+        <text x={x+w/2} y={y+h/2+1} textAnchor="middle" dominantBaseline="middle" fontSize={fz} fontWeight="600" fill={textFill} fontFamily="inherit">{t}</text>
+      )}
+    </g>
+  );
+}
+
+function RtmLabel({ x, y, label }) {
+  return (
+    <text x={x} y={y} textAnchor="end" dominantBaseline="middle"
+      fontSize={9} fontWeight="700" fill="#7a8490" fontFamily="inherit"
+      style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+      {label}
+    </text>
+  );
+}
+
+function RiskTransmissionMap() {
+  const [phase, setPhase] = React.useState(0);
+
+  // Phases:
+  // 1=Trigger, 2=Scope, 3=Scope→L1 lines, 4=L1, 5=L1→L2 lines,
+  // 6=L2, 7=L2→L3 lines, 8=L3, 9=L3→Meas lines, 10=Measurement,
+  // 11=Meas→Impact lines, 12=Impact, 13=Action
+  React.useEffect(() => {
+    const delays = [400,1000,1650,2200,2800,3350,3900,4450,5050,5700,6350,7000,7650];
+    const timers = delays.map((d, i) => setTimeout(() => setPhase(i + 1), d));
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  const rowStyle   = (minPhase) => ({ opacity: phase >= minPhase ? 1 : 0, transition: 'opacity 0.5s' });
+  const edgeStyle  = (minPhase) => ({ opacity: phase >= minPhase ? 1 : 0, transition: 'opacity 0.45s' });
+
+  const S  = { fill: '#2a1f10', stroke: '#c8855a', textFill: '#f0c880' };
+  const Hi = { fill: '#2c2600', stroke: '#d4b800', textFill: '#ffe055' };
+  const MR = { fill: '#2a1010', stroke: '#c0392b', textFill: '#ffaaaa' };
+  const MN = { fill: '#2a1f10', stroke: '#c8855a', textFill: '#f0c880' };
+  const NH = 32;
+
+  const Y = { trig: 26, scope: 94, l1: 162, l2: 230, l3: 298, meas: 380, imp: 450, lim: 488, act: 536 };
+  const midY = (y, h) => y + (h || NH) / 2;
+
+  const nodes = {
+    sg:   { x:190, y:Y.scope, w:84,  h:NH, ...S,  t:'Group' },
+    sle:  { x:289, y:Y.scope, w:114, h:NH, ...S,  t:'Les – ME Entities' },
+    sbl:  { x:418, y:Y.scope, w:112, h:NH, ...S,  t:'Business lines' },
+    sins: { x:545, y:Y.scope, w:106, h:NH, ...S,  t:'Instruments' },
+    sde:  { x:666, y:Y.scope, w:78,  h:NH, ...S,  t:'Desks' },
+    sib:  { x:759, y:Y.scope, w:78,  h:NH, ...S,  t:'IBS/BPs' },
+
+    l1tr: { x:185, y:Y.l1, w:166, h:NH, ...S,  t:'Traded Risk' },
+    l1cr: { x:412, y:Y.l1, w:136, h:NH, ...S,  t:'Credit Risk' },
+    l1or: { x:610, y:Y.l1, w:152, h:NH, ...S,  t:'Operational Risk' },
+    l1ty: { x:828, y:Y.l1, w:136, h:NH, ...S,  t:'Treasury Risk' },
+
+    l2mr: { x:185, y:Y.l2, w:122, h:NH, ...S,  t:'Market Risk' },
+    l2cc: { x:323, y:Y.l2, w:80,  h:NH, ...S,  t:'CCR' },
+    l2co: { x:418, y:Y.l2, w:120, h:NH, ...S,  t:'Country Risk' },
+    l2cm: { x:554, y:Y.l2, w:140, h:NH, ...S,  t:'Credit Migration' },
+    l2lq: { x:828, y:Y.l2, w:128, h:NH, ...S,  t:'Liquidity Risk' },
+
+    l3fx: { x:146, y:Y.l3, w:60,  h:NH, ...S,  t:'FX' },
+    l3eq: { x:213, y:Y.l3, w:60,  h:NH, ...S,  t:'EQ' },
+    l3ir: { x:280, y:Y.l3, w:60,  h:NH, ...S,  t:'IR' },
+    l3cs: { x:347, y:Y.l3, w:60,  h:NH, ...S,  t:'CS' },
+    l3dc: { x:422, y:Y.l3, w:136, h:NH, ...S,  t:'Default/', t2:'Credit Spread' },
+    l3co: { x:572, y:Y.l3, w:120, h:NH, ...S,  t:'Collateral Risk' },
+    l3mc: { x:708, y:Y.l3, w:130, h:NH, ...Hi, t:'Margin Call', t2:'Volumes' },
+    l3al: { x:852, y:Y.l3, w:116, h:NH, ...S,  t:'Asset Liquidity' },
+
+    mv:   { x:146, y:Y.meas, w:104, h:36, ...MR, t:'Trading', t2:'VaR' },
+    mp:   { x:257, y:Y.meas, w:70,  h:36, ...MR, t:'PVBP' },
+    mcs:  { x:334, y:Y.meas, w:68,  h:36, ...MR, t:'CS01' },
+    mf:   { x:409, y:Y.meas, w:128, h:36, ...MR, t:'FX net short', t2:'position' },
+    mep:  { x:544, y:Y.meas, w:126, h:36, ...MR, t:'Exposure/', t2:'Position' },
+    mpe:  { x:686, y:Y.meas, w:68,  h:36, ...MN, t:'PFE' },
+    mva:  { x:761, y:Y.meas, w:68,  h:36, ...MN, t:'CVA' },
+    mpd:  { x:836, y:Y.meas, w:60,  h:36, ...MN, t:'PD' },
+    mel:  { x:903, y:Y.meas, w:60,  h:36, ...MN, t:'ECL' },
+
+    ir1:  { x:146, y:Y.imp, w:70,  h:NH, ...S,  t:'RWA' },
+    ic1:  { x:223, y:Y.imp, w:80,  h:NH, ...S,  t:'Capital' },
+    ip1:  { x:310, y:Y.imp, w:60,  h:NH, ...S,  t:'PnL' },
+    ir2:  { x:432, y:Y.imp, w:70,  h:NH, ...S,  t:'RWA' },
+    ic2:  { x:509, y:Y.imp, w:80,  h:NH, ...S,  t:'Capital' },
+    ip2:  { x:596, y:Y.imp, w:60,  h:NH, ...S,  t:'PnL' },
+    icf:  { x:706, y:Y.imp, w:108, h:NH, ...S,  t:'Cost of', t2:'funds' },
+    ish:  { x:822, y:Y.imp, w:126, h:NH, ...S,  t:'Survival', t2:'Horizon' },
+    ip3:  { x:958, y:Y.imp, w:60,  h:NH, ...S,  t:'PnL' },
+  };
+
+  const ncx  = (id) => nodes[id].x + nodes[id].w / 2;
+  const nbot = (id) => nodes[id].y + nodes[id].h;
+  const ntop = (id) => nodes[id].y;
+
+  // Edge groups — lines appear AFTER both connected rows are visible
+  const edgeGroups = [
+    { phase: 4,  pairs: [['sg','l1tr'],['sbl','l1tr'],['sle','l1cr'],['sins','l1cr'],['sins','l1or'],['sde','l1or'],['sib','l1ty']] },
+    { phase: 6,  pairs: [['l1tr','l2mr'],['l1cr','l2cc'],['l1cr','l2co'],['l1cr','l2cm'],['l1ty','l2lq']] },
+    { phase: 8,  pairs: [['l2mr','l3fx'],['l2mr','l3eq'],['l2mr','l3ir'],['l2mr','l3cs'],['l2cc','l3dc'],['l2co','l3co'],['l2cm','l3co'],['l2lq','l3mc'],['l2lq','l3al']] },
+    { phase: 10, pairs: [['l3fx','mv'],['l3eq','mv'],['l3ir','mv'],['l3ir','mp'],['l3cs','mcs'],['l3fx','mf'],['l3dc','mep'],['l3co','mpe'],['l3co','mva'],['l3mc','mpd'],['l3al','mel']] },
+    { phase: 12, pairs: [['mv','ir1'],['mv','ic1'],['mp','ir1'],['mcs','ip1'],['mep','ir2'],['mep','ic2'],['mpe','ip2'],['mva','ic2'],['mpd','icf'],['mel','ish']] },
+  ];
+
+  const scopeRow = ['sg','sle','sbl','sins','sde','sib'];
+  const l1Row    = ['l1tr','l1cr','l1or','l1ty'];
+  const l2Row    = ['l2mr','l2cc','l2co','l2cm','l2lq'];
+  const l3Row    = ['l3fx','l3eq','l3ir','l3cs','l3dc','l3co','l3mc','l3al'];
+  const measRow  = ['mv','mp','mcs','mf','mep','mpe','mva','mpd','mel'];
+  const impRow   = ['ir1','ic1','ip1','ir2','ic2','ip2','icf','ish','ip3'];
+
+  return (
+    <div className="rtm-wrap">
+      <div className="rtm-title">
+        <i className="fa-solid fa-diagram-project"></i>
+        Risk Transmission Map — CME Exchange Failure
+      </div>
+      <div className="rtm-canvas-wrap">
+        <svg viewBox="0 0 1050 588" preserveAspectRatio="xMidYMid meet"
+          xmlns="http://www.w3.org/2000/svg" style={{ width:'100%', height:'auto', fontFamily:'inherit' }}>
+
+          {/* Edge groups — each fades in at its own phase */}
+          {edgeGroups.map((grp) => (
+            <g key={grp.phase} style={edgeStyle(grp.phase)}>
+              {grp.pairs.map(([a,b], i) => (
+                <RtmEdge key={i} x1={ncx(a)} y1={nbot(a)} x2={ncx(b)} y2={ntop(b)} />
+              ))}
+            </g>
+          ))}
+
+          {/* Phase 1 — Trigger */}
+          <g style={rowStyle(1)}>
+            <RtmLabel x={128} y={midY(Y.trig)} label="Trigger" />
+            <circle cx={158} cy={midY(Y.trig)} r={15} fill="#991b1b" />
+            <text x={158} y={midY(Y.trig)+1} textAnchor="middle" dominantBaseline="middle"
+              fontSize={13} fontWeight="800" fill="#fff" fontFamily="inherit">4</text>
+            <rect x={180} y={Y.trig} width={860} height={NH} rx={5} fill="#2d1e0c" stroke="#8B5e30" strokeWidth={1.5} />
+            <text x={610} y={midY(Y.trig)+1} textAnchor="middle" dominantBaseline="middle"
+              fontSize={11} fontWeight="700" fill="#ffcf88" fontFamily="inherit">
+              Closure of an exchange due to a cyber attack (CME Exchange Failure)
+            </text>
+          </g>
+
+          {/* Phase 2 — Scope */}
+          <g style={rowStyle(2)}>
+            <RtmLabel x={128} y={midY(Y.scope)} label="Scope" />
+            {scopeRow.map(id => <RtmBox key={id} {...nodes[id]} />)}
+          </g>
+
+          {/* Phase 3 — Risk Stripe L1 + bracket */}
+          <g style={rowStyle(3)}>
+            <rect x={131} y={Y.l1-2} width={3} height={(Y.l3+NH)-(Y.l1-2)} rx={1.5} fill="#c0392b" opacity={0.8} />
+            <RtmLabel x={128} y={midY(Y.l1)} label="Risk Stripe L1" />
+            {l1Row.map(id => <RtmBox key={id} {...nodes[id]} />)}
+          </g>
+
+          {/* Phase 5 — Risk Stripe L2 */}
+          <g style={rowStyle(5)}>
+            <RtmLabel x={128} y={midY(Y.l2)} label="Risk Stripe L2" />
+            {l2Row.map(id => <RtmBox key={id} {...nodes[id]} />)}
+          </g>
+
+          {/* Phase 7 — Risk Stripe L3 */}
+          <g style={rowStyle(7)}>
+            <RtmLabel x={128} y={midY(Y.l3)} label="Risk Stripe L3" />
+            {l3Row.map(id => <RtmBox key={id} {...nodes[id]} />)}
+          </g>
+
+          {/* Phase 9 — Risk Measurement */}
+          <g style={rowStyle(9)}>
+            <RtmLabel x={128} y={midY(Y.meas, 36)} label="Risk Measurement" />
+            {measRow.map(id => <RtmBox key={id} {...nodes[id]} />)}
+          </g>
+
+          {/* Phase 11 — Impact */}
+          <g style={rowStyle(11)}>
+            <RtmLabel x={128} y={midY(Y.imp)} label="Impact" />
+            {impRow.map(id => <RtmBox key={id} {...nodes[id]} />)}
+            <rect x={146} y={Y.lim} width={872} height={22} rx={4} fill="#2a1f10" stroke="#c8855a" strokeWidth={1} />
+            <text x={582} y={Y.lim+11} textAnchor="middle" dominantBaseline="middle"
+              fontSize={10} fontWeight="600" fill="#f0c880" fontFamily="inherit">Limit breaches</text>
+          </g>
+
+          {/* Phase 13 — Action */}
+          <g style={rowStyle(13)}>
+            <RtmLabel x={128} y={midY(Y.act)} label="Action" />
+            <rect x={180} y={Y.act} width={720} height={NH} rx={5} fill="#2a1f10" stroke="#c8855a" strokeWidth={1.5} />
+            <text x={540} y={midY(Y.act)+1} textAnchor="middle" dominantBaseline="middle"
+              fontSize={10.5} fontWeight="600" fill="#f0c880" fontFamily="inherit">
+              Proposed actions: Lowering of limits, winding down trades,
+            </text>
+          </g>
+
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 function CMEDashboard({ scenarioData, chartData, onBack, onGenerateBriefing, briefing, briefingType, generatingBriefing, showBriefing, setShowBriefing }) {
   const [actionTab,        setActionTab]        = useState('immediate');
   const [expandedAction,   setExpandedAction]   = useState(null);
@@ -3761,8 +3995,12 @@ function CMEDashboard({ scenarioData, chartData, onBack, onGenerateBriefing, bri
         </div>
       </div>
 
-      {/* Section F — Financial Impact Dashboard */}
-      <SectionHeader letter="F" title="Financial Impact Dashboard" />
+      {/* Section F — Risk Transmission Map */}
+      <SectionHeader letter="F" title="Risk Transmission Map — CME Exchange Failure" />
+      <RiskTransmissionMap />
+
+      {/* Section G — Financial Impact Dashboard */}
+      <SectionHeader letter="G" title="Financial Impact Dashboard" />
       {!chartData?.available
         ? <div className="alert alert-info" style={{marginBottom:16}}><i className="fa-solid fa-circle-info alert-icon"></i>Scenario chart data not found. Please place Scenario_Analysis_ChartData.xlsx in /data/scenario/.</div>
         : (
@@ -3778,7 +4016,7 @@ function CMEDashboard({ scenarioData, chartData, onBack, onGenerateBriefing, bri
       )}
 
       {/* Section G — Day-by-Day Escalation Heatmap */}
-      <SectionHeader letter="G" title="Day-by-Day Escalation Matrix" />
+      <SectionHeader letter="H" title="Day-by-Day Escalation Matrix" />
       <div className="card" style={{marginBottom:16}}>
         {!chartData?.available
           ? <div className="scenario-chart-unavail"><i className="fa-solid fa-circle-info" style={{marginRight:6}}></i>Chart data not available in uploaded Excel file.</div>
@@ -3795,7 +4033,7 @@ function CMEDashboard({ scenarioData, chartData, onBack, onGenerateBriefing, bri
       </div>
 
       {/* Section H — Model Limitation Warning */}
-      <SectionHeader letter="H" title="Why Standard Risk Models Fail in This Scenario" />
+      <SectionHeader letter="I" title="Why Standard Risk Models Fail in This Scenario" />
       <div className="model-warning-card">
         <div className="model-warning-title">
           <i className="fa-solid fa-triangle-exclamation"></i>
@@ -3810,7 +4048,7 @@ function CMEDashboard({ scenarioData, chartData, onBack, onGenerateBriefing, bri
       </div>
 
       {/* Section I — Regulatory Notifications */}
-      <SectionHeader letter="I" title="Regulatory Notification Requirements" />
+      <SectionHeader letter="J" title="Regulatory Notification Requirements" />
       <div className="reg-grid" style={{marginBottom:16}}>
         {REGULATORY.map((r, i) => (
           <div key={i} className="reg-card">
@@ -3825,7 +4063,7 @@ function CMEDashboard({ scenarioData, chartData, onBack, onGenerateBriefing, bri
       <div className="reg-note"><i className="fa-solid fa-circle-info" style={{marginRight:6}}></i>Confirm all reporting obligations with Legal &amp; Compliance before submitting notifications.</div>
 
       {/* Section J — Action Playbook */}
-      <SectionHeader letter="J" title="Management Action Playbook" />
+      <SectionHeader letter="K" title="Management Action Playbook" />
       <div className="card" style={{marginBottom:16}}>
         <div className="action-tabs">
           {ACTION_TABS.map(t => (
