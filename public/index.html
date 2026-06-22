@@ -2348,8 +2348,7 @@ function Sidebar({ page, setPage }) {
           >
             <i className={`fa-solid ${item.icon}`}></i>
             <span>{item.label}</span>
-            {item.id === 'insights' && <span className="nav-badge">Live</span>}
-          </button>
+                      </button>
         ))}
       </nav>
 
@@ -2544,8 +2543,7 @@ function TopNav({ page, setPage }) {
           >
             <i className={`fa-solid ${item.icon}`}></i>
             <span>{item.label}</span>
-            {item.id === 'insights' && <span className="nav-badge">Live</span>}
-          </button>
+                      </button>
         ))}
       </nav>
     </header>
@@ -5796,7 +5794,7 @@ function ScenarioSimulatorCard({ regression }) {
   return (
     <div className="scenario-simulator-card">
       <div className="card-header" style={{padding:0,marginBottom:12}}>
-        <span className="card-title"><i className="fa-solid fa-sliders" style={{marginRight:7,color:'#FFAD28'}}></i>Scenario Simulator</span>
+        <span className="card-title"><i className="fa-solid fa-sliders" style={{marginRight:7,color:'#FFAD28'}}></i>Sensitivity Simulator</span>
         <span style={{fontSize:12,color:'var(--text-3)'}}>Adjust inputs to model predicted risk</span>
       </div>
       <div className="sim-grid">
@@ -5976,25 +5974,65 @@ function GrowthRankingTable({ growthRows }) {
 }
 
 function ModelSummarySection({ summary, loading }) {
+  const [openIdx, setOpenIdx] = React.useState(null);
   if (!loading && !summary) return null;
-  const sections = summary ? parseInsightsSections(summary) : [];
+
+  // Parse numbered sections from raw text, stripping markdown bold markers
+  const parseSections = (text) => {
+    if (!text) return [];
+    // Split on numbered bullets (may appear after newline or at start)
+    const parts = text.split(/\n+(?=\d+[\.\)])/);
+    return parts.map(p => {
+      const clean = p.replace(/\*\*/g, '').trim();
+      // Match: "1. Label: content" or "1. Label content"
+      const withColon = clean.match(/^(\d+)[\.\)]\s+([^:\n]{3,60}):\s*([\s\S]*)/);
+      if (withColon) return { num: withColon[1], label: withColon[2].trim(), content: withColon[3].trim() };
+      // No colon — use first 4 words as label, rest as content
+      const plain = clean.match(/^(\d+)[\.\)]\s+([\s\S]*)/);
+      if (plain) {
+        const words = plain[2].trim().split(/\s+/);
+        const label = words.slice(0, 4).join(' ');
+        const content = words.slice(4).join(' ');
+        return { num: plain[1], label, content };
+      }
+      return null;
+    }).filter(Boolean);
+  };
+
+  const sections = parseSections(summary);
+
   return (
     <div className="card" style={{marginTop:16}}>
       <div className="card-header">
         <span className="card-title"><i className="fa-solid fa-lightbulb" style={{marginRight:7,color:'#FFAD28'}}></i>Model Intelligence Summary</span>
         {loading && <span style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'var(--text-3)'}}><div className="spinner" style={{width:13,height:13,borderWidth:2}}></div> Generating…</span>}
       </div>
-      {sections.length >= 3 ? (
-        <div className="insights-summary-sections">
+      {sections.length >= 2 ? (
+        <div style={{display:'flex',flexDirection:'column',gap:6}}>
           {sections.map((s, i) => (
-            <div key={i} className="insights-summary-section">
-              <div className="insights-summary-section-label"><i className={`fa-solid ${INSIGHTS_SECTION_ICONS[i] || 'fa-circle'}`}></i>{s.num}. {s.label}</div>
-              <div className="insights-summary-section-content">{s.content}</div>
+            <div key={i} style={{border:'1px solid var(--border)',borderRadius:'var(--radius-sm)',overflow:'hidden'}}>
+              <button
+                onClick={() => setOpenIdx(openIdx === i ? null : i)}
+                style={{width:'100%',display:'flex',alignItems:'center',gap:10,padding:'10px 14px',background: openIdx===i ? 'rgba(255,173,40,0.08)' : 'var(--surface)',border:'none',cursor:'pointer',textAlign:'left'}}
+              >
+                <span style={{minWidth:22,height:22,borderRadius:'50%',background: openIdx===i ? 'var(--primary)' : 'rgba(255,173,40,0.15)',color: openIdx===i ? '#000' : 'var(--primary)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,flexShrink:0}}>{s.num}</span>
+                <span style={{fontSize:13,fontWeight:600,color:'var(--text)',flex:1}}>{s.label || `Point ${s.num}`}</span>
+                <i className={`fa-solid fa-chevron-${openIdx===i ? 'up' : 'down'}`} style={{fontSize:11,color:'var(--text-3)'}}></i>
+              </button>
+              {openIdx === i && (
+                <div style={{padding:'10px 14px 14px 46px',fontSize:13,color:'var(--text-2)',lineHeight:1.7,borderTop:'1px solid var(--border)',background:'rgba(255,173,40,0.03)'}}>
+                  {s.content}
+                </div>
+              )}
             </div>
           ))}
         </div>
       ) : summary ? (
-        <div style={{padding:'14px 18px',fontSize:14,color:'var(--text)',lineHeight:1.75,borderLeft:'3px solid #FFAD28',background:'rgba(255,173,40,0.04)',borderRadius:'0 var(--radius) var(--radius) 0'}}>{summary}</div>
+        <div style={{display:'flex',flexDirection:'column',gap:6}}>
+          {summary.replace(/\*\*/g,'').split(/\n+/).filter(l => l.trim()).map((line, i) => (
+            <div key={i} style={{padding:'9px 14px',fontSize:13,color:'var(--text-2)',lineHeight:1.65,borderLeft:'3px solid rgba(255,173,40,0.3)',background:'rgba(255,173,40,0.03)',borderRadius:'0 var(--radius-sm) var(--radius-sm) 0'}}>{line}</div>
+          ))}
+        </div>
       ) : null}
     </div>
   );
@@ -6364,14 +6402,16 @@ function AnalysisPage() {
 
               {regrRun && (
                 <>
-                  <RegressionEquationCard regression={regression} />
-                  <div className="card" style={{marginTop:16}}>
-                    <div className="card-header" style={{marginBottom:0}}>
-                      <span className="card-title"><i className="fa-solid fa-chart-waterfall" style={{marginRight:7,color:'#FFAD28'}}></i>Risk Driver Decomposition</span>
+                  {regression?.executive_insight && (
+                    <div style={{margin:'0 0 14px 0',padding:'14px 18px',borderLeft:'3px solid #FFAD28',background:'rgba(255,173,40,0.05)',borderRadius:'0 var(--radius-sm) var(--radius-sm) 0'}}>
+                      <div style={{fontSize:11,fontWeight:700,color:'#FFAD28',textTransform:'uppercase',letterSpacing:'0.5px',marginBottom:7}}>
+                        <i className="fa-solid fa-lightbulb" style={{marginRight:6}}></i>Executive Insight
+                      </div>
+                      <div style={{fontSize:13,color:'var(--text)',lineHeight:1.7}}>{regression.executive_insight}</div>
                     </div>
-                    <WaterfallChartCard waterfallRows={waterfallRows} />
-                  </div>
+                  )}
                   <ScenarioSimulatorCard regression={regression} />
+                  <RegressionEquationCard regression={regression} />
                 </>
               )}
             </>

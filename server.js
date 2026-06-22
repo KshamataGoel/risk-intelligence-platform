@@ -723,7 +723,7 @@ function loadAnalysisData() {
 
   try {
     const wb = XLSX.readFile(predictivePath);
-    const featureRows = loadSheetRows(wb, '1_Feature_Catalogue', ['Category']);
+    const featureRows = loadSheetRows(wb, '1_Feature_Catalogue', ['Category Name', 'Category']);
     const clusterRows = loadSheetRows(wb, '2_Clustering_Data', ['Cluster', 'Cluster Label']);
     const regrEqRows  = loadSheetRows(wb, '4_Regression_Model_Equation');
     const scenRows    = loadSheetRows(wb, '5_Scenario_Simulator');
@@ -732,14 +732,17 @@ function loadAnalysisData() {
     const growthRows  = loadSheetRows(wb, '8_TimeSeries_Growth_Ranking');
 
     // Parse regression equation from sheet 4
-    // Rows: Intercept row + one row per predictor; columns: Variable, Coefficient, P-value, R² etc.
+    const STAT_KEYS = /model.?fit|r²|r2|adjusted|observations|residual|standard.?dev|baseline|executive.?insight/i;
     const regrCoeffs = {};
-    let regrIntercept = null, regrR2 = null, regrAdjR2 = null;
+    let regrIntercept = null, regrR2 = null, regrAdjR2 = null, regrInsight = null;
     regrEqRows.forEach(r => {
       const varName = String(r['Variable'] || r['variable'] || '').trim();
       const coeff   = parseFloat(r['Coefficient'] || r['coefficient'] || r['Coeff'] || 0);
+      if (!varName) return;
       if (/intercept/i.test(varName)) { regrIntercept = coeff; }
-      else if (varName) { regrCoeffs[varName] = coeff; }
+      else if (/executive.?insight/i.test(varName)) { regrInsight = varName.replace(/^EXECUTIVE INSIGHT\s*\(auto-generated\):\s*/i, '').replace(/^"|"$/g, '').trim(); }
+      else if (STAT_KEYS.test(varName)) { /* skip stat rows */ }
+      else { regrCoeffs[varName] = coeff; }
       if (r['R²'] != null || r['R2'] != null) regrR2 = parseFloat(r['R²'] || r['R2']);
       if (r['Adj R²'] != null || r['Adj R2'] != null) regrAdjR2 = parseFloat(r['Adj R²'] || r['Adj R2']);
     });
@@ -771,7 +774,8 @@ function loadAnalysisData() {
         coefficients: regrCoeffs,
         r2: regrR2,
         adj_r2: regrAdjR2,
-        n: 100
+        n: 100,
+        executive_insight: regrInsight
       },
       scenario_simulator: {
         intercept: regrIntercept,
