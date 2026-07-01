@@ -419,7 +419,7 @@ body {
 
 /* 2×2 Module tiles */
 .home-modules-section {
-  flex:1; display:grid; grid-template-columns:1fr 1fr 1fr;
+  flex:1; display:grid; grid-template-columns:1fr 1fr 1fr; align-items:start;
   gap:18px; padding:0 52px 24px;
   max-width:1180px; width:100%; align-self:center; box-sizing:border-box;
 }
@@ -2385,7 +2385,7 @@ function HomePage({ setPage }) {
 
   const GRAPHICS = {
     hub: (
-      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
+      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:48}}>
         <line x1="0" y1="22" x2="240" y2="22" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
         <line x1="0" y1="44" x2="240" y2="44" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
         <line x1="0" y1="68" x2="240" y2="68" stroke="rgba(255,255,255,0.05)" strokeWidth="1"/>
@@ -2400,7 +2400,7 @@ function HomePage({ setPage }) {
       </svg>
     ),
     vault: (
-      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
+      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:48}}>
         <rect x="58" y="24" width="148" height="44" rx="5" fill="rgba(5,150,105,0.07)" stroke="rgba(5,150,105,0.14)" strokeWidth="1"/>
         <rect x="44" y="15" width="148" height="44" rx="5" fill="rgba(5,150,105,0.10)" stroke="rgba(5,150,105,0.20)" strokeWidth="1"/>
         <rect x="30" y="6"  width="148" height="44" rx="5" fill="rgba(5,150,105,0.15)" stroke="rgba(5,150,105,0.32)" strokeWidth="1"/>
@@ -2413,7 +2413,7 @@ function HomePage({ setPage }) {
       </svg>
     ),
     analysis: (
-      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
+      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:48}}>
         <line x1="25"  y1="53" x2="62"  y2="26" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
         <line x1="62"  y1="26" x2="106" y2="42" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
         <line x1="106" y1="42" x2="142" y2="15" stroke="rgba(139,92,246,0.22)" strokeWidth="1"/>
@@ -2435,7 +2435,7 @@ function HomePage({ setPage }) {
       </svg>
     ),
     scenario: (
-      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
+      <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:48}}>
         <line x1="0" y1="52" x2="240" y2="52" stroke="rgba(255,255,255,0.07)" strokeWidth="1"/>
         <line x1="0" y1="34" x2="240" y2="34" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
         <path d="M 0 52 L 50 52 C 65 52 68 38 76 24 C 84 10 92 4 102 5 C 112 6 116 12 124 25 C 132 38 136 52 154 52 L 240 52 Z" fill="rgba(255,173,40,0.1)"/>
