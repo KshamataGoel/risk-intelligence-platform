@@ -838,6 +838,31 @@ tbody tr:last-child td { border-bottom: none; }
 }
 .source-note i { color: var(--primary); }
 
+/* ── Source Data Drill-Down ─────────────────────────────────────────── */
+.src-section { margin-bottom: 28px; }
+.src-dataset-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 16px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); cursor: pointer; user-select: none;
+  transition: background 0.15s;
+}
+.src-dataset-header:hover { background: var(--hover); }
+.src-dataset-title { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 13.5px; color: var(--text); }
+.src-dataset-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: var(--primary-light); color: var(--primary); }
+.src-dataset-meta { font-size: 11px; color: var(--text-3); }
+.src-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-sm) var(--radius-sm); }
+.src-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.src-table th { background: var(--surface-2,#f8fafc); padding: 7px 10px; text-align: left; font-weight: 600; color: var(--text-2); border-bottom: 1px solid var(--border); white-space: nowrap; position: sticky; top: 0; }
+.src-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); color: var(--text); white-space: nowrap; }
+.src-table tr:last-child td { border-bottom: none; }
+.src-table tr:hover td { background: var(--hover); }
+.src-status-frozen  { color: #DC2626; font-weight: 700; }
+.src-status-partial { color: #D97706; font-weight: 700; }
+.src-status-down    { color: #DC2626; font-weight: 700; }
+.src-status-degraded{ color: #D97706; font-weight: 700; }
+.src-status-active  { color: #16A34A; font-weight: 700; }
+.src-status-activated{color: #16A34A; font-weight: 700; }
+
 /* ── Analysis Page ─────────────────────────────────────────────────── */
 .analysis-kpi-row { display: grid; grid-template-columns: repeat(6,1fr); gap: 10px; margin-bottom: 20px; }
 .akpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
@@ -3827,6 +3852,98 @@ function RiskTransmissionMap() {
   );
 }
 
+// ── Source Data Drill-Down Component ─────────────────────────────────────────
+function SourceDataSection() {
+  const [data,   setData]   = useState(null);
+  const [open,   setOpen]   = useState({});
+  const [loaded, setLoaded] = useState(false);
+
+  const load = async () => {
+    if (loaded) return;
+    try {
+      const r = await fetch('/api/scenario/source-data');
+      const j = await r.json();
+      setData(j);
+    } catch (e) { setData({}); }
+    setLoaded(true);
+  };
+
+  const toggle = (key) => {
+    if (!loaded) load();
+    setOpen(p => ({ ...p, [key]: !p[key] }));
+  };
+
+  const DATASETS = [
+    { key: 'trade_register',       icon: 'fa-table-list',   label: 'CME Trade Register',             desc: '31 open positions across 5 desks exposed to CME',       color: '#3B82F6' },
+    { key: 'margin_ledger',        icon: 'fa-vault',        label: 'CCP Margin Ledger',              desc: '12 margin accounts — IM/VM frozen at CME ($19.5Bn)',    color: '#DC2626' },
+    { key: 'platform_mapping',     icon: 'fa-network-wired',label: 'Platform & Terminal Mapping',    desc: '12 trading platforms — status at T0 and BCDR routes',   color: '#D97706' },
+    { key: 'scenario_assumptions', icon: 'fa-sliders',      label: 'Scenario Assumptions & Parameters', desc: '28 stress parameters underpinning all scenario metrics', color: '#16A34A' },
+  ];
+
+  const statusClass = (val) => {
+    if (!val) return '';
+    const v = String(val).toUpperCase();
+    if (v === 'FROZEN')   return 'src-status-frozen';
+    if (v === 'PARTIAL')  return 'src-status-partial';
+    if (v === 'DOWN')     return 'src-status-down';
+    if (v === 'DEGRADED') return 'src-status-degraded';
+    if (v === 'ACTIVE' || v === 'ACTIVATED' || v === 'OPERATIONAL') return 'src-status-active';
+    return '';
+  };
+
+  const statusKeys = new Set(['Status_at_T0','Status_T0','Status_PreEvent','Status','status']);
+
+  const renderTable = (rows) => {
+    if (!rows || rows.length === 0) return <div style={{padding:14,color:'var(--text-3)',fontSize:12}}>No data available.</div>;
+    const cols = Object.keys(rows[0]);
+    return (
+      <div className="src-table-wrap" style={{maxHeight:320,overflowY:'auto'}}>
+        <table className="src-table">
+          <thead>
+            <tr>{cols.map(c => <th key={c}>{c.replace(/_/g,' ')}</th>)}</tr>
+          </thead>
+          <tbody>
+            {rows.map((row, i) => (
+              <tr key={i}>
+                {cols.map(c => {
+                  const val = row[c];
+                  const sc  = statusKeys.has(c) ? statusClass(val) : '';
+                  return <td key={c} className={sc}>{val === null || val === undefined ? '—' : String(val)}</td>;
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  return (
+    <div className="src-section">
+      {DATASETS.map(ds => (
+        <div key={ds.key} style={{marginBottom:8}}>
+          <div className="src-dataset-header" onClick={() => toggle(ds.key)}>
+            <div className="src-dataset-title">
+              <i className={`fa-solid ${ds.icon}`} style={{color:ds.color,fontSize:14}}></i>
+              {ds.label}
+              <span className="src-dataset-badge">{data && data[ds.key] ? data[ds.key].length + ' rows' : 'click to load'}</span>
+            </div>
+            <div style={{display:'flex',alignItems:'center',gap:12}}>
+              <span className="src-dataset-meta">{ds.desc}</span>
+              <i className={`fa-solid ${open[ds.key] ? 'fa-chevron-up' : 'fa-chevron-down'}`} style={{fontSize:11,color:'var(--text-3)'}}></i>
+            </div>
+          </div>
+          {open[ds.key] && (
+            !loaded
+              ? <div style={{padding:14,fontSize:12,color:'var(--text-3)'}}>Loading…</div>
+              : renderTable(data?.[ds.key])
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function CMEDashboard({ scenarioData, chartData, onBack, onGenerateBriefing, briefing, briefingType, generatingBriefing, showBriefing, setShowBriefing }) {
   const [actionTab,        setActionTab]        = useState('immediate');
   const [expandedAction,   setExpandedAction]   = useState(null);
@@ -4243,10 +4360,20 @@ function CMEDashboard({ scenarioData, chartData, onBack, onGenerateBriefing, bri
         )}
       </div>
 
+      {/* Section K — Source Data Drill-Down */}
+      <SectionHeader letter="L" title="Source Data — Granular Detail" />
+      <div className="card" style={{marginBottom:16,padding:'14px 16px'}}>
+        <div style={{fontSize:12,color:'var(--text-3)',marginBottom:12}}>
+          <i className="fa-solid fa-circle-info" style={{marginRight:6,color:'var(--primary)'}}></i>
+          Granular source datasets underpinning this scenario. Click any dataset to expand and inspect the detail rows.
+        </div>
+        <SourceDataSection />
+      </div>
+
       {/* Source note */}
       <div className="source-note" style={{marginTop:8}}>
         <i className="fa-solid fa-database"></i>
-        Source: Scenario_Analysis_Module.docx and Scenario_Analysis_ChartData.xlsx — Generated for internal CRO / Board restricted use.
+        Source: Scenario_Analysis_Module.docx, Scenario_Analysis_ChartData.xlsx, and CME granular datasets — Generated for internal CRO / Board restricted use.
       </div>
     </div>
   );

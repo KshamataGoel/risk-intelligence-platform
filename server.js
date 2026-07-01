@@ -1875,6 +1875,27 @@ app.post('/api/scenario/briefing', async (req, res) => {
   }
 });
 
+// ─── Source Data Endpoint ────────────────────────────────────────────────────
+app.get('/api/scenario/source-data', (req, res) => {
+  const FILES = {
+    trade_register:       'CME_Trade_Register.xlsx',
+    margin_ledger:        'CME_Margin_Ledger.xlsx',
+    platform_mapping:     'CME_Platform_Terminal_Mapping.xlsx',
+    scenario_assumptions: 'CME_Scenario_Assumptions.xlsx',
+  };
+  const result = {};
+  for (const [key, filename] of Object.entries(FILES)) {
+    const fp = path.join(SCENARIO_DIR, filename);
+    if (!fs.existsSync(fp)) { result[key] = []; continue; }
+    try {
+      const wb  = XLSX.readFile(fp);
+      const ws  = wb.Sheets[wb.SheetNames[0]];
+      result[key] = XLSX.utils.sheet_to_json(ws, { defval: '' });
+    } catch (e) { result[key] = []; }
+  }
+  res.json({ available: true, ...result });
+});
+
 // Serve React app for all non-API routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
