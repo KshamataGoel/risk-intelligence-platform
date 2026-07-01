@@ -4360,20 +4360,10 @@ function CMEDashboard({ scenarioData, chartData, onBack, onGenerateBriefing, bri
         )}
       </div>
 
-      {/* Section K — Source Data Drill-Down */}
-      <SectionHeader letter="L" title="Source Data — Granular Detail" />
-      <div className="card" style={{marginBottom:16,padding:'14px 16px'}}>
-        <div style={{fontSize:12,color:'var(--text-3)',marginBottom:12}}>
-          <i className="fa-solid fa-circle-info" style={{marginRight:6,color:'var(--primary)'}}></i>
-          Granular source datasets underpinning this scenario. Click any dataset to expand and inspect the detail rows.
-        </div>
-        <SourceDataSection />
-      </div>
-
       {/* Source note */}
       <div className="source-note" style={{marginTop:8}}>
         <i className="fa-solid fa-database"></i>
-        Source: Scenario_Analysis_Module.docx, Scenario_Analysis_ChartData.xlsx, and CME granular datasets — Generated for internal CRO / Board restricted use.
+        Source: Scenario_Analysis_Module.docx and Scenario_Analysis_ChartData.xlsx — Generated for internal CRO / Board restricted use.
       </div>
     </div>
   );
