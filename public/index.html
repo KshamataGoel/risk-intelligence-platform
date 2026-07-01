@@ -2321,11 +2321,10 @@ function DataTable({ columns, preview }) {
 
 // ── Sidebar ───────────────────────────────────────────────────────────────────
 const NAV = [
-  { id: 'home',     label: 'Home',                icon: 'fa-house' },
-  { id: 'insights', label: 'Intelligence Center', icon: 'fa-chart-bar' },
-  { id: 'vault',    label: 'Knowledge Vault',     icon: 'fa-vault' },
-  { id: 'analysis', label: 'Analytics Lab',       icon: 'fa-magnifying-glass-chart' },
-  { id: 'scenario', label: 'Scenario Analysis',   icon: 'fa-radiation' }
+  { id: 'home',     label: 'Home',              icon: 'fa-house' },
+  { id: 'hub',      label: 'Risk Insights Hub', icon: 'fa-brain' },
+  { id: 'vault',    label: 'Knowledge Vault',   icon: 'fa-vault' },
+  { id: 'scenario', label: 'Scenario Analysis', icon: 'fa-radiation' }
 ];
 
 function Sidebar({ page, setPage }) {
@@ -2362,21 +2361,15 @@ function Sidebar({ page, setPage }) {
 // ── Home Page ─────────────────────────────────────────────────────────────────
 const MODULES = [
   {
-    id: 'insights', label: 'Intelligence Center', icon: 'fa-chart-bar', iconClass: 'red',
-    tag: 'Natural Language Intelligence',
-    desc: 'Ask natural language questions across approved Risk & Compliance datasets. Get instant charts and executive summaries.',
+    id: 'hub', label: 'Risk Insights Hub', icon: 'fa-brain', iconClass: 'red',
+    tag: 'Intelligence · Analytics',
+    desc: 'Natural language intelligence and predictive analytics in one place — ask questions across datasets, run clustering, regression and time series models.',
     active: true
   },
   {
     id: 'vault', label: 'Knowledge Vault', icon: 'fa-vault', iconClass: 'green',
     tag: 'Document Intelligence',
     desc: 'Search and retrieve policy documents, regulatory guidance, email intelligence, and insights data. Generate executive reports across all sources.',
-    active: true
-  },
-  {
-    id: 'analysis', label: 'Analytics Lab', icon: 'fa-magnifying-glass-chart', iconClass: 'purple',
-    tag: 'ML Clustering & Analytics',
-    desc: 'Perform deeper model-assisted analysis, clustering, and regulatory impact assessment.',
     active: true
   },
   {
@@ -2391,7 +2384,7 @@ function HomePage({ setPage }) {
   const today = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 
   const GRAPHICS = {
-    insights: (
+    hub: (
       <svg viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:68}}>
         <line x1="0" y1="22" x2="240" y2="22" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
         <line x1="0" y1="44" x2="240" y2="44" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
@@ -4358,6 +4351,46 @@ function ScenarioPage() {
   );
 }
 
+// ── Risk Insights Hub ─────────────────────────────────────────────────────────
+function RiskInsightsHub() {
+  const [activeTab, setActiveTab] = useState('intelligence');
+
+  const tabs = [
+    { id: 'intelligence', label: 'Intelligence Center', icon: 'fa-chart-bar' },
+    { id: 'analytics',    label: 'Analytics Lab',       icon: 'fa-magnifying-glass-chart' },
+  ];
+
+  return (
+    <div className="page" style={{maxWidth:'100%', padding:0}}>
+      {/* Tab bar */}
+      <div style={{display:'flex', gap:0, borderBottom:'1px solid var(--border)', background:'var(--surface)', padding:'0 24px', marginBottom:0}}>
+        {tabs.map(t => (
+          <button
+            key={t.id}
+            onClick={() => setActiveTab(t.id)}
+            style={{
+              display:'flex', alignItems:'center', gap:8,
+              padding:'14px 22px', background:'none', border:'none',
+              borderBottom: activeTab === t.id ? '2px solid var(--primary)' : '2px solid transparent',
+              color: activeTab === t.id ? 'var(--primary)' : 'var(--text-3)',
+              fontWeight: activeTab === t.id ? 700 : 500,
+              fontSize:14, cursor:'pointer', transition:'all 0.15s',
+              fontFamily:'inherit',
+            }}
+          >
+            <i className={`fa-solid ${t.icon}`}></i>
+            {t.label}
+          </button>
+        ))}
+      </div>
+      {/* Content */}
+      <div style={{padding:'0'}}>
+        {activeTab === 'intelligence' ? <InsightsPage /> : <AnalysisPage />}
+      </div>
+    </div>
+  );
+}
+
 // ── App Root ──────────────────────────────────────────────────────────────────
 function App() {
   const [page, setPage] = useState('home');
@@ -4365,15 +4398,14 @@ function App() {
   const renderPage = () => {
     switch (page) {
       case 'home':     return <HomePage setPage={setPage} />;
-      case 'insights': return <InsightsPage />;
+      case 'hub':      return <RiskInsightsHub />;
       case 'reports':
-      case 'vault':
-        return <VaultPage />;
-      case 'analysis':
-        return <AnalysisPage />;
-      case 'scenario':
-        return <ScenarioPage />;
-      default: return <HomePage setPage={setPage} />;
+      case 'vault':    return <VaultPage />;
+      case 'scenario': return <ScenarioPage />;
+      // legacy redirects
+      case 'insights':
+      case 'analysis': return <RiskInsightsHub />;
+      default:         return <HomePage setPage={setPage} />;
     }
   };
 
