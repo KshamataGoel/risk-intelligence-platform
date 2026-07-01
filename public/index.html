@@ -2323,7 +2323,7 @@ function DataTable({ columns, preview }) {
 const NAV = [
   { id: 'home',     label: 'Home',              icon: 'fa-house' },
   { id: 'hub',      label: 'Risk Insights Hub', icon: 'fa-brain' },
-  { id: 'vault',    label: 'Knowledge Vault',   icon: 'fa-vault' },
+  { id: 'vault',    label: 'Risk Sensing & Policy Intelligence',   icon: 'fa-vault' },
   { id: 'scenario', label: 'Scenario Analysis', icon: 'fa-radiation' }
 ];
 
@@ -2367,7 +2367,7 @@ const MODULES = [
     active: true
   },
   {
-    id: 'vault', label: 'Knowledge Vault', icon: 'fa-vault', iconClass: 'green',
+    id: 'vault', label: 'Risk Sensing & Policy Intelligence', icon: 'fa-vault', iconClass: 'green',
     tag: 'Document Intelligence',
     desc: 'Search and retrieve policy documents, regulatory guidance, email intelligence, and insights data. Generate executive reports across all sources.',
     active: true
@@ -4947,7 +4947,7 @@ function VaultSummaryPanel({ doc, summary, loading, source, onClose }) {
               ))}
               <div className="vault-summary-source">
                 <i className="fa-solid fa-database"></i>
-                Source document: {source || 'Knowledge Vault'} &nbsp;·&nbsp;
+                Source document: {source || 'Risk Sensing & Policy Intelligence'} &nbsp;·&nbsp;
                 <i className="fa-solid fa-lock" style={{fontSize:10}}></i>
                 Internal use only — no external data referenced
               </div>
@@ -5117,7 +5117,7 @@ function VaultPage() {
 
   if (loading) return (
     <div className="page">
-      <div className="page-header"><div className="page-title">Knowledge Vault</div></div>
+      <div className="page-header"><div className="page-title">Risk Sensing & Policy Intelligence</div></div>
       <div className="spinner-wrap"><div className="spinner"></div><span>Loading knowledge vault…</span></div>
     </div>
   );
@@ -5125,7 +5125,7 @@ function VaultPage() {
   return (
     <div className="page" style={{maxWidth:1300}}>
       <div className="page-header">
-        <div className="page-title">Knowledge Vault</div>
+        <div className="page-title">Risk Sensing & Policy Intelligence</div>
         <div className="page-sub">Internal knowledge base Risk, Regulatory, and Email intelligence documents. Summaries generated on-demand from source documents only.</div>
       </div>
 
