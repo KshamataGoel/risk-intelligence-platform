@@ -1655,7 +1655,10 @@ const SCENARIO_DIR = path.join(__dirname, 'data', 'scenario');
 
 function loadScenarioChartData() {
   if (!fs.existsSync(SCENARIO_DIR)) return {};
-  const files = fs.readdirSync(SCENARIO_DIR).filter(f => /\.xlsx?$/i.test(f));
+  // Use the specific chart data file; fall back to first xlsx only if not found
+  const allFiles = fs.readdirSync(SCENARIO_DIR).filter(f => /\.xlsx?$/i.test(f));
+  const chartFile = allFiles.find(f => /chartdata/i.test(f)) || allFiles[0];
+  const files = chartFile ? [chartFile] : [];
   if (!files.length) return {};
   const result = {};
   try {
@@ -1703,7 +1706,10 @@ function loadScenarioChartData() {
 async function loadScenarioDocument() {
   if (!mammoth) return null;
   if (!fs.existsSync(SCENARIO_DIR)) return null;
-  const files = fs.readdirSync(SCENARIO_DIR).filter(f => /\.docx?$/i.test(f));
+  // Use the specific scenario module doc; fall back to first docx only if not found
+  const allFiles = fs.readdirSync(SCENARIO_DIR).filter(f => /\.docx?$/i.test(f));
+  const docFile  = allFiles.find(f => /module/i.test(f)) || allFiles[0];
+  const files    = docFile ? [docFile] : [];
   if (!files.length) return null;
   try {
     const { value } = await mammoth.extractRawText({ path: path.join(SCENARIO_DIR, files[0]) });
