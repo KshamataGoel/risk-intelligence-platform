@@ -1777,8 +1777,9 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 @media(min-width:640px){ .action-row-owner { display:block; } }
 
 .action-row-detail {
-  border-top:1px solid var(--border); padding:16px 18px 16px 18px;
-  background:var(--surface-2, #f8fafc); color:var(--text);
+  border-top:1px solid var(--border); padding:16px 18px;
+  background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.82);
+  font-size:13px; line-height:1.7;
   animation:detailIn 0.15s ease;
 }
 @keyframes detailIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
