@@ -2880,7 +2880,10 @@ const SCENARIOS_LIB = [
     severity:'High', tags:['Climate Risk','Physical Risk','ESG','Trade Finance'], available:false },
   { id:4, num:'Scenario 04', title:'CME Exchange Failure — Closure of an Exchange due to Cyber Attack', eventType:'Cyber / Market Infrastructure Failure',
     desc:'A cyber attack on CME infrastructure causes exchange closure for 3–5 business days. Impacts include unhedged derivatives, frozen margin, liquidity stress, and regulatory escalation.',
-    severity:'Critical', tags:['Cyber','Market Risk','Liquidity','Operational Risk'], available:true }
+    severity:'Critical', tags:['Cyber','Market Risk','Liquidity','Operational Risk'], available:true },
+  { id:5, num:'Scenario 05', title:'Archegos Capital — Wrong-Way Risk & Concentration Failure', eventType:'Counterparty Credit / Concentration Risk',
+    desc:'Archegos Capital Management defaults triggering $30Bn+ in forced liquidations across 6 prime brokers. Demonstrates catastrophic wrong-way risk, hidden leverage via TRS, and cross-dealer margin call cascades.',
+    severity:'Critical', tags:['CCR','Wrong-Way Risk','Concentration','Prime Brokerage','Margin'], available:true }
 ];
 
 const CME_META = [
@@ -4369,6 +4372,362 @@ function CMEDashboard({ scenarioData, chartData, onBack, onGenerateBriefing, bri
   );
 }
 
+// ── Archegos Dashboard ────────────────────────────────────────────────────────
+const ARCHEGOS_META = [
+  { label:'Event Type',              value:'Counterparty Credit / Concentration Risk', cls:'' },
+  { label:'Status',                  value:'Historical Case Study — March 2021',        cls:'' },
+  { label:'Severity',                value:'Critical',                                   cls:'critical' },
+  { label:'Total Bank Losses',       value:'~$10Bn across 6 prime brokers',              cls:'warning' },
+  { label:'Forced Liquidations',     value:'$30Bn+ in 10 equity names',                  cls:'warning' },
+];
+
+const ARCHEGOS_FLOW = [
+  { label:'Archegos acquires concentrated TRS positions', type:'trigger', severity:'Critical', explanation:'Bill Hwang builds $30Bn+ notional exposure across 10 names via Total Return Swaps — hidden from prime brokers and regulators due to no public 13F filing requirement.' },
+  { label:'Price decline triggers margin calls', type:'impact', severity:'Critical', explanation:'VIACOM (VIAC) falls ~55% triggering simultaneous margin calls from Credit Suisse, Nomura, Morgan Stanley, Goldman, UBS and Deutsche Bank.' },
+  { label:'Cross-dealer margin call cascade', type:'impact', severity:'Critical', explanation:'Archegos cannot meet calls. Banks begin forced liquidation of the same names simultaneously — amplifying the price decline and creating a self-reinforcing crash.' },
+  { label:'Wrong-Way Risk materialises', type:'impact', severity:'Critical', explanation:'The very collateral securing the positions is falling in value as banks try to sell — a textbook wrong-way risk scenario where counterparty default and collateral value deteriorate together.' },
+  { label:'Concentration & illiquidity amplify losses', type:'impact', severity:'High', explanation:'Positions represent 60–100% of free float in several names. Days-to-liquidate exceeds 20 days for VIAC. Forced selling at distressed prices locks in maximum losses.' },
+  { label:'Regulatory & governance failure', type:'impact', severity:'High', explanation:'No cross-dealer visibility. Each prime broker unaware of total Archegos leverage. No central counterparty for TRS. Basel III CCR rules not capturing the full exposure.' },
+];
+
+const ARCHEGOS_ACTIONS = {
+  immediate: [
+    { title:'Suspend and recall all Archegos TRS positions', owner:'Prime Brokerage / Risk', deadline:'T+0 to T+2hrs', priority:'Critical', detail:'Issue formal default notice. Exercise close-out netting rights under ISDA Master Agreement. Begin orderly liquidation — coordinate with other prime brokers to avoid simultaneous dumping.' },
+    { title:'Freeze all Archegos collateral accounts', owner:'Operations / Legal', deadline:'T+0', priority:'Critical', detail:'Place legal hold on all posted collateral. Determine value of initial margin, variation margin, and excess margin held. Calculate net exposure after netting.' },
+    { title:'Activate cross-desk risk committee', owner:'CRO', deadline:'T+2hrs', priority:'Critical', detail:'Convene emergency risk committee. Present total notional exposure, current mark-to-market loss, and liquidation timeline. Prepare Board update.' },
+    { title:'Market intelligence — coordinate with other prime brokers', owner:'Senior Risk / Legal', deadline:'T+4hrs', priority:'High', detail:'Reach out to peer banks to understand scale of simultaneous liquidation. Align on orderly sell-down pace to minimise market impact. Avoid race-to-sell.' },
+  ],
+  shortterm: [
+    { title:'Stress test all TRS book for similar concentration', owner:'Market Risk', deadline:'24hrs', priority:'Critical', detail:'Run concentration screen across all prime brokerage clients. Identify any clients with >20% free float in single names. Flag for immediate review.' },
+    { title:'Quantify total loss and file regulatory notification', owner:'Finance / Compliance', deadline:'24hrs', priority:'Critical', detail:'Calculate final P&L impact including realised and unrealised losses. File regulatory notification with PRA/FCA/SEC as required by applicable thresholds.' },
+    { title:'Review ISDA CSA terms for all PB clients', owner:'Legal / Credit', deadline:'48hrs', priority:'High', detail:'Review margin call frequency, initial margin levels, and close-out netting rights for all TRS and equity swap counterparties. Upgrade terms where inadequate.' },
+    { title:'Commission independent review of PB credit framework', owner:'Internal Audit / CRO', deadline:'72hrs', priority:'High', detail:'Immediate review of credit approval process, margin methodology, and leverage limits for prime brokerage clients. Report to Board Risk Committee within 5 days.' },
+  ],
+  mediumterm: [
+    { title:'Implement cross-dealer exposure aggregation', owner:'Risk Architecture', deadline:'30 days', priority:'High', detail:'Build or procure cross-prime-broker exposure aggregation capability. Engage DTCC or MarkitSERV for TRS trade repository data. Cannot rely on client self-reporting.' },
+    { title:'Revise concentration limits for TRS/equity swaps', owner:'Market Risk', deadline:'30 days', priority:'High', detail:'Set hard limits on single-name TRS notional as % of free float, % of ADV, and as % of client equity. Require sign-off above 10% free float threshold.' },
+    { title:'Enhance KYC/KYB for family office clients', owner:'Compliance / Onboarding', deadline:'60 days', priority:'Medium', detail:'Implement enhanced due diligence for family offices and single-investor funds. Require disclosure of total market exposure across all prime brokers as condition of continued engagement.' },
+    { title:'Board post-incident report', owner:'CRO / CEO', deadline:'60 days', priority:'High', detail:'Present full root-cause analysis to Board Risk Committee. Include: credit approval failures, margin methodology gaps, cross-dealer coordination gaps, and regulatory reporting obligations.' },
+  ],
+};
+
+function ArchegosDashboard({ onBack }) {
+  const [data,           setData]           = useState(null);
+  const [loading,        setLoading]        = useState(true);
+  const [actionTab,      setActionTab]      = useState('immediate');
+  const [expandedAction, setExpandedAction] = useState(null);
+  const [expandAll,      setExpandAll]      = useState(false);
+  const [openFlow,       setOpenFlow]       = useState(null);
+
+  useEffect(() => {
+    fetch('/api/scenario/archegos').then(r => r.json()).then(d => { setData(d); setLoading(false); }).catch(() => setLoading(false));
+  }, []);
+
+  const SectionHeader = ({ letter, title }) => (
+    <div className="scenario-section-header"><span className="section-letter">{letter}</span>{title}</div>
+  );
+
+  const toggleAction = (tab, idx) => setExpandedAction(prev => prev?.tab===tab && prev?.idx===idx ? null : { tab, idx });
+  const isExpanded   = (tab, idx) => expandAll || (expandedAction?.tab===tab && expandedAction?.idx===idx);
+
+  // ── Chart helpers ──────────────────────────────────────────────────────────
+  const ArchegosLineChart = ({ rows, xKey, series, title }) => {
+    const ref = React.useRef(null);
+    const chartRef = React.useRef(null);
+    useEffect(() => {
+      if (!rows || !rows.length || !ref.current) return;
+      if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; }
+      const labels = rows.map(r => r[xKey] != null ? String(r[xKey]) : '');
+      const COLS = ['#FFAD28','#3B82F6','#EF4444','#10B981','#8B5CF6','#F59E0B'];
+      const datasets = series.map((s, i) => ({
+        label: s.label, data: rows.map(r => r[s.key]),
+        borderColor: COLS[i % COLS.length], backgroundColor: COLS[i % COLS.length] + '22',
+        borderWidth: 2, tension: 0.3, fill: s.fill || false, pointRadius: 3,
+        borderDash: s.dash ? [5,3] : undefined,
+      }));
+      chartRef.current = new Chart(ref.current, { type:'line', data:{ labels, datasets },
+        options:{ responsive:true, plugins:{ legend:{ labels:{ color:'#94a3b8', font:{ size:11 } } } },
+          scales:{ x:{ ticks:{ color:'#64748b', font:{ size:10 } }, grid:{ color:'rgba(255,255,255,0.05)' } },
+                   y:{ ticks:{ color:'#64748b', font:{ size:10 } }, grid:{ color:'rgba(255,255,255,0.05)' } } } } });
+      return () => { if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; } };
+    }, [rows]);
+    return <canvas ref={ref} style={{maxHeight:220}}></canvas>;
+  };
+
+  const ArchegosBarChart = ({ rows, labelKey, valueKeys, title }) => {
+    const ref = React.useRef(null);
+    const chartRef = React.useRef(null);
+    useEffect(() => {
+      if (!rows || !rows.length || !ref.current) return;
+      if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; }
+      const labels = rows.map(r => r[labelKey] != null ? String(r[labelKey]) : '');
+      const COLS = ['#FFAD28','#3B82F6','#EF4444','#10B981','#8B5CF6'];
+      const datasets = valueKeys.map((vk, i) => ({
+        label: vk.label, data: rows.map(r => r[vk.key]),
+        backgroundColor: COLS[i % COLS.length] + 'cc', borderRadius: 4,
+      }));
+      chartRef.current = new Chart(ref.current, { type:'bar', data:{ labels, datasets },
+        options:{ responsive:true, plugins:{ legend:{ labels:{ color:'#94a3b8', font:{ size:11 } } } },
+          scales:{ x:{ ticks:{ color:'#64748b', font:{ size:10 }, maxRotation:35 }, grid:{ color:'rgba(255,255,255,0.05)' } },
+                   y:{ ticks:{ color:'#64748b', font:{ size:10 } }, grid:{ color:'rgba(255,255,255,0.05)' } } } } });
+      return () => { if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; } };
+    }, [rows]);
+    return <canvas ref={ref} style={{maxHeight:220}}></canvas>;
+  };
+
+  const DataTable = ({ rows, cols, maxH }) => {
+    if (!rows || !rows.length) return <div style={{padding:12,color:'var(--text-3)',fontSize:12}}>No data.</div>;
+    const headers = cols || Object.keys(rows[0]);
+    const numFmt = v => typeof v === 'number' ? (Math.abs(v) > 100 ? v.toLocaleString() : v.toFixed(2)) : (v ?? '—');
+    const sevColor = v => { const s=String(v||'').toLowerCase(); if(s.includes('critical'))return'#EF4444'; if(s.includes('high'))return'#F59E0B'; if(s.includes('medium'))return'#3B82F6'; return ''; };
+    return (
+      <div style={{overflowX:'auto',overflowY:'auto',maxHeight:maxH||260,borderRadius:6,border:'1px solid var(--border)'}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:11.5}}>
+          <thead>
+            <tr>{headers.map(h=><th key={h} style={{padding:'7px 10px',textAlign:'left',fontWeight:600,color:'var(--text-2)',borderBottom:'1px solid var(--border)',background:'var(--surface)',whiteSpace:'nowrap',position:'sticky',top:0}}>{String(h).replace(/_/g,' ')}</th>)}</tr>
+          </thead>
+          <tbody>
+            {rows.map((row,i)=>(
+              <tr key={i} style={{borderBottom:'1px solid var(--border)'}}>
+                {headers.map(h=>{
+                  const v=row[h]; const sc=sevColor(v);
+                  return <td key={h} style={{padding:'6px 10px',color:sc||'var(--text)',whiteSpace:'nowrap',fontWeight:sc?700:400}}>{numFmt(v)}</td>;
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  const HeatTable = ({ rows, rowKey, colKeys }) => {
+    if (!rows || !rows.length) return null;
+    const colorCell = v => {
+      if (v == null) return '';
+      const n = typeof v === 'number' ? v : parseFloat(v);
+      if (isNaN(n)) return '';
+      const pct = Math.min(Math.abs(n) / 10000, 1);
+      return `rgba(255,173,40,${0.1 + pct * 0.8})`;
+    };
+    return (
+      <div style={{overflowX:'auto',borderRadius:6,border:'1px solid var(--border)'}}>
+        <table style={{borderCollapse:'collapse',fontSize:11}}>
+          <thead>
+            <tr>
+              <th style={{padding:'6px 10px',background:'var(--surface)',fontWeight:600,color:'var(--text-2)',borderBottom:'1px solid var(--border)',whiteSpace:'nowrap'}}>Bank</th>
+              {colKeys.map(c=><th key={c} style={{padding:'6px 10px',background:'var(--surface)',fontWeight:600,color:'var(--text-2)',borderBottom:'1px solid var(--border)',whiteSpace:'nowrap'}}>{c}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row,i)=>(
+              <tr key={i}>
+                <td style={{padding:'6px 10px',fontWeight:600,color:'var(--text)',whiteSpace:'nowrap',borderBottom:'1px solid var(--border)'}}>{row[rowKey]}</td>
+                {colKeys.map(c=>{
+                  const v = row[c]; const bg = colorCell(v);
+                  return <td key={c} style={{padding:'6px 10px',background:bg,textAlign:'right',borderBottom:'1px solid var(--border)',color:'var(--text)'}}>{typeof v==='number' ? v.toLocaleString() : (v??'—')}</td>;
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  if (loading) return <div className="page"><div className="spinner-wrap"><div className="spinner"></div> Loading Archegos scenario data…</div></div>;
+
+  const sh = k => (data && data[k]) || [];
+  const calRows  = sh('01_Scenario_Calendar');
+  const capRows  = sh('02_WWR_Capital_vs_Exposure');
+  const wwrRows  = sh('03_WWR_Specific_By_Name');
+  const callRows = sh('04_WWR_CrossDealer_Calls');
+  const liqRows  = sh('05_Position_vs_Liquidity');
+  const hmRows   = sh('06_CrossDealer_Heatmap');
+  const hhiRows  = sh('08_Concentration_HHI');
+  const txRows   = sh('Transmission flow');
+
+  const capXKey   = capRows[0]  ? Object.keys(capRows[0])[0]  : 'Scenario Day';
+  const callXKey  = callRows[0] ? Object.keys(callRows[0])[0] : 'Scenario Day';
+  const capKeys   = capRows[0]  ? Object.keys(capRows[0]).slice(3) : [];
+  const callBanks = callRows[0] ? Object.keys(callRows[0]).slice(2).filter(k => k !== 'TOTAL All Banks ($mm)' && !k.toLowerCase().includes('total')) : [];
+  const hmRowKey  = hmRows[0]   ? Object.keys(hmRows[0])[0] : 'Bank \\ Ticker';
+  const hmColKeys = hmRows[0]   ? Object.keys(hmRows[0]).slice(1).filter(k => !k.toLowerCase().includes('total')) : [];
+  const liqLabelKey = liqRows[0] ? Object.keys(liqRows[0])[0] : 'Ticker';
+  const hhiBankRows = hhiRows.filter(r => { const v = Object.values(r)[0]; return v && !String(v).toLowerCase().includes('bank') && String(v).length < 30 && !String(v).includes('HHI') && !String(v).includes('Name'); }).slice(0, 6);
+
+  return (
+    <div className="page" style={{maxWidth:1240}}>
+      {/* Back button */}
+      <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:20}}>
+        <button className="btn-outline" style={{fontSize:13}} onClick={onBack}>
+          <i className="fa-solid fa-arrow-left"></i> Scenario Library
+        </button>
+        <div style={{flex:1}}>
+          <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.8px',color:'var(--text-3)',marginBottom:2}}>Scenario 05 · Historical Case</div>
+          <div style={{fontSize:18,fontWeight:800,color:'var(--text)',lineHeight:1.2}}>Archegos Capital — Wrong-Way Risk &amp; Concentration Failure</div>
+        </div>
+        <span className="sev-badge sev-critical">Critical</span>
+      </div>
+
+      {/* Meta KPIs */}
+      <div className="scenario-meta-grid" style={{marginBottom:20}}>
+        {ARCHEGOS_META.map((m,i) => (
+          <div key={i} className="scenario-meta-card">
+            <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.7px',color:'var(--text-3)',marginBottom:4}}>{m.label}</div>
+            <div style={{fontSize:13,fontWeight:700,color: m.cls==='critical'?'#EF4444': m.cls==='warning'?'#F59E0B':'var(--text)'}}>{m.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Section A — Executive Summary */}
+      <SectionHeader letter="A" title="Executive Summary" />
+      <div className="card" style={{marginBottom:16,lineHeight:1.7,fontSize:13.5,color:'var(--text-2)'}}>
+        <strong style={{color:'var(--text)'}}>Archegos Capital Management</strong> was a family office run by Bill Hwang that built an estimated <strong>$30Bn+ notional exposure</strong> across 10 concentrated equity names through Total Return Swaps (TRS) with 6 prime brokers simultaneously — with no single broker aware of the full picture. When <strong>ViacomCBS (VIAC) fell ~55%</strong> in March 2021, simultaneous margin calls from all 6 banks could not be met. The resulting forced liquidation of the same names by competing banks created a self-reinforcing price collapse — a textbook <strong>Wrong-Way Risk (WWR)</strong> event. Total bank losses exceeded <strong>$10Bn</strong>, with Credit Suisse losing $4.7Bn and Nomura $2.9Bn. This scenario stress-tests counterparty credit concentration, cross-dealer visibility gaps, and prime brokerage margin adequacy.
+      </div>
+
+      {/* Section B — Risk Transmission */}
+      <SectionHeader letter="B" title="Risk Transmission — How the Failure Cascaded" />
+      <div className="card" style={{marginBottom:16}}>
+        {ARCHEGOS_FLOW.map((step, i) => (
+          <div key={i} style={{display:'flex',gap:14,padding:'12px 0',borderBottom: i<ARCHEGOS_FLOW.length-1?'1px solid var(--border)':'none',cursor:'pointer'}}
+               onClick={() => setOpenFlow(openFlow===i ? null : i)}>
+            <div style={{width:28,height:28,borderRadius:'50%',background: step.type==='trigger'?'#EF444422':'#F59E0B22',border:`2px solid ${step.type==='trigger'?'#EF4444':'#F59E0B'}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:step.type==='trigger'?'#EF4444':'#F59E0B',flexShrink:0}}>
+              {i+1}
+            </div>
+            <div style={{flex:1}}>
+              <div style={{fontWeight:600,fontSize:13,color:'var(--text)',marginBottom:openFlow===i?6:0}}>{step.label}</div>
+              {openFlow===i && <div style={{fontSize:12.5,color:'var(--text-2)',lineHeight:1.6}}>{step.explanation}</div>}
+            </div>
+            <i className={`fa-solid ${openFlow===i?'fa-chevron-up':'fa-chevron-down'}`} style={{fontSize:11,color:'var(--text-3)',alignSelf:'center'}}></i>
+          </div>
+        ))}
+      </div>
+
+      {/* Section C — Scenario Timeline */}
+      <SectionHeader letter="C" title="Scenario Timeline" />
+      <div className="card" style={{marginBottom:16}}>
+        {calRows.length ? <DataTable rows={calRows} maxH={200} /> : <div style={{color:'var(--text-3)',fontSize:12}}>Timeline data not available.</div>}
+      </div>
+
+      {/* Section D — Capital vs Margin Call Demand */}
+      <SectionHeader letter="D" title="Archegos Capital vs. Cumulative Margin Call Demand" />
+      <div className="scenario-charts-grid" style={{marginBottom:16}}>
+        <div className="scenario-chart-card">
+          <div style={{fontWeight:600,fontSize:13,marginBottom:12}}>Capital vs. Margin Demand ($Bn)</div>
+          {capRows.length && capKeys.length ? (
+            <ArchegosLineChart rows={capRows} xKey={capXKey}
+              series={[
+                { key: capKeys[0], label: 'Archegos Capital ($Bn)' },
+                { key: capKeys[1], label: 'Cumul. Margin Call ($Bn)', dash:true },
+                { key: capKeys[2], label: 'Net Modeled Loss ($Bn)' },
+                { key: capKeys[3], label: 'Coverage Gap ($Bn)', dash:true },
+              ]} />
+          ) : <div style={{color:'var(--text-3)',fontSize:12,padding:12}}>Data loading…</div>}
+        </div>
+        <div className="scenario-chart-card">
+          <div style={{fontWeight:600,fontSize:13,marginBottom:12}}>Cross-Dealer Margin Calls by Bank ($mm)</div>
+          {callRows.length && callBanks.length ? (
+            <ArchegosBarChart rows={callRows} labelKey={callXKey}
+              valueKeys={callBanks.map(b => ({ key:b, label:b }))} />
+          ) : <div style={{color:'var(--text-3)',fontSize:12,padding:12}}>Data loading…</div>}
+        </div>
+      </div>
+
+      {/* Section E — WWR Position Detail */}
+      <SectionHeader letter="E" title="Wrong-Way Risk — Position-Level Detail (10 Names)" />
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{fontSize:12,color:'var(--text-3)',marginBottom:10}}>Each position is self-referential WWR — the collateral securing the TRS falls in value as Archegos defaults and banks liquidate.</div>
+        {wwrRows.length ? <DataTable rows={wwrRows} maxH={280} /> : <div style={{color:'var(--text-3)',fontSize:12}}>Data not available.</div>}
+      </div>
+
+      {/* Section F — Position vs Liquidity */}
+      <SectionHeader letter="F" title="Position Size vs. Market Liquidity — Days to Liquidate" />
+      <div className="scenario-charts-grid" style={{marginBottom:16}}>
+        <div className="scenario-chart-card">
+          <div style={{fontWeight:600,fontSize:13,marginBottom:12}}>Notional Exposure by Ticker ($mm)</div>
+          {liqRows.length ? (
+            <ArchegosBarChart rows={liqRows} labelKey={liqLabelKey}
+              valueKeys={[{ key: Object.keys(liqRows[0]||{})[1]||'Notional Exposure ($mm)', label:'Notional ($mm)' }]} />
+          ) : <div style={{color:'var(--text-3)',fontSize:12,padding:12}}>Data loading…</div>}
+        </div>
+        <div className="scenario-chart-card">
+          <div style={{fontWeight:600,fontSize:13,marginBottom:12}}>Days to Liquidate by Ticker</div>
+          {liqRows.length ? (
+            <ArchegosBarChart rows={liqRows} labelKey={liqLabelKey}
+              valueKeys={[{ key:'Days to Liquidate (Position / ADV)', label:'Days to Liquidate' }]} />
+          ) : <div style={{color:'var(--text-3)',fontSize:12,padding:12}}>Data loading…</div>}
+        </div>
+      </div>
+
+      {/* Section G — Cross-Dealer Exposure Heatmap */}
+      <SectionHeader letter="G" title="Cross-Dealer Exposure Heatmap — 6 Banks × 10 Names ($mm)" />
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{fontSize:12,color:'var(--text-3)',marginBottom:10}}>Darker cells = higher concentration. No single bank saw the full combined exposure across all banks simultaneously.</div>
+        {hmRows.length && hmColKeys.length ? <HeatTable rows={hmRows} rowKey={hmRowKey} colKeys={hmColKeys} /> : <div style={{color:'var(--text-3)',fontSize:12}}>Heatmap data not available.</div>}
+      </div>
+
+      {/* Section H — Concentration HHI */}
+      <SectionHeader letter="H" title="Concentration Risk — Herfindahl-Hirschman Index (HHI)" />
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{fontSize:12,color:'var(--text-3)',marginBottom:10}}>HHI above 2,500 indicates high concentration risk. Values above 7,500 are extreme.</div>
+        {hhiBankRows.length ? <DataTable rows={hhiBankRows} maxH={200} /> : <DataTable rows={hhiRows.slice(0,8)} maxH={200} />}
+      </div>
+
+      {/* Section I — Management Action Playbook */}
+      <SectionHeader letter="I" title="Management Action Playbook" />
+      <div className="card" style={{marginBottom:16}}>
+        <div className="action-tabs">
+          {[{id:'immediate',label:'Immediate (0–4hrs)'},{id:'shortterm',label:'Short-Term (24–72hrs)'},{id:'mediumterm',label:'Medium-Term (30–60 days)'}].map(t => (
+            <button key={t.id} className={`action-tab ${actionTab===t.id?'active':''}`}
+              onClick={() => { setActionTab(t.id); setExpandedAction(null); }}>
+              {t.label}
+              <span style={{marginLeft:6,background:'rgba(0,0,0,0.07)',borderRadius:10,padding:'1px 7px',fontSize:10,fontWeight:700}}>
+                {(ARCHEGOS_ACTIONS[t.id]||[]).length}
+              </span>
+            </button>
+          ))}
+        </div>
+        <div className="playbook-toolbar">
+          <span className="playbook-count"><i className="fa-solid fa-list-check" style={{marginRight:5,color:'var(--primary)'}}></i>
+            {(ARCHEGOS_ACTIONS[actionTab]||[]).length} actions · click to expand
+          </span>
+          <button className="btn-outline" style={{fontSize:12,padding:'6px 14px'}}
+            onClick={() => { setExpandAll(p => !p); setExpandedAction(null); }}>
+            <i className={`fa-solid ${expandAll?'fa-compress':'fa-expand'}`}></i> {expandAll?'Collapse All':'Expand All'}
+          </button>
+        </div>
+        <div>
+          {(ARCHEGOS_ACTIONS[actionTab]||[]).map((action, i) => (
+            <div key={i} className="action-row" onClick={() => toggleAction(actionTab, i)} style={{cursor:'pointer'}}>
+              <div className="action-row-header">
+                <div style={{display:'flex',alignItems:'center',gap:10}}>
+                  <span className={`priority-dot ${action.priority==='Critical'?'dot-critical':'dot-high'}`}></span>
+                  <span style={{fontWeight:600,fontSize:13}}>{action.title}</span>
+                </div>
+                <div style={{display:'flex',alignItems:'center',gap:12,fontSize:11.5,color:'var(--text-3)'}}>
+                  <span><i className="fa-regular fa-clock" style={{marginRight:4}}></i>{action.deadline}</span>
+                  <span><i className="fa-solid fa-user" style={{marginRight:4}}></i>{action.owner}</span>
+                  <i className={`fa-solid ${isExpanded(actionTab,i)?'fa-chevron-up':'fa-chevron-down'}`} style={{fontSize:11}}></i>
+                </div>
+              </div>
+              {isExpanded(actionTab, i) && (
+                <div className="action-row-detail">{action.detail}</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Source note */}
+      <div className="source-note" style={{marginTop:8}}>
+        <i className="fa-solid fa-database"></i>
+        Source: Archegos_WWR_Concentration_Dataset_v4.xlsx — Historical case study for internal CRO / Board restricted use.
+      </div>
+    </div>
+  );
+}
+
 function ScenarioPage() {
   const [selected,           setSelected]           = useState(null);
   const [transitioning,      setTransitioning]      = useState(false);
@@ -4437,6 +4796,10 @@ function ScenarioPage() {
   );
 
   if (!selected) return <ScenarioLibrary onSelect={handleSelect} />;
+
+  if (selected === 5) {
+    return <ArchegosDashboard onBack={() => setSelected(null)} />;
+  }
 
   if (selected !== 4) {
     return (

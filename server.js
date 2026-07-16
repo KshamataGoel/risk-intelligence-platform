@@ -1881,6 +1881,32 @@ app.post('/api/scenario/briefing', async (req, res) => {
   }
 });
 
+// ─── Archegos Scenario Endpoint ──────────────────────────────────────────────
+app.get('/api/scenario/archegos', (req, res) => {
+  const fp = path.join(SCENARIO_DIR, 'Archegos_WWR_Concentration_Dataset_v4.xlsx');
+  if (!fs.existsSync(fp)) return res.json({ available: false });
+  try {
+    const wb = XLSX.readFile(fp);
+    const result = { available: true };
+    for (const name of wb.SheetNames) {
+      const ws  = wb.Sheets[name];
+      // Find first non-empty row; skip title rows (row 0 often has description)
+      const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      // Find header row: first row with >= 2 non-empty cells
+      let headerIdx = raw.findIndex(r => r.filter(c => c !== '').length >= 2);
+      if (headerIdx < 0) headerIdx = 0;
+      const rows = XLSX.utils.sheet_to_json(ws, { defval: null, range: headerIdx });
+      const cleaned = rows
+        .map(r => { const o = {}; for (const [k,v] of Object.entries(r)) o[String(k).trim()] = v; return o; })
+        .filter(r => Object.values(r).some(v => v !== null && v !== ''));
+      result[name] = cleaned;
+    }
+    res.json(result);
+  } catch (e) {
+    res.json({ available: false, error: e.message });
+  }
+});
+
 // ─── Source Data Endpoint ────────────────────────────────────────────────────
 app.get('/api/scenario/source-data', (req, res) => {
   const FILES = {
