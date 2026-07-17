@@ -84,6 +84,7 @@
 .scenario-light input::placeholder,
 .scenario-light textarea::placeholder { color: #64748B !important; }
 .scenario-light select option { background:#fff; color:#0A0F1A; }
+.scenario-light .reg-note { background:#FEF9C3; color:#713F12; border-color:#EAB308; }
 
 /* Analytics Lab — dark-coded elements */
 .scenario-light .analysis-model-select,
@@ -113,6 +114,28 @@
 .scenario-light [style*="background:#0D1321"] {
   background: #fff !important; color: #0A0F1A !important;
 }
+/* Intelligence Brief card — restore light style over global dark override */
+.scenario-light .summary-card {
+  background: linear-gradient(135deg, #fafbfc 0%, #f8f9fa 100%) !important;
+  border-color: var(--border) !important;
+  border-left-color: var(--primary) !important;
+}
+.scenario-light .summary-section.section-blue   { background: #EFF6FF !important; border-left-color: #3B82F6 !important; }
+.scenario-light .summary-section.section-blue   .summary-section-label { color: #1D4ED8 !important; }
+.scenario-light .summary-section.section-orange { background: #FFF7ED !important; border-left-color: #F97316 !important; }
+.scenario-light .summary-section.section-orange .summary-section-label { color: #C2410C !important; }
+.scenario-light .summary-section.section-purple { background: #F5F3FF !important; border-left-color: #8B5CF6 !important; }
+.scenario-light .summary-section.section-purple .summary-section-label { color: #6D28D9 !important; }
+.scenario-light .summary-section.section-teal   { background: #F0FDFA !important; border-left-color: #14B8A6 !important; }
+.scenario-light .summary-section.section-teal   .summary-section-label { color: #0F766E !important; }
+.scenario-light .summary-section.section-gray   { background: #F8FAFC !important; border-left-color: #94A3B8 !important; }
+.scenario-light .summary-section.section-gray   .summary-section-label { color: #64748B !important; }
+.scenario-light .summary-section-content { color: #0A0F1A !important; }
+.scenario-light .concentration-banner { background: #FFFBEB !important; border-color: #FCD34D !important; border-left-color: #FFB84D !important; color: #92400E !important; }
+.scenario-light .concentration-banner i { color: #FFB84D !important; }
+.scenario-light .quality-note { background: #F8FAFC !important; border-color: #CBD5E1 !important; }
+.scenario-light thead th { background: #F1F5F9 !important; color: #0A0F1A !important; }
+.scenario-light tbody td { border-bottom-color: rgba(0,0,0,0.07) !important; }
 
 html, body, #root { height: 100%; }
 
@@ -2174,7 +2197,7 @@ function buildChartConfig(type, data, title, highlightIndex, highlightType) {
       title: {
         display: true, text: title,
         font: { family: 'Inter', size: 15, weight: '600' },
-        color: '#E2E8F0', padding: { bottom: 16 }
+        color: '#1E293B', padding: { bottom: 16 }
       }
     }
   };
@@ -2214,8 +2237,8 @@ function buildChartConfig(type, data, title, highlightIndex, highlightType) {
           }
         },
         scales: {
-          x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 12 }, color: '#94A3B8' } },
-          y: { grid: { color: 'rgba(255,255,255,0.07)' }, ticks: { font: { family: 'Inter', size: 12 }, color: '#94A3B8' }, beginAtZero: true }
+          x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 12 }, color: '#334155'} },
+          y: { grid: { color: 'rgba(0,0,0,0.08)' }, ticks: { font: { family: 'Inter', size: 12 }, color: '#334155'}, beginAtZero: true }
         }
       }
     };
@@ -2295,11 +2318,11 @@ function buildChartConfig(type, data, title, highlightIndex, highlightType) {
         },
         scales: {
           x: {
-            grid: { color: 'rgba(255,255,255,0.07)' },
+            grid: { color: 'rgba(0,0,0,0.08)' },
             ticks: { font: { family: 'Inter', size: 12 }, color: '#94A3B8', callback: v => isGBP ? `£${Number(v).toLocaleString()}` : Number(v).toLocaleString() },
             beginAtZero: true
           },
-          y: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 12 }, color: '#94A3B8' } }
+          y: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 12 }, color: '#334155'} }
         }
       }
     };
@@ -2330,9 +2353,9 @@ function buildChartConfig(type, data, title, highlightIndex, highlightType) {
           tooltip: { callbacks: { label: ctx => `  £${ctx.raw.toLocaleString()}` } }
         },
         scales: {
-          x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 12 }, color: '#94A3B8' } },
+          x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 12 }, color: '#334155'} },
           y: {
-            grid: { color: 'rgba(255,255,255,0.07)' },
+            grid: { color: 'rgba(0,0,0,0.08)' },
             ticks: { font: { family: 'Inter', size: 12 }, color: '#94A3B8', callback: v => `£${Number(v).toLocaleString()}` },
             beginAtZero: true
           }
@@ -3288,7 +3311,7 @@ function buildScenarioChartCfg(chartInfo, opts = {}) {
   const baseOpts = {
     responsive:true, maintainAspectRatio:false,
     plugins:{
-      legend:{ position:'bottom', labels:{ font:{family:'Inter',size:11}, padding:12, boxWidth:12, color:'#E2E8F0' } },
+      legend:{ position:'bottom', labels:{ font:{family:'Inter',size:11}, padding:12, boxWidth:12, color:'#1E293B' } },
       title:{ display:false },
       tooltip:{ callbacks:{ label: ctx => ` ${ctx.dataset.label || ''}: ${ctx.formattedValue}` } },
       zoom: enableZoom ? zoomCfg.zoom : undefined
@@ -3313,8 +3336,8 @@ function buildScenarioChartCfg(chartInfo, opts = {}) {
         ...baseOpts,
         indexAxis: type === 'horizontalBar' ? 'y' : 'x',
         scales:{
-          x:{ stacked:false, grid:{color:'rgba(255,255,255,0.07)'}, ticks:{font:scaleFont, color:'#94A3B8'}, title:{ display:!!xLabel, text:xLabel||'', color:'#94A3B8', font:{...scaleFont,weight:'500'} } },
-          y:{ stacked:false, grid:{color:'rgba(255,255,255,0.07)'}, ticks:{font:scaleFont, color:'#94A3B8'}, beginAtZero:true, title:{ display:!!yLabel, text:yLabel||'', color:'#94A3B8', font:{...scaleFont,weight:'500'} } }
+          x:{ stacked:false, grid:{color:'rgba(0,0,0,0.08)'}, ticks:{font:scaleFont, color:'#334155'}, title:{ display:!!xLabel, text:xLabel||'', color:'#334155', font:{...scaleFont,weight:'500'} } },
+          y:{ stacked:false, grid:{color:'rgba(0,0,0,0.08)'}, ticks:{font:scaleFont, color:'#334155'}, beginAtZero:true, title:{ display:!!yLabel, text:yLabel||'', color:'#334155', font:{...scaleFont,weight:'500'} } }
         }
       }
     };
@@ -3342,8 +3365,8 @@ function buildScenarioChartCfg(chartInfo, opts = {}) {
       indexAxis: type === 'horizontalBar' ? 'y' : 'x',
       plugins:{...baseOpts.plugins, legend:{display:false}},
       scales:{
-        x:{ grid:{color:'rgba(255,255,255,0.07)'}, ticks:{font:scaleFont, color:'#94A3B8'}, title:{ display:!!xLabel, text:xLabel||'', color:'#94A3B8', font:{...scaleFont,weight:'500'} } },
-        y:{ grid:{color:'rgba(255,255,255,0.07)'}, ticks:{font:scaleFont, color:'#94A3B8'}, beginAtZero:true, title:{ display:!!yLabel, text:yLabel||'', color:'#94A3B8', font:{...scaleFont,weight:'500'} } }
+        x:{ grid:{color:'rgba(0,0,0,0.08)'}, ticks:{font:scaleFont, color:'#334155'}, title:{ display:!!xLabel, text:xLabel||'', color:'#334155', font:{...scaleFont,weight:'500'} } },
+        y:{ grid:{color:'rgba(0,0,0,0.08)'}, ticks:{font:scaleFont, color:'#334155'}, beginAtZero:true, title:{ display:!!yLabel, text:yLabel||'', color:'#334155', font:{...scaleFont,weight:'500'} } }
       }
     }
   };
@@ -4497,8 +4520,8 @@ function ArchegosDashboard({ onBack }) {
       }));
       chartRef.current = new Chart(ref.current, { type:'line', data:{ labels, datasets },
         options:{ responsive:true, plugins:{ legend:{ labels:{ color:'#1E293B', font:{ size:11 } } } },
-          scales:{ x:{ ticks:{ color:'#64748b', font:{ size:10 } }, grid:{ color:'rgba(255,255,255,0.05)' } },
-                   y:{ ticks:{ color:'#64748b', font:{ size:10 } }, grid:{ color:'rgba(255,255,255,0.05)' } } } } });
+          scales:{ x:{ ticks:{ color:'#334155', font:{ size:10 } }, grid:{ color:'rgba(0,0,0,0.08)' } },
+                   y:{ ticks:{ color:'#334155', font:{ size:10 } }, grid:{ color:'rgba(0,0,0,0.08)' } } } } });
       return () => { if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; } };
     }, [rows]);
     return <canvas ref={ref} style={{maxHeight:220}}></canvas>;
@@ -4518,8 +4541,8 @@ function ArchegosDashboard({ onBack }) {
       }));
       chartRef.current = new Chart(ref.current, { type:'bar', data:{ labels, datasets },
         options:{ responsive:true, plugins:{ legend:{ labels:{ color:'#1E293B', font:{ size:11 } } } },
-          scales:{ x:{ ticks:{ color:'#64748b', font:{ size:10 }, maxRotation:35 }, grid:{ color:'rgba(255,255,255,0.05)' } },
-                   y:{ ticks:{ color:'#64748b', font:{ size:10 } }, grid:{ color:'rgba(255,255,255,0.05)' } } } } });
+          scales:{ x:{ ticks:{ color:'#334155', font:{ size:10 }, maxRotation:35 }, grid:{ color:'rgba(0,0,0,0.08)' } },
+                   y:{ ticks:{ color:'#334155', font:{ size:10 } }, grid:{ color:'rgba(0,0,0,0.08)' } } } } });
       return () => { if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; } };
     }, [rows]);
     return <canvas ref={ref} style={{maxHeight:220}}></canvas>;
@@ -5146,14 +5169,14 @@ function ScatterPlotChart({ data, xCol, yCol }) {
         },
         scales: {
           x: {
-            title: { display: true, text: xCol, font: { family: 'Inter', size: 12 }, color: '#94A3B8' },
-            ticks: { callback: v => formatVal(xCol, v), font: { family: 'Inter', size: 11 }, color: '#94A3B8' },
-            grid: { color: 'rgba(255,255,255,0.07)' }
+            title: { display: true, text: xCol, font: { family: 'Inter', size: 12 }, color: '#334155'},
+            ticks: { callback: v => formatVal(xCol, v), font: { family: 'Inter', size: 11 }, color: '#334155'},
+            grid: { color: 'rgba(0,0,0,0.08)' }
           },
           y: {
-            title: { display: true, text: yCol, font: { family: 'Inter', size: 12 }, color: '#94A3B8' },
-            ticks: { callback: v => formatVal(yCol, v), font: { family: 'Inter', size: 11 }, color: '#94A3B8' },
-            grid: { color: 'rgba(255,255,255,0.07)' }
+            title: { display: true, text: yCol, font: { family: 'Inter', size: 12 }, color: '#334155'},
+            ticks: { callback: v => formatVal(yCol, v), font: { family: 'Inter', size: 11 }, color: '#334155'},
+            grid: { color: 'rgba(0,0,0,0.08)' }
           }
         }
       }
@@ -5850,8 +5873,8 @@ function ReportChart({ chartData, chartType, title, metrics }) {
           tooltip: { callbacks: { label: ctx => { const v = ctx.parsed[isHBar ? 'x' : 'y']; return (title.includes('Volume') || title.includes('Exposure')) ? ` £${Number(v).toLocaleString()}` : ` ${Number(v).toLocaleString()}`; } } }
         },
         scales: isDoughnut ? {} : {
-          x: { grid: { color: 'rgba(255,255,255,0.07)' }, ticks: { font: { size: 10.5 }, color: '#94A3B8' } },
-          y: { grid: { color: 'rgba(255,255,255,0.07)' }, ticks: { font: { size: 10.5 }, color: '#94A3B8' } }
+          x: { grid: { color: 'rgba(0,0,0,0.08)' }, ticks: { font: { size: 10.5 }, color: '#334155'} },
+          y: { grid: { color: 'rgba(0,0,0,0.08)' }, ticks: { font: { size: 10.5 }, color: '#334155'} }
         }
       }
     });
