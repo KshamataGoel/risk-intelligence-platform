@@ -53,6 +53,67 @@
   --shadow-lg:      0 10px 32px rgba(0,0,0,0.6);
 }
 
+/* ── Scenario light theme scope ─────────────────────────────────────────── */
+.scenario-light {
+  --bg:       #F1F5F9;
+  --surface:  #FFFFFF;
+  --border:   rgba(0,0,0,0.12);
+  --text:     #000000;
+  --text-2:   #0A0F1A;
+  --text-3:   #1E293B;
+  --shadow:   0 1px 4px rgba(0,0,0,0.10),0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.12);
+  --shadow-lg:0 10px 32px rgba(0,0,0,0.16);
+}
+.scenario-light { background: var(--bg); color: var(--text); }
+
+/* Force all form controls light in the light theme */
+.scenario-light input,
+.scenario-light textarea,
+.scenario-light select,
+.scenario-light .input-box,
+.scenario-light .q-input,
+.scenario-light .search-input,
+.scenario-light [class*="search"],
+.scenario-light [class*="input"],
+.scenario-light [class*="select"] {
+  background: #fff !important;
+  color: #0A0F1A !important;
+  border-color: rgba(0,0,0,0.18) !important;
+}
+.scenario-light input::placeholder,
+.scenario-light textarea::placeholder { color: #64748B !important; }
+.scenario-light select option { background:#fff; color:#0A0F1A; }
+
+/* Analytics Lab — dark-coded elements */
+.scenario-light .analysis-model-select,
+.scenario-light .analysis-model-select option {
+  background: #fff !important; color: #0A0F1A !important;
+  border-color: rgba(0,0,0,0.18) !important;
+}
+.scenario-light .eq-formula,
+.scenario-light .eq-coeff {
+  background: #1E293B !important; color: #F1F5F9 !important;
+  border-color: rgba(0,0,0,0.2) !important;
+}
+.scenario-light .growth-table thead th {
+  background: #F1F5F9 !important; color: #0A0F1A !important;
+}
+/* Slider track — light theme: thin grey line, no fill shade */
+.scenario-light input[type=range].sim-slider {
+  background: linear-gradient(to right, var(--primary) 0%, var(--primary) var(--pct, 50%), rgba(0,0,0,0.15) var(--pct, 50%), rgba(0,0,0,0.15) 100%) !important;
+  height: 3px !important;
+}
+.scenario-light input[type=range].sim-slider::-webkit-slider-thumb {
+  border-color: #fff !important;
+  box-shadow: 0 0 3px rgba(0,0,0,0.2) !important;
+}
+/* Intelligence center search / vault inputs with hardcoded bg */
+.scenario-light [style*="background: #0D1321"],
+.scenario-light [style*="background:#0D1321"] {
+  background: #fff !important; color: #0A0F1A !important;
+}
+
 html, body, #root { height: 100%; }
 
 body {
@@ -1778,7 +1839,7 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 
 .action-row-detail {
   border-top:1px solid var(--border); padding:16px 18px;
-  background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.82);
+  background:rgba(128,128,128,0.07); color:var(--text-2);
   font-size:13px; line-height:1.7;
   animation:detailIn 0.15s ease;
 }
@@ -2109,7 +2170,7 @@ function buildChartConfig(type, data, title, highlightIndex, highlightType) {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: 'top', labels: { font: { family: 'Inter', size: 12 }, padding: 16, color: '#E2E8F0' } },
+      legend: { position: 'top', labels: { font: { family: 'Inter', size: 12 }, padding: 16, color: '#1E293B' } },
       title: {
         display: true, text: title,
         font: { family: 'Inter', size: 15, weight: '600' },
@@ -2180,7 +2241,7 @@ function buildChartConfig(type, data, title, highlightIndex, highlightType) {
         ...baseOpts,
         plugins: {
           ...baseOpts.plugins,
-          legend: { position: 'right', labels: { font: { family: 'Inter', size: 12 }, padding: 14, color: '#E2E8F0' } },
+          legend: { position: 'right', labels: { font: { family: 'Inter', size: 12 }, padding: 14, color: '#1E293B' } },
           tooltip: {
             callbacks: {
               label: ctx => {
@@ -2870,25 +2931,25 @@ function InsightsPage() {
 // ── Scenario Intelligence Module ─────────────────────────────────────────────
 
 const SCENARIOS_LIB = [
-  { id:1, num:'Scenario 01', title:'Credit Event for a Top 10 Large Exposure Counterparty', eventType:'Credit / Concentration Risk',
+  { id:1, num:'Scenario 01', title:'Credit Event for a Top 10 Large Exposure Counterparty', eventType:'Credit | Concentration Risk',
     desc:'A sudden credit deterioration or default of a top 10 large exposure counterparty, triggering CCR, PFE, and credit migration impacts across the bank.',
     severity:'Critical', tags:['Credit Risk','CCR','Concentration','Large Exposure'], available:false },
-  { id:2, num:'Scenario 02', title:'Middle East Region Conflict and Closure of the Strait of Hormuz', eventType:'Geopolitical / Commodity Risk',
+  { id:2, num:'Scenario 02', title:'Middle East Region Conflict and Closure of the Strait of Hormuz', eventType:'Geopolitical | Commodity Risk',
     desc:'Escalation of Middle East conflict leading to closure of the Strait of Hormuz, causing energy commodity price spikes and sovereign credit stress.',
     severity:'High', tags:['Geopolitical','Commodity','Market Risk','Energy'], available:false },
   { id:3, num:'Scenario 03', title:'Asian Storms Supercharged by Climate Change', eventType:'Physical Climate Risk',
     desc:'Severe climate events across Asia-Pacific impacting real asset valuations, trade finance exposures, and physical climate risk across the loan book.',
     severity:'High', tags:['Climate Risk','Physical Risk','ESG','Trade Finance'], available:false },
-  { id:4, num:'Scenario 04', title:'CME Exchange Failure — Closure of an Exchange due to Cyber Attack', eventType:'Cyber / Market Infrastructure Failure',
+  { id:4, num:'Scenario 04', title:'CME Exchange Failure — Closure of an Exchange due to Cyber Attack', eventType:'Cyber | Market Infrastructure Failure',
     desc:'A cyber attack on CME infrastructure causes exchange closure for 3–5 business days. Impacts include unhedged derivatives, frozen margin, liquidity stress, and regulatory escalation.',
     severity:'Critical', tags:['Cyber','Market Risk','Liquidity','Operational Risk'], available:true },
-  { id:5, num:'Scenario 05', title:'Archegos Capital — Wrong-Way Risk & Concentration Failure', eventType:'Counterparty Credit / Concentration Risk',
+  { id:5, num:'Scenario 05', title:'Archegos Capital — Wrong Way Risk & Concentration Failure', eventType:'Counterparty Credit | Concentration Risk',
     desc:'Archegos Capital Management defaults triggering $30Bn+ in forced liquidations across 6 prime brokers. Demonstrates catastrophic wrong-way risk, hidden leverage via TRS, and cross-dealer margin call cascades.',
-    severity:'Critical', tags:['CCR','Wrong-Way Risk','Concentration','Prime Brokerage','Margin'], available:true }
+    severity:'Critical', tags:['CCR','Wrong Way Risk','Concentration','Prime Brokerage','Margin'], available:true }
 ];
 
 const CME_META = [
-  { label:'Event Type',              value:'Cyber / Market Infrastructure Failure',      cls:'' },
+  { label:'Event Type',              value:'Cyber | Market Infrastructure Failure',      cls:'' },
   { label:'Status',                  value:'Active Scenario',                            cls:'' },
   { label:'Severity',                value:'Critical',                                   cls:'critical' },
   { label:'Board Escalation',        value:'Required if closure exceeds 3 days',         cls:'warning' },
@@ -3488,7 +3549,7 @@ function ActionRow({ action, idx, isExpanded, onToggle }) {
 
 function ScenarioLibrary({ onSelect }) {
   return (
-    <div className="page">
+    <div className="page scenario-light">
       <div className="page-header">
         <div className="page-title">Scenario Analysis</div>
         <div className="page-sub">Stress Simulation &amp; CRO War Room — select a scenario to open the full dashboard.</div>
@@ -3557,9 +3618,6 @@ function BriefingModal({ type, briefing, generating, onClose }) {
             <button className="btn-outline" style={{fontSize:13}} onClick={window.print}><i className="fa-solid fa-print"></i> Print</button>
           </div>
         )}
-        <div style={{marginTop:16,fontSize:11,color:'var(--text-3)'}}>
-          Source: Scenario_Analysis_Module.docx — Generated for internal CRO / Board restricted use.
-        </div>
       </div>
     </div>
   );
@@ -3634,10 +3692,6 @@ function SourceDrawer({ step, onClose }) {
               {step.sourceEvidence || 'Not available in source document.'}
             </div>
           </div>
-        </div>
-        <div className="source-drawer-footer">
-          <i className="fa-solid fa-database" style={{marginRight:5}}></i>
-          Source: Scenario_Analysis_Module.docx — Internal use only.
         </div>
       </div>
     </>
@@ -4381,7 +4435,7 @@ const ARCHEGOS_FLOW = [
   { label:'Archegos acquires concentrated TRS positions', type:'trigger', severity:'Critical', explanation:'Bill Hwang builds $30Bn+ notional exposure across 10 names via Total Return Swaps — hidden from prime brokers and regulators due to no public 13F filing requirement.' },
   { label:'Price decline triggers margin calls', type:'impact', severity:'Critical', explanation:'VIACOM (VIAC) falls ~55% triggering simultaneous margin calls from Credit Suisse, Nomura, Morgan Stanley, Goldman, UBS and Deutsche Bank.' },
   { label:'Cross-dealer margin call cascade', type:'impact', severity:'Critical', explanation:'Archegos cannot meet calls. Banks begin forced liquidation of the same names simultaneously — amplifying the price decline and creating a self-reinforcing crash.' },
-  { label:'Wrong-Way Risk materialises', type:'impact', severity:'Critical', explanation:'The very collateral securing the positions is falling in value as banks try to sell — a textbook wrong-way risk scenario where counterparty default and collateral value deteriorate together.' },
+  { label:'Wrong Way Risk materialises', type:'impact', severity:'Critical', explanation:'The very collateral securing the positions is falling in value as banks try to sell — a textbook wrong-way risk scenario where counterparty default and collateral value deteriorate together.' },
   { label:'Concentration & illiquidity amplify losses', type:'impact', severity:'High', explanation:'Positions represent 60–100% of free float in several names. Days-to-liquidate exceeds 20 days for VIAC. Forced selling at distressed prices locks in maximum losses.' },
   { label:'Regulatory & governance failure', type:'impact', severity:'High', explanation:'No cross-dealer visibility. Each prime broker unaware of total Archegos leverage. No central counterparty for TRS. Basel III CCR rules not capturing the full exposure.' },
 ];
@@ -4442,7 +4496,7 @@ function ArchegosDashboard({ onBack }) {
         borderDash: s.dash ? [5,3] : undefined,
       }));
       chartRef.current = new Chart(ref.current, { type:'line', data:{ labels, datasets },
-        options:{ responsive:true, plugins:{ legend:{ labels:{ color:'#94a3b8', font:{ size:11 } } } },
+        options:{ responsive:true, plugins:{ legend:{ labels:{ color:'#1E293B', font:{ size:11 } } } },
           scales:{ x:{ ticks:{ color:'#64748b', font:{ size:10 } }, grid:{ color:'rgba(255,255,255,0.05)' } },
                    y:{ ticks:{ color:'#64748b', font:{ size:10 } }, grid:{ color:'rgba(255,255,255,0.05)' } } } } });
       return () => { if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; } };
@@ -4463,7 +4517,7 @@ function ArchegosDashboard({ onBack }) {
         backgroundColor: COLS[i % COLS.length] + 'cc', borderRadius: 4,
       }));
       chartRef.current = new Chart(ref.current, { type:'bar', data:{ labels, datasets },
-        options:{ responsive:true, plugins:{ legend:{ labels:{ color:'#94a3b8', font:{ size:11 } } } },
+        options:{ responsive:true, plugins:{ legend:{ labels:{ color:'#1E293B', font:{ size:11 } } } },
           scales:{ x:{ ticks:{ color:'#64748b', font:{ size:10 }, maxRotation:35 }, grid:{ color:'rgba(255,255,255,0.05)' } },
                    y:{ ticks:{ color:'#64748b', font:{ size:10 } }, grid:{ color:'rgba(255,255,255,0.05)' } } } } });
       return () => { if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; } };
@@ -4474,7 +4528,8 @@ function ArchegosDashboard({ onBack }) {
   const DataTable = ({ rows, cols, maxH }) => {
     if (!rows || !rows.length) return <div style={{padding:12,color:'var(--text-3)',fontSize:12}}>No data.</div>;
     const headers = cols || Object.keys(rows[0]);
-    const numFmt = v => typeof v === 'number' ? (Math.abs(v) > 100 ? v.toLocaleString() : v.toFixed(2)) : (v ?? '—');
+    const excelToDate = n => { const d = new Date(Math.round((n - 25569) * 86400 * 1000)); return d.toISOString().slice(0,10); };
+    const numFmt = (v, h) => { if (typeof v === 'number' && String(h||'').toLowerCase().includes('date') && v > 40000 && v < 60000) return excelToDate(v); return typeof v === 'number' ? (Math.abs(v) > 100 ? v.toLocaleString() : v.toFixed(2)) : (v ?? '—'); };
     const sevColor = v => { const s=String(v||'').toLowerCase(); if(s.includes('critical'))return'#EF4444'; if(s.includes('high'))return'#F59E0B'; if(s.includes('medium'))return'#3B82F6'; return ''; };
     return (
       <div style={{overflowX:'auto',overflowY:'auto',maxHeight:maxH||260,borderRadius:6,border:'1px solid var(--border)'}}>
@@ -4487,7 +4542,7 @@ function ArchegosDashboard({ onBack }) {
               <tr key={i} style={{borderBottom:'1px solid var(--border)'}}>
                 {headers.map(h=>{
                   const v=row[h]; const sc=sevColor(v);
-                  return <td key={h} style={{padding:'6px 10px',color:sc||'var(--text)',whiteSpace:'nowrap',fontWeight:sc?700:400}}>{numFmt(v)}</td>;
+                  return <td key={h} style={{padding:'6px 10px',color:sc||'var(--text)',whiteSpace:'nowrap',fontWeight:sc?700:400}}>{numFmt(v,h)}</td>;
                 })}
               </tr>
             ))}
@@ -4504,7 +4559,7 @@ function ArchegosDashboard({ onBack }) {
       const n = typeof v === 'number' ? v : parseFloat(v);
       if (isNaN(n)) return '';
       const pct = Math.min(Math.abs(n) / 10000, 1);
-      return `rgba(255,173,40,${0.1 + pct * 0.8})`;
+      return `rgba(239,68,68,${0.1 + pct * 0.85})`;
     };
     return (
       <div style={{overflowX:'auto',borderRadius:6,border:'1px solid var(--border)'}}>
@@ -4553,7 +4608,7 @@ function ArchegosDashboard({ onBack }) {
   const hhiBankRows = hhiRows.filter(r => { const v = Object.values(r)[0]; return v && !String(v).toLowerCase().includes('bank') && String(v).length < 30 && !String(v).includes('HHI') && !String(v).includes('Name'); }).slice(0, 6);
 
   return (
-    <div className="page" style={{maxWidth:1240}}>
+    <div className="page scenario-light" style={{maxWidth:1240}}>
       {/* Back button */}
       <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:20}}>
         <button className="btn-outline" style={{fontSize:13}} onClick={onBack}>
@@ -4561,7 +4616,7 @@ function ArchegosDashboard({ onBack }) {
         </button>
         <div style={{flex:1}}>
           <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.8px',color:'var(--text-3)',marginBottom:2}}>Scenario 05 · Historical Case</div>
-          <div style={{fontSize:18,fontWeight:800,color:'var(--text)',lineHeight:1.2}}>Archegos Capital — Wrong-Way Risk &amp; Concentration Failure</div>
+          <div style={{fontSize:18,fontWeight:800,color:'var(--text)',lineHeight:1.2}}>Archegos Capital — Wrong Way Risk &amp; Concentration Failure</div>
         </div>
         <span className="sev-badge sev-critical">Critical</span>
       </div>
@@ -4579,30 +4634,60 @@ function ArchegosDashboard({ onBack }) {
       {/* Section A — Executive Summary */}
       <SectionHeader letter="A" title="Executive Summary" />
       <div className="card" style={{marginBottom:16,lineHeight:1.7,fontSize:13.5,color:'var(--text-2)'}}>
-        <strong style={{color:'var(--text)'}}>Archegos Capital Management</strong> was a family office run by Bill Hwang that built an estimated <strong>$30Bn+ notional exposure</strong> across 10 concentrated equity names through Total Return Swaps (TRS) with 6 prime brokers simultaneously — with no single broker aware of the full picture. When <strong>ViacomCBS (VIAC) fell ~55%</strong> in March 2021, simultaneous margin calls from all 6 banks could not be met. The resulting forced liquidation of the same names by competing banks created a self-reinforcing price collapse — a textbook <strong>Wrong-Way Risk (WWR)</strong> event. Total bank losses exceeded <strong>$10Bn</strong>, with Credit Suisse losing $4.7Bn and Nomura $2.9Bn. This scenario stress-tests counterparty credit concentration, cross-dealer visibility gaps, and prime brokerage margin adequacy.
+        <strong style={{color:'var(--text)'}}>Archegos Capital Management</strong> was a family office run by Bill Hwang that built an estimated <strong>$30Bn+ notional exposure</strong> across 10 concentrated equity names through Total Return Swaps (TRS) with 6 prime brokers simultaneously — with no single broker aware of the full picture. When <strong>ViacomCBS (VIAC) fell ~55%</strong> in March 2021, simultaneous margin calls from all 6 banks could not be met. The resulting forced liquidation of the same names by competing banks created a self-reinforcing price collapse — a textbook <strong>Wrong Way Risk (WWR)</strong> event. Total bank losses exceeded <strong>$10Bn</strong>, with Credit Suisse losing $4.7Bn and Nomura $2.9Bn. This scenario stress-tests counterparty credit concentration, cross-dealer visibility gaps, and prime brokerage margin adequacy.
       </div>
 
       {/* Section B — Risk Transmission */}
       <SectionHeader letter="B" title="Risk Transmission — How the Failure Cascaded" />
       <div className="card" style={{marginBottom:16}}>
-        {ARCHEGOS_FLOW.map((step, i) => (
-          <div key={i} style={{display:'flex',gap:14,padding:'12px 0',borderBottom: i<ARCHEGOS_FLOW.length-1?'1px solid var(--border)':'none',cursor:'pointer'}}
-               onClick={() => setOpenFlow(openFlow===i ? null : i)}>
-            <div style={{width:28,height:28,borderRadius:'50%',background: step.type==='trigger'?'#EF444422':'#F59E0B22',border:`2px solid ${step.type==='trigger'?'#EF4444':'#F59E0B'}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:step.type==='trigger'?'#EF4444':'#F59E0B',flexShrink:0}}>
-              {i+1}
+        {(() => {
+          // Parse txRows: find numbered headings (e.g. "1. ViacomCBS...") and pair with next row as detail
+          const col0 = txRows.length ? Object.keys(txRows[0])[0] : null;
+          const items = [];
+          if (col0) {
+            txRows.forEach((row, idx) => {
+              const val = String(row[col0] || '').trim();
+              if (/^\d+\./.test(val)) {
+                const nextRow = txRows[idx + 1];
+                const detailVal = nextRow ? String(nextRow[col0] || '').trim() : '';
+                items.push({ title: val, detail: detailVal });
+              }
+            });
+          }
+          const flows = items.length ? items : ARCHEGOS_FLOW.map(s => ({ title: s.label, detail: s.explanation }));
+          return flows.map((item, i) => (
+            <div key={i} style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
+              <div style={{width:'100%',border:'1px solid var(--border)',borderRadius:10,cursor:'pointer',background:'rgba(255,255,255,0.03)',transition:'background 0.2s'}}
+                   onClick={() => setOpenFlow(openFlow===i ? null : i)}>
+                <div style={{display:'flex',alignItems:'center',justifyContent:'center',padding:'11px 18px',gap:10,position:'relative'}}>
+                  <div style={{flex:1,textAlign:'center',fontWeight:600,fontSize:13,color:'var(--text)'}}>
+                    {String(item.title).replace(/^\d+\.\s*/,'')}
+                  </div>
+                  <i className={`fa-solid ${openFlow===i?'fa-chevron-up':'fa-chevron-down'}`} style={{fontSize:11,color:'var(--text-3)',position:'absolute',right:14}}></i>
+                </div>
+                {openFlow===i && (
+                  <div style={{borderTop:'1px solid var(--border)',padding:'12px 18px',fontSize:12.5,color:'var(--text-2)',lineHeight:1.7,textAlign:'left'}}>
+                    {item.detail}
+                  </div>
+                )}
+              </div>
+              {i < flows.length-1 && (
+                <div style={{padding:'6px 0'}}>
+                  <i className="fa-solid fa-arrow-down" style={{fontSize:13,color:'#F59E0B'}}></i>
+                </div>
+              )}
             </div>
-            <div style={{flex:1}}>
-              <div style={{fontWeight:600,fontSize:13,color:'var(--text)',marginBottom:openFlow===i?6:0}}>{step.label}</div>
-              {openFlow===i && <div style={{fontSize:12.5,color:'var(--text-2)',lineHeight:1.6}}>{step.explanation}</div>}
-            </div>
-            <i className={`fa-solid ${openFlow===i?'fa-chevron-up':'fa-chevron-down'}`} style={{fontSize:11,color:'var(--text-3)',alignSelf:'center'}}></i>
-          </div>
-        ))}
+          ));
+        })()}
       </div>
 
       {/* Section C — Scenario Timeline */}
       <SectionHeader letter="C" title="Scenario Timeline" />
       <div className="card" style={{marginBottom:16}}>
+        <div style={{marginBottom:10}}>
+          <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:4}}>9-Day Crisis</div>
+          <div style={{fontSize:12,color:'var(--text-3)',lineHeight:1.6}}>The Archegos collapse unfolded over a compressed 9-day window — from the ViacomCBS secondary offering trigger on Day 0 through forced liquidations, cross-dealer loss crystallisation, and regulatory escalation by Day 9. Each day represents a distinct phase of margin stress, counterparty action, and market contagion.</div>
+        </div>
         {calRows.length ? <DataTable rows={calRows} maxH={200} /> : <div style={{color:'var(--text-3)',fontSize:12}}>Timeline data not available.</div>}
       </div>
 
@@ -4631,7 +4716,7 @@ function ArchegosDashboard({ onBack }) {
       </div>
 
       {/* Section E — WWR Position Detail */}
-      <SectionHeader letter="E" title="Wrong-Way Risk — Position-Level Detail (10 Names)" />
+      <SectionHeader letter="E" title="Wrong Way Risk — Position-Level Detail (10 Names)" />
       <div className="card" style={{marginBottom:16}}>
         <div style={{fontSize:12,color:'var(--text-3)',marginBottom:10}}>Each position is self-referential WWR — the collateral securing the TRS falls in value as Archegos defaults and banks liquidate.</div>
         {wwrRows.length ? <DataTable rows={wwrRows} maxH={280} /> : <div style={{color:'var(--text-3)',fontSize:12}}>Data not available.</div>}
@@ -4770,7 +4855,8 @@ function ScenarioPage() {
   if (loading) return <div className="page"><div className="spinner-wrap"><div className="spinner"></div> Loading scenario data…</div></div>;
 
   if (transitioning) return (
-    <div className="page">
+    <div className="scenario-light" style={{position:'fixed',top:58,left:0,right:0,bottom:0,display:'flex',alignItems:'center',justifyContent:'center',zIndex:999,background:'#F1F5F9'}}>
+      <div style={{width:'100%',maxWidth:520,padding:'0 24px'}}>
       <ProcessingView
         title="Loading Scenario Dashboard"
         icon="fa-radiation"
@@ -4783,6 +4869,7 @@ function ScenarioPage() {
           'Preparing scenario intelligence data…',
         ]}
       />
+      </div>
     </div>
   );
 
@@ -4883,7 +4970,7 @@ function App() {
   return (
     <div className="app">
       {page !== 'home' && <TopNav page={page} setPage={setPage} />}
-      <div className="main">
+      <div className={`main${page !== 'home' ? ' scenario-light' : ''}`} style={page !== 'home' ? {background:'#F1F5F9'} : {}}>
         {renderPage()}
       </div>
     </div>
@@ -5030,7 +5117,7 @@ function ScatterPlotChart({ data, xCol, yCol }) {
       options: {
         responsive: true, maintainAspectRatio: false,
         plugins: {
-          legend: { position: 'top', labels: { font: { family: 'Inter', size: 12 }, padding: 14, color: '#E2E8F0' } },
+          legend: { position: 'top', labels: { font: { family: 'Inter', size: 12 }, padding: 14, color: '#1E293B' } },
           title: { display: false },
           tooltip: {
             callbacks: {
@@ -5759,7 +5846,7 @@ function ReportChart({ chartData, chartType, title, metrics }) {
         responsive: true, maintainAspectRatio: false,
         animation: { duration: 400 },
         plugins: {
-          legend: { display: isDoughnut, position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, color: '#E2E8F0' } },
+          legend: { display: isDoughnut, position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, color: '#1E293B' } },
           tooltip: { callbacks: { label: ctx => { const v = ctx.parsed[isHBar ? 'x' : 'y']; return (title.includes('Volume') || title.includes('Exposure')) ? ` £${Number(v).toLocaleString()}` : ` ${Number(v).toLocaleString()}`; } } }
         },
         scales: isDoughnut ? {} : {
@@ -6203,7 +6290,7 @@ function ClusterScatterChart({ clusterRows, xCol, yCol }) {
       options: {
         responsive: true, maintainAspectRatio: false,
         plugins: {
-          legend: { labels: { color: '#CBD5E1', font: { size: 11 } } },
+          legend: { labels: { color: '#1E293B', font: { size: 11 } } },
           tooltip: {
             callbacks: {
               label: ctx => {
@@ -6404,7 +6491,7 @@ function TimeSeriesChartCard({ tsHistorical, tsForecast }) {
       options: {
         responsive: true, maintainAspectRatio: false,
         plugins: {
-          legend: { labels: { color: '#CBD5E1', font: { size: 11 }, filter: (item) => item.text !== 'Lower 95% CI' } },
+          legend: { labels: { color: '#1E293B', font: { size: 11 }, filter: (item) => item.text !== 'Lower 95% CI' } },
           tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: £${ctx.raw != null ? Number(ctx.raw).toLocaleString() : 'N/A'}m` } }
         },
         scales: {
