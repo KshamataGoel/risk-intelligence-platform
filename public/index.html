@@ -1687,6 +1687,333 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .scenario-lib-tag { background:var(--primary-light); color:var(--primary); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; }
 .scenario-lib-footer { display:flex; align-items:center; justify-content:space-between; }
 
+/* ── Real Scenario Test ── */
+.rst-event-card { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--primary); border-radius:var(--radius); padding:18px 22px; margin-bottom:20px; }
+.rst-event-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:10px; }
+.rst-event-id { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.7px; color:var(--primary); background:var(--primary-light); padding:2px 9px; border-radius:20px; white-space:nowrap; }
+.rst-event-title { font-size:15px; font-weight:700; color:var(--text); flex:1; }
+.rst-event-meta { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; font-size:12px; color:var(--text-2); }
+.rst-event-meta span { display:flex; align-items:center; gap:4px; }
+.rst-event-text { background:#F8FAFC; border:1px solid rgba(0,0,0,0.08); border-radius:var(--radius-sm); padding:12px 14px; font-size:12.5px; color:var(--text-2); line-height:1.7; white-space:pre-line; margin-top:12px; max-height:180px; overflow-y:auto; }
+.rst-candidate-list { display:flex; flex-direction:column; gap:14px; }
+.rst-candidate { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+.rst-candidate-header { display:flex; align-items:center; gap:10px; padding:14px 18px; cursor:pointer; user-select:none; }
+.rst-candidate-header:hover { background:rgba(0,0,0,0.025); }
+.rst-rank-badge { width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.rst-candidate-trigger { flex:1; font-size:14px; font-weight:600; color:var(--text); }
+.rst-score-pill { padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; }
+.rst-score-high { background:rgba(16,185,129,0.12); color:#047857; }
+.rst-score-med  { background:rgba(245,158,11,0.12);  color:#92400E; }
+.rst-score-low  { background:rgba(239,68,68,0.12);   color:#991B1B; }
+.rst-llm-badge  { padding:3px 9px; border-radius:20px; font-size:11px; font-weight:700; }
+.rst-llm-relevant   { background:rgba(16,185,129,0.12);  color:#047857; }
+.rst-llm-possibly   { background:rgba(245,158,11,0.12);  color:#92400E; }
+.rst-llm-not        { background:rgba(239,68,68,0.12);   color:#991B1B; }
+.rst-candidate-body { padding:0 18px 16px; border-top:1px solid var(--border); }
+.rst-scores-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:8px; padding:12px 0; }
+.rst-score-item { text-align:center; }
+.rst-score-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-3); margin-bottom:4px; }
+.rst-score-bar-wrap { height:6px; background:rgba(0,0,0,0.08); border-radius:3px; overflow:hidden; margin-bottom:3px; }
+.rst-score-bar { height:100%; border-radius:3px; background:var(--primary); transition:width 0.4s ease; }
+.rst-score-val { font-size:12px; font-weight:700; color:var(--text-2); }
+.rst-pathway { margin-top:12px; }
+.rst-pathway-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-3); margin-bottom:8px; }
+.rst-pathway-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.rst-pathway-item { background:#F8FAFC; border:1px solid rgba(0,0,0,0.08); border-radius:var(--radius-sm); padding:9px 12px; }
+.rst-pathway-key { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-3); margin-bottom:3px; }
+.rst-pathway-val { font-size:12.5px; color:var(--text-2); line-height:1.55; }
+.rst-llm-section { margin-top:12px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2); border-radius:var(--radius-sm); padding:12px 14px; }
+.rst-llm-row { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:6px; font-size:12.5px; }
+.rst-llm-label { font-weight:700; color:var(--text-3); font-size:11px; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:2px; }
+.rst-llm-val   { color:var(--text-2); line-height:1.55; }
+.rst-event-select { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px 24px; margin-bottom:24px; }
+.rst-event-list { display:flex; flex-direction:column; gap:8px; }
+.rst-event-row { display:flex; align-items:center; gap:12px; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); cursor:pointer; transition:all 0.15s; background:var(--surface); }
+.rst-event-row:hover,.rst-event-row.selected { border-color:var(--primary); background:var(--primary-light); }
+.rst-weight-panel { display:flex; flex-wrap:wrap; gap:12px; padding:14px 0; }
+.rst-weight-item { display:flex; align-items:center; gap:8px; font-size:12.5px; }
+.rst-weight-item label { color:var(--text-2); font-weight:600; min-width:120px; }
+
+/* ── News Intelligence ── */
+.ni-search-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px; margin-bottom:24px; box-shadow:var(--shadow); }
+.ni-search-box { display:flex; gap:10px; align-items:center; }
+.ni-search-input { flex:1; padding:13px 16px 13px 44px; font-size:14px; border:1.5px solid var(--border); border-radius:var(--radius); background:var(--surface); color:var(--text); outline:none; }
+.ni-search-input:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-light); }
+.ni-search-icon { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-3); font-size:15px; pointer-events:none; }
+.ni-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.ni-chip { display:inline-flex; align-items:center; gap:7px; padding:7px 13px; font-size:12.5px; font-weight:600; border:1px solid var(--border); border-radius:20px; background:var(--surface); color:var(--text-2); cursor:pointer; transition:all 0.15s; }
+.ni-chip:hover { border-color:var(--primary); background:var(--primary-light); color:var(--text); }
+.ni-chip i { color:var(--primary); }
+.ni-searching { display:flex; flex-direction:column; align-items:center; gap:14px; padding:44px 20px; }
+.ni-searching-sources { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:520px; }
+.ni-src-pill { font-size:11px; font-weight:600; padding:4px 11px; border-radius:20px; border:1px solid var(--border); color:var(--text-3); background:var(--surface); opacity:0.4; transition:all 0.3s; }
+.ni-src-pill.hit { opacity:1; border-color:var(--primary); color:var(--primary); background:var(--primary-light); }
+.ni-stage { margin-bottom:26px; }
+.ni-stage-head { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.ni-stage-num { width:30px; height:30px; border-radius:8px; background:var(--primary); color:#fff; font-size:14px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.ni-stage-title { font-size:15px; font-weight:800; color:var(--text); }
+.ni-stage-sub { font-size:12px; color:var(--text-3); }
+.ni-web-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 20px; box-shadow:var(--shadow); }
+.ni-web-src { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-3); margin-bottom:6px; }
+.ni-web-src .ni-fav { width:16px; height:16px; border-radius:4px; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:9px; }
+.ni-web-headline { font-size:16px; font-weight:700; color:#1a56db; margin-bottom:4px; line-height:1.4; }
+.ni-web-url { font-size:12px; color:#15803D; margin-bottom:8px; }
+.ni-web-snippet { font-size:13px; color:var(--text-2); line-height:1.65; }
+.ni-web-cites { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+.ni-cite { font-size:11px; font-weight:600; padding:3px 10px; border-radius:6px; background:#F1F5F9; color:var(--text-2); border:1px solid var(--border); }
+.ni-extract-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-top:14px; }
+.ni-extract-item { background:#F8FAFC; border:1px solid rgba(0,0,0,0.07); border-left:3px solid var(--primary); border-radius:var(--radius-sm); padding:10px 13px; }
+.ni-extract-key { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-3); margin-bottom:4px; }
+.ni-extract-val { font-size:13px; font-weight:600; color:var(--text); line-height:1.5; }
+.ni-tag { display:inline-block; font-size:11px; font-weight:600; padding:2px 9px; margin:2px 3px 2px 0; border-radius:20px; background:var(--primary-light); color:var(--primary-dark); }
+.ni-cat-grid { display:grid; grid-template-columns:1.4fr 1fr; gap:16px; }
+@media (max-width:820px){ .ni-cat-grid { grid-template-columns:1fr; } }
+.ni-panel { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); }
+.ni-panel-title { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-3); margin-bottom:14px; }
+.ni-kv-row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 0; border-bottom:1px dashed var(--border); font-size:13px; }
+.ni-kv-row:last-child { border-bottom:none; }
+.ni-kv-key { color:var(--text-3); font-weight:600; }
+.ni-kv-val { color:var(--text); font-weight:700; text-align:right; }
+.ni-prio-score { text-align:center; }
+.ni-prio-ring { width:118px; height:118px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:4px auto 10px; position:relative; }
+.ni-prio-ring-inner { width:92px; height:92px; border-radius:50%; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.ni-prio-num { font-size:30px; font-weight:800; line-height:1; }
+.ni-prio-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-3); margin-top:3px; }
+.ni-prio-bars { margin-top:8px; }
+.ni-prio-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+.ni-prio-bar-lbl { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-3); width:78px; flex-shrink:0; }
+.ni-prio-bar-track { flex:1; height:8px; background:rgba(0,0,0,0.07); border-radius:4px; overflow:hidden; }
+.ni-prio-bar-fill { height:100%; border-radius:4px; transition:width 0.6s ease; }
+.ni-prio-bar-val { font-size:12px; font-weight:700; color:var(--text-2); width:34px; text-align:right; }
+.ni-similar { background:linear-gradient(180deg,rgba(255,173,40,0.06),var(--surface)); border:1px solid rgba(255,173,40,0.3); border-left:4px solid var(--primary); border-radius:var(--radius); padding:16px 20px; box-shadow:var(--shadow); }
+.ni-similar-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
+.ni-similar-badge { font-size:11px; font-weight:800; padding:4px 11px; border-radius:20px; background:var(--primary); color:#fff; display:flex; align-items:center; gap:6px; }
+.ni-similar-sim { font-size:13px; font-weight:800; color:var(--primary-dark); }
+.ni-kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:12px; margin-bottom:18px; }
+.ni-kpi { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:15px 16px; box-shadow:var(--shadow); border-top:3px solid var(--primary); }
+.ni-kpi-icon { font-size:15px; color:var(--primary); margin-bottom:8px; }
+.ni-kpi-val { font-size:22px; font-weight:800; color:var(--text); line-height:1.05; }
+.ni-kpi-lbl { font-size:11px; font-weight:600; color:var(--text-3); margin-top:4px; }
+.ni-kpi-delta { font-size:11px; font-weight:700; margin-top:6px; display:inline-flex; align-items:center; gap:4px; }
+.ni-flow { display:flex; align-items:stretch; gap:0; overflow-x:auto; padding:6px 2px 12px; }
+.ni-flow-col { flex:1; min-width:150px; display:flex; flex-direction:column; }
+.ni-flow-col-title { font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-3); text-align:center; margin-bottom:10px; }
+.ni-flow-nodes { display:flex; flex-direction:column; gap:8px; flex:1; justify-content:center; }
+.ni-flow-node { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:9px 11px; font-size:12px; font-weight:600; color:var(--text); text-align:center; box-shadow:var(--shadow); border-left:4px solid var(--sev-color,var(--primary)); }
+.ni-flow-node small { display:block; font-size:10px; font-weight:700; margin-top:2px; text-transform:uppercase; letter-spacing:0.4px; }
+.ni-flow-arrow { display:flex; align-items:center; justify-content:center; color:var(--primary); font-size:16px; padding:0 4px; flex-shrink:0; }
+.ni-heat-wrap { overflow-x:auto; }
+.ni-heat { border-collapse:separate; border-spacing:4px; width:100%; min-width:560px; }
+.ni-heat th { font-size:11px; font-weight:700; color:var(--text-3); padding:6px 8px; text-align:center; }
+.ni-heat th.ni-heat-row-h { text-align:left; min-width:130px; }
+.ni-heat td { text-align:center; padding:10px 8px; border-radius:6px; font-size:13px; font-weight:700; color:#fff; }
+.ni-heat td.ni-heat-row-h { color:var(--text); font-weight:700; text-align:left; background:#F1F5F9; font-size:12.5px; }
+.ni-legend { display:flex; align-items:center; gap:14px; margin-top:12px; font-size:11px; color:var(--text-3); flex-wrap:wrap; }
+.ni-legend-item { display:flex; align-items:center; gap:6px; }
+.ni-legend-swatch { width:26px; height:12px; border-radius:3px; }
+.ni-disclaimer { font-size:11.5px; color:var(--text-3); background:#F8FAFC; border:1px dashed var(--border); border-radius:var(--radius-sm); padding:10px 14px; margin-top:18px; line-height:1.6; }
+
+/* ── News Assessment & Impact ── */
+.na-news-table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:20px; }
+.na-news-table { width:100%; border-collapse:collapse; font-size:13px; background:var(--surface); }
+.na-news-table th { background:#F8FAFC; padding:11px 14px; text-align:left; font-weight:700; color:var(--text-2); border-bottom:2px solid var(--border); font-size:11px; text-transform:uppercase; letter-spacing:0.4px; white-space:nowrap; }
+.na-news-table td { padding:12px 14px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:top; line-height:1.5; }
+.na-news-table tr.na-news-row { cursor:pointer; transition:background 0.15s; }
+.na-news-table tr.na-news-row:hover td { background:var(--primary-light); }
+.na-news-table tr.na-news-row.sel td { background:var(--primary-light); }
+.na-news-date { font-weight:700; white-space:nowrap; color:var(--text-2); }
+.na-news-title { font-weight:700; color:var(--text); }
+.na-type-pill { display:inline-block; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:20px; background:var(--primary-light); color:var(--primary-dark); white-space:nowrap; text-transform:uppercase; letter-spacing:0.3px; }
+.na-news-syn { font-size:12.5px; color:var(--text-2); max-width:520px; }
+.na-src-link { font-size:12px; color:#15803D; font-weight:600; white-space:nowrap; }
+.na-feed { display:flex; flex-direction:column; gap:9px; }
+.na-feed-row { display:grid; grid-template-columns:88px 1.5fr 158px 2.6fr 100px 26px; gap:14px; align-items:center; padding:13px 18px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); cursor:pointer; transition:all 0.15s; box-shadow:var(--shadow); }
+.na-feed-row:hover { border-color:var(--primary); background:var(--primary-light); transform:translateX(3px); }
+.na-feed-date { font-size:12.5px; font-weight:700; color:var(--text-2); white-space:nowrap; }
+.na-feed-title { font-size:13.5px; font-weight:700; color:var(--text); line-height:1.3; }
+.na-feed-syn { font-size:12px; color:var(--text-2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.na-feed-src { font-size:12px; color:#15803D; font-weight:600; white-space:nowrap; }
+.na-feed-go { color:var(--primary); font-size:16px; text-align:right; }
+.na-feed-row:hover .na-feed-go { transform:translateX(2px); }
+.na-feed-empty { text-align:center; padding:34px 20px; color:var(--text-3); font-size:13px; background:var(--surface); border:1px dashed var(--border); border-radius:var(--radius); }
+.na-feed-count { font-size:12px; color:var(--text-3); margin:0 0 10px; }
+.na-feed-hl { background:rgba(255,173,40,0.35); border-radius:3px; padding:0 1px; }
+@media (max-width:860px){ .na-feed-row { grid-template-columns:1fr; gap:5px; } .na-feed-syn{ white-space:normal; } .na-feed-go{ display:none; } }
+
+/* Internet-style "live search" loader */
+.na-loading { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:34px 24px; text-align:center; }
+.na-loading-globe { font-size:30px; color:var(--primary); margin-bottom:14px; }
+.na-loading-title { font-size:15px; font-weight:800; color:var(--text); margin-bottom:6px; }
+.na-loading-sub { font-size:12.5px; color:var(--text-3); margin-bottom:18px; }
+.na-loading-srcs { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:560px; margin:0 auto; }
+.na-src-pill { font-size:11px; font-weight:600; padding:5px 12px; border-radius:20px; border:1px solid var(--border); color:var(--text-3); background:var(--surface); opacity:0.4; transition:all 0.3s; display:flex; align-items:center; gap:6px; }
+.na-src-pill.hit { opacity:1; border-color:var(--primary); color:var(--primary); background:var(--primary-light); }
+.na-src-pill.hit i.chk { color:#15803D; }
+
+/* Internet-style search results */
+.na-sr { display:flex; flex-direction:column; gap:14px; }
+.na-sr-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px 20px; cursor:pointer; transition:all 0.15s; }
+.na-sr-card:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); }
+.na-sr-top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:12px; color:var(--text-3); margin-bottom:5px; }
+.na-sr-fav { width:18px; height:18px; border-radius:5px; background:var(--primary-light); color:var(--primary-dark); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; }
+.na-sr-url { color:#15803D; font-weight:600; }
+.na-sr-dot { color:var(--border); }
+.na-sr-title { font-size:17px; font-weight:700; color:#1a56db; line-height:1.35; margin-bottom:6px; }
+.na-sr-card:hover .na-sr-title { text-decoration:underline; }
+.na-sr-snippet { font-size:13px; color:var(--text-2); line-height:1.6; }
+.na-sr-foot { display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap; }
+.na-sr-run { margin-left:auto; font-size:12px; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:6px; }
+.na-sr-card:hover .na-sr-run { gap:9px; }
+
+/* Live agent step execution */
+.na-exec-wrap { max-width:760px; margin:0 auto; }
+.na-agent-block { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:14px; overflow:hidden; }
+.na-agent-head { display:flex; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--border); }
+.na-agent-badge { width:34px; height:34px; border-radius:9px; background:var(--primary-light); color:var(--primary-dark); font-size:14px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.3s; }
+.na-agent-block.act .na-agent-badge { background:var(--primary); color:#fff; }
+.na-agent-block.done .na-agent-badge { background:#15803D; color:#fff; }
+.na-agent-name { font-size:14px; font-weight:800; color:var(--text); }
+.na-agent-role { font-size:11.5px; color:var(--text-3); }
+.na-agent-out { margin-left:auto; font-size:10.5px; font-weight:700; color:var(--text-3); background:#F1F5F9; border:1px solid var(--border); border-radius:20px; padding:3px 10px; white-space:nowrap; }
+.na-steps { padding:8px 18px 14px; }
+.na-step { display:flex; align-items:center; gap:11px; padding:7px 0; font-size:13px; color:var(--text-3); transition:color 0.2s; }
+.na-step.run { color:var(--text); font-weight:600; }
+.na-step.ok  { color:var(--text-2); }
+.na-step-ic { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; border:1.5px solid var(--border); color:var(--text-3); background:var(--surface); }
+.na-step.run .na-step-ic { border-color:var(--primary); color:var(--primary); }
+.na-step.ok .na-step-ic { border-color:#15803D; background:#15803D; color:#fff; }
+.na-step-how { font-size:11px; color:var(--text-3); font-style:italic; margin-left:auto; text-align:right; max-width:300px; }
+.na-exec-progress { height:6px; background:rgba(0,0,0,0.07); border-radius:4px; overflow:hidden; margin:4px 0 18px; }
+.na-exec-progress-bar { height:100%; background:var(--primary); border-radius:4px; transition:width 0.4s ease; }
+
+/* Categorisation (Section A) */
+.na-cat-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-bottom:14px; }
+.na-cat-card { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--primary); border-radius:var(--radius); padding:14px 16px; box-shadow:var(--shadow); }
+.na-cat-k { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-3); margin-bottom:6px; }
+.na-cat-v { font-size:14px; font-weight:700; color:var(--text); line-height:1.4; }
+.na-conf-track { height:8px; background:rgba(0,0,0,0.08); border-radius:4px; overflow:hidden; margin-top:8px; }
+.na-conf-fill { height:100%; background:#15803D; border-radius:4px; }
+.na-chip { display:inline-block; font-size:11px; font-weight:600; padding:3px 10px; margin:2px 4px 2px 0; border-radius:20px; background:var(--primary-light); color:var(--primary-dark); }
+.na-sentiment { display:inline-flex; align-items:center; gap:7px; font-weight:700; }
+
+/* Human-in-the-loop */
+.na-hitl { background:#FFFBEB; border:1px solid #FDE68A; border-left:4px solid #FFAD28; border-radius:var(--radius); padding:14px 18px; margin-bottom:16px; }
+.na-hitl-title { font-size:13px; font-weight:800; color:#92400E; display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.na-hitl-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+.na-hitl-note { font-size:12px; color:#15803D; font-weight:700; display:flex; align-items:center; gap:6px; margin-top:8px; }
+.na-hitl-note.reject { color:#991B1B; }
+.na-thumb { display:inline-flex; align-items:center; gap:8px; padding:9px 20px; font-size:13px; font-weight:700; border-radius:var(--radius); cursor:pointer; border:1.5px solid var(--border); background:var(--surface); font-family:inherit; transition:all 0.15s; }
+.na-thumb.up { color:#15803D; border-color:#86EFAC; }
+.na-thumb.up:hover { background:#F0FDF4; border-color:#15803D; }
+.na-thumb.down { color:#991B1B; border-color:#FCA5A5; }
+.na-thumb.down:hover { background:#FEF2F2; border-color:#991B1B; }
+.na-hitl-comment { width:100%; min-height:72px; padding:10px 12px; font-size:13px; font-family:inherit; border:1.5px solid #FCA5A5; border-radius:var(--radius-sm); background:#fff; color:var(--text); outline:none; resize:vertical; box-sizing:border-box; }
+.na-hitl-comment:focus { border-color:#991B1B; }
+
+/* Transmission map (Section F) */
+.na-map { display:flex; align-items:stretch; overflow-x:auto; padding:8px 2px 14px; }
+.na-map-col { flex:1; min-width:150px; display:flex; flex-direction:column; }
+.na-map-col-title { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-3); text-align:center; margin-bottom:10px; }
+.na-map-nodes { display:flex; flex-direction:column; gap:8px; flex:1; justify-content:center; }
+.na-map-node { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:9px 11px; font-size:12px; font-weight:600; color:var(--text); text-align:center; box-shadow:var(--shadow); border-left:4px solid var(--na-sev,var(--primary)); }
+.na-map-node small { display:block; font-size:9.5px; font-weight:700; margin-top:2px; text-transform:uppercase; letter-spacing:0.4px; }
+.na-map-arrow { display:flex; align-items:center; justify-content:center; color:var(--primary); font-size:16px; padding:0 4px; flex-shrink:0; }
+
+/* Financial impact (Section G) */
+.na-fin-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:16px; }
+.na-fin-kpi { background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--primary); border-radius:var(--radius); padding:15px 16px; box-shadow:var(--shadow); }
+.na-fin-kpi-ic { font-size:15px; margin-bottom:8px; }
+.na-fin-kpi-val { font-size:21px; font-weight:800; line-height:1.05; }
+.na-fin-kpi-lbl { font-size:11px; font-weight:600; color:var(--text-3); margin-top:4px; }
+.na-fin-kpi-delta { font-size:11px; font-weight:700; margin-top:6px; }
+.na-bar-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.na-bar-lbl { font-size:12px; font-weight:600; color:var(--text-2); width:180px; flex-shrink:0; }
+.na-bar-track { flex:1; height:20px; background:rgba(0,0,0,0.06); border-radius:5px; overflow:hidden; }
+.na-bar-fill { height:100%; border-radius:5px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:11px; font-weight:800; color:#fff; transition:width 0.6s ease; }
+
+/* Escalation matrix (Section H) */
+.na-esc-wrap { overflow-x:auto; }
+.na-esc { border-collapse:separate; border-spacing:4px; width:100%; min-width:560px; }
+.na-esc th { font-size:11px; font-weight:700; color:var(--text-3); padding:6px 8px; text-align:center; }
+.na-esc th.na-esc-rh { text-align:left; min-width:150px; }
+.na-esc td { text-align:center; padding:9px 6px; border-radius:5px; font-size:11px; font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:0.3px; }
+.na-esc td.na-esc-rh { color:var(--text); font-weight:700; text-align:left; background:#F1F5F9; text-transform:none; letter-spacing:0; font-size:12.5px; }
+
+/* Playbook rows */
+.na-act-row { border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:8px; overflow:hidden; background:var(--surface); }
+.na-act-head { display:flex; align-items:center; gap:12px; padding:12px 16px; cursor:pointer; }
+.na-act-head:hover { background:rgba(0,0,0,0.02); }
+.na-act-num { width:24px; height:24px; border-radius:50%; background:var(--primary-light); color:var(--primary-dark); font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.na-act-title { flex:1; font-size:13.5px; font-weight:600; color:var(--text); }
+.na-act-body { padding:0 16px 14px 52px; font-size:12.5px; color:var(--text-2); line-height:1.6; }
+.na-act-meta { display:flex; gap:16px; flex-wrap:wrap; margin-top:8px; font-size:11.5px; }
+.na-act-meta span { color:var(--text-3); }
+.na-act-meta strong { color:var(--text-2); }
+
+/* Chatbot (Agent 4) */
+.na-chat { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+.na-chat-head { display:flex; align-items:center; gap:10px; padding:13px 18px; border-bottom:1px solid var(--border); font-size:13px; font-weight:800; color:var(--text); }
+.na-chat-body { padding:16px 18px; max-height:340px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; }
+.na-chat-msg { display:flex; gap:10px; max-width:88%; }
+.na-chat-msg.user { align-self:flex-end; flex-direction:row-reverse; }
+.na-chat-av { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; }
+.na-chat-av.bot { background:var(--primary); color:#fff; }
+.na-chat-av.user { background:#334155; color:#fff; }
+.na-chat-bubble { padding:10px 14px; border-radius:12px; font-size:13px; line-height:1.6; }
+.na-chat-msg.bot .na-chat-bubble { background:#F1F5F9; color:var(--text); border-top-left-radius:3px; }
+.na-chat-msg.user .na-chat-bubble { background:var(--primary-light); color:var(--text); border-top-right-radius:3px; }
+.na-chat-suggest { display:flex; flex-wrap:wrap; gap:8px; padding:0 18px 14px; }
+.na-chat-sg { font-size:12px; font-weight:600; padding:6px 12px; border:1px solid var(--border); border-radius:20px; background:var(--surface); color:var(--text-2); cursor:pointer; transition:all 0.15s; }
+.na-chat-sg:hover { border-color:var(--primary); background:var(--primary-light); color:var(--text); }
+.na-chat-input { display:flex; gap:8px; padding:12px 18px; border-top:1px solid var(--border); }
+.na-chat-input input { flex:1; padding:10px 14px; font-size:13px; border:1.5px solid var(--border); border-radius:var(--radius); background:var(--surface); color:var(--text); outline:none; }
+.na-chat-input input:focus { border-color:var(--primary); }
+
+/* Floating chatbot */
+.na-fab { position:fixed; right:26px; bottom:26px; width:60px; height:60px; border-radius:50%; background:var(--primary); color:#fff; border:none; box-shadow:0 8px 24px rgba(0,0,0,0.28); font-size:23px; cursor:pointer; z-index:1200; display:flex; align-items:center; justify-content:center; transition:transform 0.18s, background 0.18s; }
+.na-fab:hover { background:var(--primary-hover); transform:scale(1.07); }
+.na-fab-badge { position:absolute; top:-2px; right:-2px; background:#991B1B; color:#fff; font-size:10px; font-weight:800; border-radius:20px; padding:2px 7px; border:2px solid var(--surface); }
+.na-fab-pulse { position:absolute; inset:0; border-radius:50%; box-shadow:0 0 0 0 rgba(255,173,40,0.55); animation:naPulse 2s infinite; }
+@keyframes naPulse { 0%{ box-shadow:0 0 0 0 rgba(255,173,40,0.5); } 70%{ box-shadow:0 0 0 16px rgba(255,173,40,0); } 100%{ box-shadow:0 0 0 0 rgba(255,173,40,0); } }
+.na-chatwin { position:fixed; right:26px; bottom:98px; width:392px; max-width:calc(100vw - 44px); max-height:72vh; background:var(--surface); border:1px solid var(--border); border-radius:14px; box-shadow:0 16px 44px rgba(0,0,0,0.30); z-index:1200; display:flex; flex-direction:column; overflow:hidden; }
+.na-chatwin .na-chat-head { border-bottom:1px solid var(--border); background:linear-gradient(135deg,rgba(255,173,40,0.10),transparent); }
+.na-chatwin .na-chat-body { flex:1; min-height:150px; }
+.na-chatwin-close { margin-left:auto; background:none; border:none; color:var(--text-3); font-size:16px; cursor:pointer; padding:2px 4px; }
+.na-chatwin-close:hover { color:var(--text); }
+
+/* Agent tabs + processing panel */
+.na-tabs { display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 20px; }
+.na-tab { flex:1; min-width:200px; display:flex; align-items:center; gap:11px; padding:12px 16px; border:1.5px solid var(--border); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow); cursor:pointer; transition:all 0.15s; text-align:left; font-family:inherit; }
+.na-tab.locked { cursor:not-allowed; opacity:0.5; }
+.na-tab:not(.locked):hover { border-color:var(--primary); }
+.na-tab.active { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-light); }
+.na-tab-ic { width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; flex-shrink:0; background:#F1F5F9; color:var(--text-3); }
+.na-tab.active .na-tab-ic { background:var(--primary); color:#fff; }
+.na-tab.status-processing .na-tab-ic { background:var(--primary); color:#fff; }
+.na-tab.status-done .na-tab-ic { background:#15803D; color:#fff; }
+.na-tab-lbl { font-size:13px; font-weight:800; color:var(--text); line-height:1.2; display:block; }
+.na-tab-sub { font-size:10.5px; color:var(--text-3); margin-top:2px; display:block; }
+.na-proc { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:26px 24px; max-width:560px; margin:0 auto 26px; text-align:center; }
+.na-proc-title { font-size:16px; font-weight:800; color:var(--text); display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:4px; }
+.na-proc-role { font-size:12.5px; color:var(--text-3); margin-bottom:18px; }
+.na-proc-steps { max-width:340px; margin:0 auto; text-align:left; }
+.na-outbtn-wrap { margin-top:18px; padding-top:16px; border-top:1px dashed var(--border); display:flex; justify-content:center; }
+.na-continue-wrap { display:flex; justify-content:center; gap:12px; margin:6px 0 34px; }
+
+/* Agent process stepper (connected nodes, centered) */
+.na-proc-nav { display:flex; align-items:flex-start; justify-content:center; margin:22px auto 26px; max-width:960px; }
+.na-proc-node { display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; width:158px; flex:0 0 auto; text-align:center; }
+.na-proc-node.locked { cursor:not-allowed; opacity:0.5; }
+.na-proc-circle { width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; background:#F1F5F9; color:var(--text-3); border:2px solid var(--border); transition:all 0.2s; }
+.na-proc-node.active .na-proc-circle { background:var(--primary); color:#fff; border-color:var(--primary); box-shadow:0 0 0 4px var(--primary-light); }
+.na-proc-node.status-processing .na-proc-circle { background:var(--primary); color:#fff; border-color:var(--primary); }
+.na-proc-node.status-done .na-proc-circle { background:#15803D; color:#fff; border-color:#15803D; }
+.na-proc-node-lbl { font-size:12.5px; font-weight:800; color:var(--text); line-height:1.25; }
+.na-proc-node.locked .na-proc-node-lbl { color:var(--text-3); }
+.na-proc-node-sub { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-3); }
+.na-proc-connector { flex:1; min-width:24px; height:3px; background:var(--border); margin-top:22px; border-radius:2px; transition:background 0.3s; }
+.na-proc-connector.done { background:#15803D; }
+
 .briefing-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; display:flex; align-items:flex-start; justify-content:center; padding:40px 20px; overflow-y:auto; }
 .briefing-modal { background:var(--surface); border-radius:var(--radius); padding:32px 36px; max-width:700px; width:100%; box-shadow:var(--shadow-lg); position:relative; }
 .briefing-modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--border); }
@@ -2968,7 +3295,10 @@ const SCENARIOS_LIB = [
     severity:'Critical', tags:['Cyber','Market Risk','Liquidity','Operational Risk'], available:true },
   { id:5, num:'Scenario 05', title:'Archegos Capital — Wrong Way Risk & Concentration Failure', eventType:'Counterparty Credit | Concentration Risk',
     desc:'Archegos Capital Management defaults triggering $30Bn+ in forced liquidations across 6 prime brokers. Demonstrates catastrophic wrong-way risk, hidden leverage via TRS, and cross-dealer margin call cascades.',
-    severity:'Critical', tags:['CCR','Wrong Way Risk','Concentration','Prime Brokerage','Margin'], available:true }
+    severity:'Critical', tags:['CCR','Wrong Way Risk','Concentration','Prime Brokerage','Margin'], available:true },
+  { id:101, num:'News Intelligence and Impact Assessment', title:'Agentic News → Risk Transmission → Impact Assessment', eventType:'Agentic | News → Risk Transmission → Impact',
+    desc:'An agentic pipeline that reads the news, categorises the event, maps it to the risk transmission register and quantifies the impact — four agents execute step-by-step with human-in-the-loop validation and a what-if chatbot.',
+    severity:'Live', tags:['Agentic','News Ingestion','Transmission','Impact','Escalation','Chatbot'], available:true }
 ];
 
 const CME_META = [
@@ -3570,6 +3900,1304 @@ function ActionRow({ action, idx, isExpanded, onToggle }) {
   );
 }
 
+function niSevColor(sev) {
+  return sev === 'Critical' ? '#991B1B' : sev === 'High' ? '#C2410C' : sev === 'Medium' ? '#92400E' : '#15803D';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// NEWS ASSESSMENT & IMPACT — pre-fed news events run through a 4-agent pipeline
+// (Ingestion & Categorisation → Risk Transmission → Impact & Prioritisation →
+// Intelligence/MI), rendered in the CME Exchange dashboard format (Sections A–K).
+// 100% mock/demo data. No backend, no LLM, no live web search.
+// ══════════════════════════════════════════════════════════════════════════════
+
+function naEscColor(level) {
+  return level === 'Critical' ? '#991B1B' : level === 'High' ? '#EA580C'
+    : level === 'Elevated' ? '#F59E0B' : level === 'Normal' ? '#94A3B8' : '#CBD5E1';
+}
+
+// Pre-fed news events (from the Scenarios table — instead of a live web search)
+// Searchable news feed — each underlying story (dataId → NA_DATA) has several
+// related articles from different outlets, so a search returns a ranked list.
+const NA_FEED = [
+  // ── CRE / office credit risk (dataId: cre) ──
+  { id:'cre-1', dataId:'cre', canonical:true, date:'12/03/2026', title:'CRE exposure flagged as key risk', type:'Credit', source:'Reuters', area:'United States · West Coast', domain:'reuters.com',
+    synopsis:`A large international bank's annual report flagged its US CRE exposure as a key risk given ongoing refinancing struggles and uncertain price stabilization, warning of loan-loss provisions higher than expected, with particular concern around West Coast office space.` },
+  { id:'cre-2', dataId:'cre', date:'10/03/2026', title:'US office CRE loan losses set to climb as refinancing wall looms', type:'Credit', source:'Bloomberg', area:'United States', domain:'bloomberg.com',
+    synopsis:`Analysts flag US CRE exposure as a key credit risk, warning that refinancing commercial real-estate at higher rates will push office loan losses and provisions higher into 2026, with West Coast towers most exposed.` },
+  { id:'cre-3', dataId:'cre', date:'08/03/2026', title:'West Coast office values slide, pressuring bank CRE exposure', type:'Credit', source:'Financial Times', area:'United States · West Coast', domain:'ft.com',
+    synopsis:`Falling office valuations and weak leasing on the US West Coast are pressuring banks' CRE exposure, flagged as a key risk, and lifting expected credit losses on maturing commercial real-estate loans.` },
+  { id:'cre-4', dataId:'cre', date:'05/03/2026', title:'Regional lenders brace for CRE provisioning hit', type:'Credit', source:'WSJ', area:'United States', domain:'wsj.com',
+    synopsis:`Lenders with concentrated CRE exposure are bracing for higher loan-loss provisions, with commercial real-estate flagged as a key risk as office loan maturities loom and price discovery stays weak.` },
+  { id:'cre-5', dataId:'cre', date:'03/03/2026', title:'Office CMBS spreads widen as CRE refinancing risk builds', type:'Credit', source:'S&P Global', area:'United States', domain:'spglobal.com',
+    synopsis:`Office CMBS spreads widened sharply as investors priced in CRE refinancing risk and rising delinquencies across US commercial real-estate exposure, adding mark-to-market pressure on bank books.` },
+
+  // ── Ransomware / payments processor (dataId: ransom) ──
+  { id:'ransom-1', dataId:'ransom', canonical:true, date:'06/02/2026', title:'Ransomware halts payments processor', type:'Cyber / Operational', source:'Bloomberg', area:'United States · Nationwide', domain:'bloomberg.com',
+    synopsis:`A ransomware attack forced a US payment gateway provider to take core systems offline, causing a nationwide outage that disrupted card processing for merchants and public-sector customers, including several municipalities reverting to cash-only operations.` },
+  { id:'ransom-2', dataId:'ransom', date:'06/02/2026', title:'US payment processor knocked offline by ransomware attack', type:'Cyber / Operational', source:'Reuters', area:'United States · Nationwide', domain:'reuters.com',
+    synopsis:`A ransomware attack took a major US payment gateway offline, disrupting card authorisation and settlement for merchants across the country as the provider worked to restore systems.` },
+  { id:'ransom-3', dataId:'ransom', date:'06/02/2026', title:'Card processing outage spreads after cyberattack on payments firm', type:'Cyber / Operational', source:'Financial Times', area:'United States', domain:'ft.com',
+    synopsis:`A cyberattack on a payments processor caused a nationwide card-processing outage, forcing merchants and public-sector clients into cash-only operations while settlement files were delayed.` },
+  { id:'ransom-4', dataId:'ransom', date:'07/02/2026', title:'Municipalities revert to cash as payments outage drags on', type:'Cyber / Operational', source:'WSJ', area:'United States', domain:'wsj.com',
+    synopsis:`Several municipalities reverted to cash-only operations as a ransomware-driven payments outage extended into a second day, disrupting collections and public-sector transactions.` },
+  { id:'ransom-5', dataId:'ransom', date:'07/02/2026', title:'Regulators press payments firm over ransomware disruption', type:'Cyber / Operational', source:'Dow Jones Newswire', area:'United States', domain:'dowjones.com',
+    synopsis:`Regulators are seeking details from a payments provider after a ransomware incident disrupted card processing and settlement nationwide, raising operational-resilience questions.` },
+
+  // ── Shared infrastructure outage / concentration (dataId: infra) ──
+  { id:'infra-1', dataId:'infra', canonical:true, date:'18/11/2025', title:'Infrastructure outage hits banking apps', type:'Third-party / Concentration', source:'Financial Times', area:'Global', domain:'ft.com',
+    synopsis:`A configuration error at a major internet infrastructure provider triggered a ~5.5-hour global outage, taking down banking and payment portals, a credit ratings agency, a crypto exchange, and thousands of other services that all depend on the same shared provider — a textbook fourth-party concentration event.` },
+  { id:'infra-2', dataId:'infra', date:'18/11/2025', title:'Global internet outage takes down banking and payment portals', type:'Third-party / Concentration', source:'Reuters', area:'Global', domain:'reuters.com',
+    synopsis:`A configuration error at a major internet infrastructure provider triggered a multi-hour global outage, downing banking apps, payment portals and thousands of other dependent services.` },
+  { id:'infra-3', dataId:'infra', date:'18/11/2025', title:'Shared cloud provider failure disrupts banks, exchange and ratings agency', type:'Third-party / Concentration', source:'Bloomberg', area:'Global', domain:'bloomberg.com',
+    synopsis:`A single shared infrastructure provider's failure simultaneously disrupted banking portals, a crypto exchange and a ratings agency — a textbook fourth-party concentration event across finance.` },
+  { id:'infra-4', dataId:'infra', date:'18/11/2025', title:'Banks scramble as digital channels hit by provider outage', type:'Third-party / Concentration', source:'WSJ', area:'Global', domain:'wsj.com',
+    synopsis:`Banks scrambled to switch to backup channels as a shared provider outage knocked out digital banking and payments for several hours, leaving customers unable to transact.` },
+  { id:'infra-5', dataId:'infra', date:'19/11/2025', title:'Outage renews scrutiny of fourth-party concentration risk', type:'Third-party / Concentration', source:'S&P Global', area:'Global', domain:'spglobal.com',
+    synopsis:`A widespread outage at a shared infrastructure provider renewed regulatory scrutiny of fourth-party concentration and operational resilience across the financial system.` },
+
+  // ── Sanctions package / financial crime (dataId: sanctions) ──
+  { id:'sanctions-1', dataId:'sanctions', canonical:true, date:'28/07/2026', title:'Major sanctions package expands', type:'Geopolitical', source:'WSJ', area:'Cross-border · Multi-jurisdiction', domain:'wsj.com',
+    synopsis:`A major sanctions package took effect, tightening measures across energy, financial services and crypto assets, while parallel legislation advanced the same week — together requiring firms to re-screen counterparty and cross-border exposure.` },
+  { id:'sanctions-2', dataId:'sanctions', date:'28/07/2026', title:'New sanctions tighten measures on energy, finance and crypto', type:'Geopolitical', source:'Reuters', area:'Cross-border', domain:'reuters.com',
+    synopsis:`A sweeping new sanctions package tightened measures across energy, financial services and crypto assets, forcing firms to re-screen counterparties and cross-border exposure.` },
+  { id:'sanctions-3', dataId:'sanctions', date:'28/07/2026', title:'Banks face re-screening rush as sanctions regime widens', type:'Geopolitical', source:'Bloomberg', area:'Cross-border', domain:'bloomberg.com',
+    synopsis:`Banks face a re-screening rush as an expanded sanctions regime broadens designated entities across sectors and jurisdictions, raising compliance and screening demands.` },
+  { id:'sanctions-4', dataId:'sanctions', date:'29/07/2026', title:'Parallel legislation broadens cross-border sanctions exposure', type:'Geopolitical', source:'Financial Times', area:'Multi-jurisdiction', domain:'ft.com',
+    synopsis:`Parallel legislation advancing alongside the new package broadens cross-border sanctions exposure, raising compliance, counterparty screening and reporting demands for firms.` },
+  { id:'sanctions-5', dataId:'sanctions', date:'29/07/2026', title:'Firms told to freeze exposure to newly designated entities', type:'Geopolitical', source:'Dow Jones Newswire', area:'Cross-border', domain:'dowjones.com',
+    synopsis:`Firms were instructed to identify and freeze exposure to newly designated energy and financial entities under the expanded sanctions package, with reporting obligations attached.` },
+];
+
+// Agent execution sequence (identical structure for all events; shown live during run)
+const NA_AGENTS = [
+  { n:1, short:'Ingestion & Categorisation', name:'News Event Ingestion & Categorisation Agent', role:'Extracts entities, sentiment & context; matches the risk register; classifies the event',
+    steps:[
+      { t:'Scanning news article' },
+      { t:'Extracting entities, sentiment & context' },
+      { t:'Matching event against the risk register' },
+      { t:'Classifying event type & confidence' },
+    ] },
+  { n:2, short:'Risk Transmission', name:'Risk Transmission Agent', role:'Maps primary & secondary risk stripes and builds the end-to-end transmission structure',
+    steps:[
+      { t:'Retrieving comparable events from the register' },
+      { t:'Mapping primary & secondary risk stripes' },
+      { t:'Building the end-to-end transmission sequence' },
+      { t:'Attaching severity to each stage' },
+    ] },
+  { n:3, short:'Impact & Prioritisation', name:'Impact Assessment & Prioritisation Agent', role:'Scores severity & velocity, sizes exposure, sets escalation thresholds',
+    steps:[
+      { t:'Structuring first- & second-order impact' },
+      { t:'Sizing exposed entities & positions' },
+      { t:'Computing estimated financial impact' },
+      { t:'Compiling the escalation matrix' },
+    ] },
+  { n:4, short:'Intelligence / MI', name:'Intelligence / MI Agent', role:'Narrates model limitations, compiles the action playbook, enables the what-if chatbot',
+    steps:[
+      { t:'Reviewing model assumptions & limitations' },
+      { t:'Synthesising findings across all agents' },
+      { t:'Compiling management recommendations' },
+      { t:'Enabling the follow-up chatbot' },
+    ] },
+];
+
+const NA_DATA = {
+  // ─────────────────────────────────────────────── CRE EXPOSURE (Credit) ──────
+  cre:{
+    meta:[
+      { label:'Event Type', value:'Credit — Commercial Real Estate', cls:'' },
+      { label:'Status', value:'Active Assessment — 12 Mar 2026', cls:'' },
+      { label:'Severity', value:'High', cls:'warning' },
+      { label:'Register Match', value:'TRR-0118 · 91% similarity', cls:'' },
+      { label:'Est. Provision Uplift', value:'+$0.9–1.4bn', cls:'warning' },
+    ],
+    alert:'ACTIVE ASSESSMENT — CRE CREDIT DETERIORATION UNDER CRO REVIEW',
+    categorisation:{
+      entities:['US Commercial Real Estate','West Coast office','Loan-loss provisions','Refinancing wall','CMBS'],
+      sentiment:{ label:'Negative', score:-0.62, icon:'fa-face-frown', color:'#C2410C' },
+      context:`Disclosure surfaces in an annual report; consistent with a multi-quarter CRE refinancing overhang and weak office price discovery. Historical analogue: post-2008 CRE workout cycles and 2023 regional-bank office stress.`,
+      eventType:'Credit / Concentration Risk', confidence:91,
+      registerMatch:{ id:'TRR-0118', title:'CRE downturn — office valuation & refinancing stress', similarity:91, basis:'Sector/domain + trigger text match' },
+      extracted:[
+        { k:'Direction', v:'Deterioration / Adverse' }, { k:'Geography', v:'United States (West Coast)' },
+        { k:'Primary L1', v:'CR — Credit Risk' }, { k:'Time Horizon', v:'2–4 quarters' },
+      ],
+    },
+    flow:[
+      { label:'CRE valuations fall; refinancing stalls', type:'trigger', severity:'High', explanation:'Office values under pressure on the West Coast; higher-for-longer rates make refinancing uneconomic at maturity.' },
+      { label:'Borrower PD rises on maturing loans', type:'', severity:'High', explanation:'Probability of default increases as borrowers cannot refinance or inject equity at maturity.' },
+      { label:'LGD rises as collateral values soften', type:'', severity:'High', explanation:'Loss-given-default worsens because the underlying office collateral is falling in value.' },
+      { label:'Provisions & ECL charges increase', type:'', severity:'Medium', explanation:'IFRS 9 expected credit loss models push provisions up, hitting earnings.' },
+      { label:'RWA and capital ratios pressured', type:'escalation', severity:'Medium', explanation:'Risk-weighted assets rise on downgraded exposures, compressing CET1 headroom.' },
+    ],
+    firstOrder:[
+      { stripe:'Credit Risk (CRE)', measure:'PD / LGD', impact:'PD +180–260bps on maturing West Coast office loans; LGD +8–12pts', sev:'High' },
+      { stripe:'Credit Risk (ECL)', measure:'IFRS 9 provisions', impact:'Stage 2 migration on ~18% of office book; ECL +$0.9–1.4bn', sev:'High' },
+      { stripe:'Market Risk (traded)', measure:'CMBS spreads', impact:'Office CMBS spreads +90–140bps; AFS mark-downs', sev:'Medium' },
+      { stripe:'Concentration', measure:'Single-sector exposure', impact:'CRE >14% of loan book; office sub-segment flagged over appetite', sev:'High' },
+    ],
+    secondOrder:[
+      { stripe:'Capital / RWA', measure:'CET1 ratio', impact:'RWA uplift compresses CET1 by ~35–55bps', sev:'Medium' },
+      { stripe:'Earnings', measure:'Pre-provision profit', impact:'Provision charges reduce quarterly PPP; guidance revised', sev:'Medium' },
+      { stripe:'Liquidity & Funding', measure:'Wholesale funding cost', impact:'Modest funding spread widening on headline risk', sev:'Low' },
+      { stripe:'Reputational', measure:'Analyst / investor sentiment', impact:'Equity re-rating risk on CRE disclosure', sev:'Medium' },
+    ],
+    scope:{
+      entities:['US Bank Holding Co','West Coast commercial lending arm','CMBS conduit'],
+      businessLines:['CRE Lending','Structured Finance / CMBS','Wholesale Banking'],
+      instruments:['CRE term loans','Construction loans','Office CMBS','Bridge facilities'],
+      desks:['Real Estate Finance','Structured Credit','Portfolio Management'],
+    },
+    quant:[
+      { title:'Office loan book at risk', narrative:'~18% of the West Coast office book migrates to Stage 2, driving a $0.9–1.4bn ECL uplift over 2–3 quarters.', severity:'High', riskStripe:'Credit Risk (ECL)', impactedDesk:'Real Estate Finance', sourceSection:'Annual report — CRE risk disclosure', sourceEvidence:'Warns of loan-loss provisions higher than expected, particular concern around West Coast office space.' },
+      { title:'CMBS mark-to-market', narrative:'Office CMBS spread widening of 90–140bps produces AFS/OCI mark-downs on the conduit book.', severity:'Medium', riskStripe:'Market Risk', impactedDesk:'Structured Credit', sourceSection:'Market data — CMBS index', sourceEvidence:'Uncertain price stabilization cited as an ongoing risk to office valuations.' },
+      { title:'Capital headroom', narrative:'RWA migration compresses CET1 by 35–55bps, reducing distributable headroom.', severity:'Medium', riskStripe:'Capital / RWA', impactedDesk:'Portfolio Management', sourceSection:'Internal capital model', sourceEvidence:'Refinancing struggles increase downgrade migration on maturing exposures.' },
+    ],
+    map:[
+      { title:'Trigger', nodes:[{ name:'CRE valuation & refinancing stress', sev:'High' }] },
+      { title:'First-order', nodes:[{ name:'PD / LGD ↑', sev:'High' },{ name:'ECL provisions ↑', sev:'High' },{ name:'CMBS spreads ↑', sev:'Medium' }] },
+      { title:'Second-order', nodes:[{ name:'RWA / CET1 ↓', sev:'Medium' },{ name:'Earnings ↓', sev:'Medium' }] },
+      { title:'Exposure', nodes:[{ name:'CRE Lending book', sev:'High' },{ name:'CMBS conduit', sev:'Medium' }] },
+    ],
+    financial:{
+      sufficiency:'Sufficient — exposure and provision parameters available from portfolio data.',
+      kpis:[
+        { icon:'fa-sack-dollar', val:'+$1.1bn', lbl:'ECL provision uplift', tone:'#C2410C', delta:'Base case' },
+        { icon:'fa-percent', val:'−45bps', lbl:'CET1 impact', tone:'#EA580C', delta:'RWA migration' },
+        { icon:'fa-building', val:'$7.8bn', lbl:'Office book at risk', tone:'#991B1B', delta:'West Coast' },
+        { icon:'fa-chart-line', val:'−$0.6bn', lbl:'Pre-provision profit', tone:'#C2410C', delta:'Quarterly' },
+      ],
+      bars:[
+        { label:'ECL provision uplift', pct:78, disp:'$1.1bn', tone:'#C2410C' },
+        { label:'CMBS AFS mark-down', pct:42, disp:'$0.4bn', tone:'#EA580C' },
+        { label:'RWA increase', pct:60, disp:'$6.2bn', tone:'#F59E0B' },
+      ],
+    },
+    escalation:{
+      days:['Q1','Q2','Q3','Q4'],
+      rows:[
+        { stripe:'Credit Risk (ECL)', cells:['Elevated','High','High','Critical'] },
+        { stripe:'Capital / RWA', cells:['Normal','Elevated','High','High'] },
+        { stripe:'Market Risk (CMBS)', cells:['Elevated','High','Elevated','Elevated'] },
+        { stripe:'Earnings', cells:['Normal','Elevated','High','High'] },
+      ],
+    },
+    modelLimits:[
+      { title:'Point-in-time PD lag', desc:'Through-the-cycle PD models under-react to sudden CRE repricing; migration is faster than models assume.' },
+      { title:'Collateral valuation staleness', desc:'Appraisal-based LGD relies on infrequent valuations that lag distressed transaction prices.' },
+      { title:'Correlation understatement', desc:'Standard models treat office exposures as diversified when refinancing stress is highly correlated across the sub-sector.' },
+    ],
+    regulatory:[
+      { icon:'fa-landmark', title:'PRA / FCA disclosure', body:'Assess whether CRE concentration and provisioning require enhanced Pillar 3 and market disclosure.' },
+      { icon:'fa-file-invoice', title:'IFRS 9 governance', body:'Document ECL model overlays and post-model adjustments for the CRE overlay to satisfy audit.' },
+      { icon:'fa-scale-balanced', title:'Stress testing', body:'Feed CRE scenario into ICAAP / firm-wide stress test; confirm capital plan resilience.' },
+    ],
+    actions:{
+      immediate:[
+        { title:'Freeze new West Coast office origination above appetite', owner:'CRO / Credit', deadline:'T+0', priority:'Critical', detail:'Halt new commitments in the flagged sub-segment pending portfolio review. Require CRO sign-off on any exceptions.' },
+        { title:'Re-rate maturing office exposures', owner:'Credit Risk', deadline:'T+3d', priority:'High', detail:'Run a full re-rating of loans maturing in the next 4 quarters; identify refinancing gaps and equity shortfalls.' },
+        { title:'Refresh ECL overlay', owner:'Finance / Risk', deadline:'T+5d', priority:'High', detail:'Apply a CRE post-model adjustment reflecting West Coast office stress; brief audit committee.' },
+      ],
+      shortterm:[
+        { title:'Portfolio-wide CRE concentration review', owner:'Portfolio Management', deadline:'2–4 weeks', priority:'High', detail:'Quantify office, retail and multifamily sub-segments; identify single-name and geographic concentrations over appetite.' },
+        { title:'Hedge CMBS conduit exposure', owner:'Structured Credit', deadline:'2 weeks', priority:'Medium', detail:'Evaluate CDX/CMBX hedges for the office CMBS book to cap AFS mark-to-market downside.' },
+      ],
+      ongoing:[
+        { title:'Reduce CRE appetite and rebalance', owner:'CRO / ExCo', deadline:'1–2 quarters', priority:'High', detail:'Set a glidepath to reduce office CRE as a share of the loan book; reallocate risk capital.' },
+        { title:'Enhance CRE early-warning indicators', owner:'Risk Architecture', deadline:'1 quarter', priority:'Medium', detail:'Add lease-rollover, vacancy and refinancing-gap indicators to the CRE early-warning dashboard.' },
+      ],
+    },
+    chatbot:[
+      { q:'What if office values fall another 15%?', a:'A further 15% office value decline pushes LGD up ~6–9 points and migrates an additional ~7% of the book to Stage 3, lifting the ECL uplift to roughly $1.6–2.0bn and compressing CET1 by a further ~20bps.' },
+      { q:'Which desk is most exposed?', a:'Real Estate Finance carries the largest first-order exposure ($7.8bn West Coast office), with Structured Credit second via the office CMBS conduit.' },
+      { q:'What is the top immediate action?', a:'Freeze new West Coast office origination above appetite (T+0, CRO sign-off on exceptions) while maturing exposures are re-rated.' },
+    ],
+    reportSummary:`CRE credit deterioration is a High-severity, slow-velocity event. Primary transmission is Credit Risk (PD/LGD and ECL) with second-order pressure on capital and earnings. Base-case provision uplift $0.9–1.4bn and CET1 impact ~45bps. Immediate action: freeze above-appetite West Coast office origination and refresh the ECL overlay.`,
+  },
+
+  // ─────────────────────────────────────── RANSOMWARE — PAYMENTS (Cyber) ──────
+  ransom:{
+    meta:[
+      { label:'Event Type', value:'Cyber / Operational — Third-party', cls:'' },
+      { label:'Status', value:'Active Assessment — 06 Feb 2026', cls:'' },
+      { label:'Severity', value:'Critical', cls:'critical' },
+      { label:'Register Match', value:'TRR-0231 · 88% similarity', cls:'' },
+      { label:'Outage Window', value:'48–96 hours', cls:'warning' },
+    ],
+    alert:'ACTIVE SCENARIO — PAYMENTS PROCESSOR OUTAGE — IMMEDIATE ATTENTION REQUIRED',
+    categorisation:{
+      entities:['US payment gateway provider','Card processing','Merchants','Municipalities','Ransomware group'],
+      sentiment:{ label:'Strongly Negative', score:-0.81, icon:'fa-face-dizzy', color:'#991B1B' },
+      context:`A critical third-party payments vendor is offline. Analogous to prior payment-network outages and ransomware disruptions; operational-resilience and third-party dependency risks crystallise immediately.`,
+      eventType:'Operational / Cyber / Third-party Risk', confidence:88,
+      registerMatch:{ id:'TRR-0231', title:'Critical third-party payment outage (ransomware)', similarity:88, basis:'Cyber+operational trigger match' },
+      extracted:[
+        { k:'Direction', v:'Service disruption / Outage' }, { k:'Geography', v:'United States (nationwide)' },
+        { k:'Primary L1', v:'OPS — Operational Risk' }, { k:'Time Horizon', v:'Hours to days' },
+      ],
+    },
+    flow:[
+      { label:'Ransomware forces processor offline', type:'trigger', severity:'Critical', explanation:'Core payment-processing systems taken offline; nationwide card processing disrupted.' },
+      { label:'Card authorisation & settlement fail', type:'', severity:'Critical', explanation:'Merchant transactions decline or queue; settlement files delayed.' },
+      { label:'Merchant & client service impact', type:'', severity:'High', explanation:'Merchants and public-sector clients revert to cash-only; complaints and SLA breaches spike.' },
+      { label:'Settlement & liquidity timing stress', type:'', severity:'High', explanation:'Delayed settlement creates intraday liquidity and reconciliation exposure.' },
+      { label:'Regulatory & reputational escalation', type:'escalation', severity:'High', explanation:'Operational-resilience reporting triggers; reputational damage from visible outage.' },
+    ],
+    firstOrder:[
+      { stripe:'Operational Risk', measure:'Payment availability', impact:'Card auth/settlement unavailable via the affected gateway for 48–96h', sev:'Critical' },
+      { stripe:'Third-party / Vendor', measure:'Single-vendor dependency', impact:'No hot failover for ~40% of processed card volume', sev:'Critical' },
+      { stripe:'Client / Conduct', measure:'Service disruption', impact:'Merchant and public-sector clients unable to accept cards', sev:'High' },
+      { stripe:'Liquidity & Funding', measure:'Settlement timing', impact:'Delayed settlement files; intraday liquidity buffer drawn', sev:'High' },
+    ],
+    secondOrder:[
+      { stripe:'Reputational', measure:'Brand / trust', impact:'Visible nationwide outage; media and social escalation', sev:'High' },
+      { stripe:'Financial (Revenue)', measure:'Interchange / fees', impact:'Lost transaction revenue; SLA credits and penalties', sev:'Medium' },
+      { stripe:'Legal / Regulatory', measure:'Incident reporting', impact:'Operational-resilience and breach reporting obligations', sev:'High' },
+      { stripe:'Concentration', measure:'Fourth-party', impact:'Other clients on the same processor simultaneously impacted', sev:'Medium' },
+    ],
+    scope:{
+      entities:['Merchant Acquiring entity','Card Issuing entity','Payments subsidiary'],
+      businessLines:['Merchant Acquiring','Cards & Payments','Transaction Banking'],
+      instruments:['Card transactions','Settlement files','Merchant float'],
+      desks:['Payments Operations','Cyber / Security Ops','Vendor Risk'],
+    },
+    quant:[
+      { title:'Processed volume at risk', narrative:'~40% of card processing routed through the affected gateway is unavailable for 48–96 hours with no hot failover.', severity:'Critical', riskStripe:'Third-party / Vendor', impactedDesk:'Payments Operations', sourceSection:'Vendor dependency map', sourceEvidence:'Core systems taken offline, causing a nationwide outage that disrupted card processing.' },
+      { title:'Settlement liquidity', narrative:'Delayed settlement files draw ~$0.4–0.7bn of intraday liquidity buffer and create reconciliation backlog.', severity:'High', riskStripe:'Liquidity & Funding', impactedDesk:'Treasury / Payments', sourceSection:'Settlement timing model', sourceEvidence:'Merchants and municipalities revert to cash-only operations during the outage.' },
+      { title:'Revenue & penalties', narrative:'Lost interchange plus SLA credits estimated at $30–55m over the outage window.', severity:'Medium', riskStripe:'Financial (Revenue)', impactedDesk:'Cards & Payments', sourceSection:'Revenue model', sourceEvidence:'Nationwide disruption to card processing for merchants and public-sector customers.' },
+    ],
+    map:[
+      { title:'Trigger', nodes:[{ name:'Ransomware — processor offline', sev:'Critical' }] },
+      { title:'First-order', nodes:[{ name:'Auth/settlement fail', sev:'Critical' },{ name:'Vendor dependency', sev:'Critical' },{ name:'Client disruption', sev:'High' }] },
+      { title:'Second-order', nodes:[{ name:'Liquidity timing', sev:'High' },{ name:'Reputational', sev:'High' },{ name:'Regulatory', sev:'High' }] },
+      { title:'Exposure', nodes:[{ name:'Merchant Acquiring', sev:'Critical' },{ name:'Cards & Payments', sev:'High' }] },
+    ],
+    financial:{
+      sufficiency:'Sufficient — volume, revenue and SLA parameters available from payments MI.',
+      kpis:[
+        { icon:'fa-credit-card', val:'40%', lbl:'Card volume affected', tone:'#991B1B', delta:'No failover' },
+        { icon:'fa-money-bill-wave', val:'−$45m', lbl:'Revenue + penalties', tone:'#C2410C', delta:'Outage window' },
+        { icon:'fa-droplet', val:'$0.6bn', lbl:'Intraday liquidity draw', tone:'#EA580C', delta:'Settlement delay' },
+        { icon:'fa-clock', val:'48–96h', lbl:'Estimated outage', tone:'#991B1B', delta:'Recovery ETA' },
+      ],
+      bars:[
+        { label:'Lost transaction revenue', pct:55, disp:'$32m', tone:'#C2410C' },
+        { label:'SLA credits / penalties', pct:30, disp:'$13m', tone:'#EA580C' },
+        { label:'Remediation & IR cost', pct:40, disp:'$18m', tone:'#F59E0B' },
+      ],
+    },
+    escalation:{
+      days:['Day 1','Day 2','Day 3','Day 5'],
+      rows:[
+        { stripe:'Operational (Payments)', cells:['Critical','Critical','High','Elevated'] },
+        { stripe:'Liquidity (Settlement)', cells:['High','High','Elevated','Normal'] },
+        { stripe:'Reputational', cells:['Elevated','High','High','Elevated'] },
+        { stripe:'Regulatory', cells:['Elevated','High','High','Elevated'] },
+      ],
+    },
+    modelLimits:[
+      { title:'Availability assumption', desc:'Operational risk capital assumes payment rails are available; a total processor outage is outside modelled loss distributions.' },
+      { title:'Fourth-party blind spot', desc:'Vendor risk models capture the direct vendor but miss shared upstream dependencies affecting many clients at once.' },
+      { title:'Recovery-time optimism', desc:'BCP RTOs assume clean failover; ransomware forensics and rebuild extend recovery well beyond planned windows.' },
+    ],
+    regulatory:[
+      { icon:'fa-shield-halved', title:'Operational resilience', body:'Assess impact tolerance breach for the "make payments" important business service (PRA SS1/21 / DORA).' },
+      { icon:'fa-bell', title:'Incident reporting', body:'Notify regulators and card schemes within required windows; log the third-party incident.' },
+      { icon:'fa-handshake-angle', title:'Vendor / outsourcing', body:'Invoke outsourcing agreement remedies; document exit and substitutability assessment.' },
+    ],
+    actions:{
+      immediate:[
+        { title:'Invoke payments BCP and reroute volume', owner:'Payments Ops / CIO', deadline:'T+0', priority:'Critical', detail:'Activate business continuity plan; reroute processable volume to alternate gateway; enable offline/stand-in authorisation where permitted.' },
+        { title:'Stand up crisis command centre', owner:'CRO / COO', deadline:'T+1h', priority:'Critical', detail:'Convene cross-functional incident bridge (Cyber, Payments, Treasury, Comms, Legal). Establish cadence and single source of truth.' },
+        { title:'Protect settlement & liquidity', owner:'Treasury', deadline:'T+2h', priority:'High', detail:'Pre-position intraday liquidity; manage delayed settlement files; reconcile queued transactions.' },
+      ],
+      shortterm:[
+        { title:'Client & merchant communications', owner:'Comms / Client', deadline:'24h', priority:'High', detail:'Issue proactive merchant and public-sector client messaging; stand up support surge; track SLA exposure.' },
+        { title:'Regulatory & scheme notifications', owner:'Compliance / Legal', deadline:'24–48h', priority:'High', detail:'File operational-resilience and incident notifications; engage card schemes on contingency processing.' },
+      ],
+      ongoing:[
+        { title:'Eliminate single-vendor dependency', owner:'Vendor Risk / Architecture', deadline:'1–2 quarters', priority:'High', detail:'Implement multi-processor routing with hot failover for critical card volume; remove single points of failure.' },
+        { title:'Fourth-party concentration mapping', owner:'Third-party Risk', deadline:'1 quarter', priority:'Medium', detail:'Map shared upstream dependencies across critical vendors; set concentration limits and contingency plans.' },
+      ],
+    },
+    chatbot:[
+      { q:'What if the outage extends to 7 days?', a:'A 7-day outage roughly doubles revenue and penalty impact to ~$80–95m, keeps Operational and Reputational stripes Critical through Day 5+, and likely breaches the impact tolerance for the payments important business service — escalating to a reportable resilience event.' },
+      { q:'Which stripe is primary?', a:'Operational Risk (payment availability) is the primary stripe, driven by single-vendor third-party dependency with no hot failover for ~40% of card volume.' },
+      { q:'What is the first action?', a:'Invoke the payments BCP and reroute processable volume to an alternate gateway (T+0), enabling stand-in authorisation where permitted.' },
+    ],
+    reportSummary:`A ransomware outage at a critical payments processor is a Critical-severity, high-velocity operational event. Primary transmission is Operational Risk via single-vendor third-party dependency, with second-order liquidity, reputational and regulatory impact. Estimated $30–55m revenue/penalty impact and ~$0.6bn intraday liquidity draw over a 48–96h window. Immediate action: invoke payments BCP and reroute volume.`,
+  },
+
+  // ─────────────────────────────── INFRASTRUCTURE OUTAGE (Concentration) ──────
+  infra:{
+    meta:[
+      { label:'Event Type', value:'Third-party / Concentration — Cloud', cls:'' },
+      { label:'Status', value:'Active Assessment — 18 Nov 2025', cls:'' },
+      { label:'Severity', value:'High', cls:'warning' },
+      { label:'Register Match', value:'TRR-0244 · 85% similarity', cls:'' },
+      { label:'Global Outage', value:'~5.5 hours', cls:'warning' },
+    ],
+    alert:'ACTIVE SCENARIO — SHARED INFRASTRUCTURE OUTAGE — FOURTH-PARTY CONCENTRATION',
+    categorisation:{
+      entities:['Internet infrastructure provider','Banking portals','Credit ratings agency','Crypto exchange','CDN / edge'],
+      sentiment:{ label:'Negative', score:-0.68, icon:'fa-face-frown', color:'#C2410C' },
+      context:`A single configuration error at a shared infrastructure provider takes down many independent services at once — a textbook fourth-party concentration event. Analogous to prior CDN/cloud outages that cascaded across the financial system.`,
+      eventType:'Operational / Third-party / Concentration Risk', confidence:85,
+      registerMatch:{ id:'TRR-0244', title:'Shared cloud/CDN outage — fourth-party concentration', similarity:85, basis:'Third-party concentration trigger match' },
+      extracted:[
+        { k:'Direction', v:'Service disruption / Outage' }, { k:'Geography', v:'Global' },
+        { k:'Primary L1', v:'OPS — Operational Risk' }, { k:'Time Horizon', v:'Hours' },
+      ],
+    },
+    flow:[
+      { label:'Config error at shared provider', type:'trigger', severity:'High', explanation:'A configuration change at a major internet infrastructure provider triggers a global ~5.5-hour outage.' },
+      { label:'Digital banking channels go down', type:'', severity:'High', explanation:'Customer-facing banking and payment portals dependent on the provider become unavailable.' },
+      { label:'Simultaneous multi-service failure', type:'', severity:'High', explanation:'Ratings agency, crypto exchange and thousands of services fail at once — shared dependency crystallises.' },
+      { label:'Customer & transaction disruption', type:'', severity:'Medium', explanation:'Digital transactions fail; call-centre volumes surge; some payments delayed.' },
+      { label:'Resilience & concentration escalation', type:'escalation', severity:'High', explanation:'Fourth-party concentration risk escalates to Board and regulators.' },
+    ],
+    firstOrder:[
+      { stripe:'Operational Risk', measure:'Channel availability', impact:'Digital banking & payment portals down for ~5.5h', sev:'High' },
+      { stripe:'Concentration (4th-party)', measure:'Shared dependency', impact:'Multiple critical services depend on one provider — no diversity', sev:'High' },
+      { stripe:'Client / Conduct', measure:'Customer access', impact:'Retail and corporate customers cannot transact digitally', sev:'Medium' },
+      { stripe:'Market Access', measure:'Trading / data', impact:'Ratings and exchange access impaired for the outage window', sev:'Medium' },
+    ],
+    secondOrder:[
+      { stripe:'Reputational', measure:'Trust / attrition', impact:'Visible outage; customer trust and potential attrition', sev:'High' },
+      { stripe:'Operational (backlog)', measure:'Post-outage queue', impact:'Transaction and reconciliation backlog after restoration', sev:'Medium' },
+      { stripe:'Regulatory', measure:'Resilience reporting', impact:'Operational-resilience and concentration disclosure', sev:'High' },
+      { stripe:'Financial', measure:'Downtime cost', impact:'Lost digital revenue and remediation', sev:'Low' },
+    ],
+    scope:{
+      entities:['Retail Bank','Digital Banking unit','Payments platform'],
+      businessLines:['Digital / Mobile Banking','Payments','Corporate Portals'],
+      instruments:['Digital transactions','API services','Market data feeds'],
+      desks:['Cloud / Platform Ops','Digital Channels','Vendor Risk'],
+    },
+    quant:[
+      { title:'Digital channel downtime', narrative:'Core digital channels unavailable for ~5.5 hours, affecting the majority of retail digital transactions in-window.', severity:'High', riskStripe:'Operational Risk', impactedDesk:'Digital Channels', sourceSection:'Provider status / dependency map', sourceEvidence:'~5.5-hour global outage taking down banking and payment portals and thousands of other services.' },
+      { title:'Fourth-party concentration', narrative:'A single provider underpins banking portals, a ratings agency and a crypto exchange simultaneously — concentration far exceeds appetite.', severity:'High', riskStripe:'Concentration (4th-party)', impactedDesk:'Vendor Risk', sourceSection:'Concentration register', sourceEvidence:'Thousands of services all depend on the same shared provider — a textbook fourth-party concentration event.' },
+      { title:'Post-outage backlog', narrative:'Transaction and reconciliation backlog on restoration extends operational impact by several hours.', severity:'Medium', riskStripe:'Operational (backlog)', impactedDesk:'Cloud / Platform Ops', sourceSection:'BCP model', sourceEvidence:'Global outage disrupted services that resumed only after the provider restored configuration.' },
+    ],
+    map:[
+      { title:'Trigger', nodes:[{ name:'Shared provider config error', sev:'High' }] },
+      { title:'First-order', nodes:[{ name:'Channels down', sev:'High' },{ name:'4th-party concentration', sev:'High' },{ name:'Market access', sev:'Medium' }] },
+      { title:'Second-order', nodes:[{ name:'Reputational', sev:'High' },{ name:'Backlog', sev:'Medium' },{ name:'Regulatory', sev:'High' }] },
+      { title:'Exposure', nodes:[{ name:'Digital Banking', sev:'High' },{ name:'Payments platform', sev:'Medium' }] },
+    ],
+    financial:{
+      sufficiency:'Partial — downtime quantifiable; indirect attrition cost estimated with wide confidence band.',
+      kpis:[
+        { icon:'fa-plug-circle-xmark', val:'~5.5h', lbl:'Global downtime', tone:'#C2410C', delta:'Digital channels' },
+        { icon:'fa-users-slash', val:'High', lbl:'Customers impacted', tone:'#EA580C', delta:'Retail + corporate' },
+        { icon:'fa-sitemap', val:'1 provider', lbl:'Shared dependency', tone:'#991B1B', delta:'4th-party' },
+        { icon:'fa-money-bill', val:'−$12–20m', lbl:'Downtime + remediation', tone:'#C2410C', delta:'Estimate' },
+      ],
+      bars:[
+        { label:'Lost digital revenue', pct:45, disp:'$9m', tone:'#C2410C' },
+        { label:'Remediation & backlog', pct:35, disp:'$6m', tone:'#EA580C' },
+        { label:'Estimated attrition cost', pct:25, disp:'$4m', tone:'#F59E0B' },
+      ],
+    },
+    escalation:{
+      days:['Hr 0–2','Hr 2–5','Hr 5–8','Day 2'],
+      rows:[
+        { stripe:'Operational (Channels)', cells:['High','Critical','Elevated','Normal'] },
+        { stripe:'Reputational', cells:['Elevated','High','High','Elevated'] },
+        { stripe:'Concentration', cells:['High','High','High','High'] },
+        { stripe:'Regulatory', cells:['Elevated','Elevated','High','High'] },
+      ],
+    },
+    modelLimits:[
+      { title:'Independence assumption', desc:'Availability models assume vendor failures are independent; a shared upstream provider makes them highly correlated.' },
+      { title:'Fourth-party invisibility', desc:'Registers track direct suppliers but rarely map the suppliers-of-suppliers where the real concentration sits.' },
+      { title:'Substitutability overstated', desc:'Exit/substitution plans assume rapid switching that is not feasible within an active outage window.' },
+    ],
+    regulatory:[
+      { icon:'fa-shield-halved', title:'Operational resilience', body:'Test impact tolerances for digital-channel important business services against the outage duration.' },
+      { icon:'fa-diagram-project', title:'Concentration risk', body:'Report fourth-party concentration to Board Risk; assess against outsourcing/concentration guidance.' },
+      { icon:'fa-bell', title:'Incident notification', body:'Notify regulators of the operational disruption within required timelines.' },
+    ],
+    actions:{
+      immediate:[
+        { title:'Activate digital-channel BCP', owner:'Platform Ops / CIO', deadline:'T+0', priority:'Critical', detail:'Fail over to alternate routing/CDN where available; enable degraded-mode and branch/call-centre contingencies.' },
+        { title:'Customer communications', owner:'Comms / Digital', deadline:'T+30m', priority:'High', detail:'Publish status updates across channels; set expectations; surge contact-centre capacity.' },
+        { title:'Confirm no data compromise', owner:'Cyber / Security', deadline:'T+1h', priority:'High', detail:'Verify the event is availability-only (config error) and not a security breach; monitor for opportunistic attacks.' },
+      ],
+      shortterm:[
+        { title:'Post-incident reconciliation', owner:'Operations', deadline:'24h', priority:'High', detail:'Clear transaction and reconciliation backlog; validate no duplicate or dropped payments.' },
+        { title:'Regulatory & Board notification', owner:'Compliance / CRO', deadline:'24–48h', priority:'High', detail:'File resilience notifications; brief Board on fourth-party concentration exposure.' },
+      ],
+      ongoing:[
+        { title:'Introduce provider diversity', owner:'Architecture / Vendor Risk', deadline:'1–2 quarters', priority:'High', detail:'Multi-CDN / multi-region architecture for critical services; remove single shared-provider dependency.' },
+        { title:'Map and limit fourth-party concentration', owner:'Third-party Risk', deadline:'1 quarter', priority:'Medium', detail:'Map suppliers-of-suppliers for critical services; set concentration limits and contingency playbooks.' },
+      ],
+    },
+    chatbot:[
+      { q:'What if this had happened during market hours peak?', a:'A peak-hours outage would raise the Operational and Reputational stripes to Critical for longer, increase lost digital revenue toward the upper band (~$18–22m), and heighten regulatory scrutiny given greater customer and market-access impact.' },
+      { q:'Why is concentration the key stripe?', a:'Because a single shared provider simultaneously underpins banking portals, a ratings agency and a crypto exchange — a fourth-party concentration that standard vendor registers do not capture.' },
+      { q:'What is the durable fix?', a:'Introduce provider diversity (multi-CDN / multi-region) for critical services and set fourth-party concentration limits so no single upstream provider can take down critical channels.' },
+    ],
+    reportSummary:`A shared-infrastructure outage is a High-severity, high-velocity operational event whose defining feature is fourth-party concentration. Primary transmission is Operational Risk (digital-channel availability) with second-order reputational and regulatory impact. ~5.5h downtime; estimated $12–20m cost. Durable mitigation is provider diversity and concentration limits.`,
+  },
+
+  // ────────────────────────────────────────── SANCTIONS PACKAGE (Geopolitical)
+  sanctions:{
+    meta:[
+      { label:'Event Type', value:'Geopolitical — Sanctions / Financial Crime', cls:'' },
+      { label:'Status', value:'Active Assessment — 28 Jul 2026', cls:'' },
+      { label:'Severity', value:'High', cls:'warning' },
+      { label:'Register Match', value:'TRR-0189 · 83% similarity', cls:'' },
+      { label:'Re-screen Scope', value:'Group-wide', cls:'warning' },
+    ],
+    alert:'ACTIVE ASSESSMENT — SANCTIONS EXPANSION — COUNTERPARTY RE-SCREENING REQUIRED',
+    categorisation:{
+      entities:['Sanctions authorities','Energy sector','Financial services','Crypto assets','Cross-border counterparties'],
+      sentiment:{ label:'Negative / Elevated', score:-0.58, icon:'fa-face-frown', color:'#C2410C' },
+      context:`A major sanctions package takes effect with parallel legislation the same week, expanding measures across energy, financial services and crypto. Requires immediate re-screening of counterparty and cross-border exposure. Analogous to prior sanctions-regime expansions.`,
+      eventType:'Geopolitical / Financial Crime / Compliance Risk', confidence:83,
+      registerMatch:{ id:'TRR-0189', title:'Sanctions regime expansion — counterparty re-screening', similarity:83, basis:'Geopolitical + financial-crime trigger match' },
+      extracted:[
+        { k:'Direction', v:'Regulatory tightening' }, { k:'Geography', v:'Cross-border / Multi-jurisdiction' },
+        { k:'Primary L1', v:'OPS / FC — Financial Crime & Compliance' }, { k:'Time Horizon', v:'Immediate + ongoing' },
+      ],
+    },
+    flow:[
+      { label:'Sanctions package takes effect', type:'trigger', severity:'High', explanation:'New measures across energy, financial services and crypto take effect, with parallel legislation advancing the same week.' },
+      { label:'Counterparty & cross-border re-screening', type:'', severity:'High', explanation:'Firms must re-screen counterparties and cross-border exposure against expanded lists.' },
+      { label:'Exposure identification & freezes', type:'', severity:'High', explanation:'Newly sanctioned entities identified; asset freezes and payment blocks required.' },
+      { label:'Trade, FX & correspondent impact', type:'', severity:'Medium', explanation:'Trade finance, FX and correspondent flows to affected sectors restricted or exited.' },
+      { label:'Regulatory & conduct escalation', type:'escalation', severity:'High', explanation:'Breach risk and reporting obligations escalate; enforcement exposure if screening lags.' },
+    ],
+    firstOrder:[
+      { stripe:'Financial Crime / Compliance', measure:'Screening coverage', impact:'Group-wide re-screen of counterparties & cross-border exposure against expanded lists', sev:'High' },
+      { stripe:'Credit / Counterparty', measure:'Exposure to sanctioned names', impact:'Identify and exit exposure to newly designated entities', sev:'High' },
+      { stripe:'Operational', measure:'Remediation capacity', impact:'Surge in alerts, manual review and payment holds', sev:'High' },
+      { stripe:'Market Risk', measure:'Energy / FX', impact:'Energy and FX volatility on affected corridors', sev:'Medium' },
+    ],
+    secondOrder:[
+      { stripe:'Legal / Regulatory', measure:'Breach & reporting', impact:'Sanctions breach risk; mandatory reporting and licensing', sev:'High' },
+      { stripe:'Reputational', measure:'Enforcement exposure', impact:'Reputational and enforcement risk if screening lags', sev:'High' },
+      { stripe:'Liquidity', measure:'Frozen assets', impact:'Frozen balances and blocked payments reduce usable liquidity', sev:'Medium' },
+      { stripe:'Client / Conduct', measure:'Exited relationships', impact:'De-risking and offboarding of affected clients', sev:'Medium' },
+    ],
+    scope:{
+      entities:['Correspondent Banking entity','Trade Finance unit','Markets / FX'],
+      businessLines:['Trade Finance','Correspondent Banking','Markets / FX','Wealth (crypto)'],
+      instruments:['Cross-border payments','Trade LCs','FX','Crypto assets'],
+      desks:['Financial Crime / Sanctions','Trade Operations','FX Trading'],
+    },
+    quant:[
+      { title:'Screening surge', narrative:'Expanded lists trigger a group-wide re-screen; alert volumes rise sharply, requiring surge review capacity to clear within regulatory expectations.', severity:'High', riskStripe:'Financial Crime / Compliance', impactedDesk:'Financial Crime / Sanctions', sourceSection:'Sanctions program', sourceEvidence:'Together requiring firms to re-screen counterparty and cross-border exposure.' },
+      { title:'Exposure to designated entities', narrative:'Direct and indirect exposure to newly sanctioned energy and financial entities must be identified, frozen where required, and exited.', severity:'High', riskStripe:'Credit / Counterparty', impactedDesk:'Trade Operations', sourceSection:'Counterparty register', sourceEvidence:'Tightening measures across energy, financial services and crypto assets.' },
+      { title:'Trade & FX corridor impact', narrative:'Restricted corridors reduce trade-finance and FX flow; some transactions blocked or held pending review.', severity:'Medium', riskStripe:'Market / Operational', impactedDesk:'FX Trading', sourceSection:'Corridor exposure', sourceEvidence:'Parallel legislation advanced the same week, broadening cross-border restrictions.' },
+    ],
+    map:[
+      { title:'Trigger', nodes:[{ name:'Sanctions package in force', sev:'High' }] },
+      { title:'First-order', nodes:[{ name:'Re-screening surge', sev:'High' },{ name:'Sanctioned exposure', sev:'High' },{ name:'Energy / FX vol', sev:'Medium' }] },
+      { title:'Second-order', nodes:[{ name:'Breach / reporting', sev:'High' },{ name:'Reputational', sev:'High' },{ name:'Frozen liquidity', sev:'Medium' }] },
+      { title:'Exposure', nodes:[{ name:'Correspondent Banking', sev:'High' },{ name:'Trade Finance', sev:'High' }] },
+    ],
+    financial:{
+      sufficiency:'Partial — remediation cost quantifiable; fine/enforcement exposure scenario-dependent.',
+      kpis:[
+        { icon:'fa-magnifying-glass-chart', val:'Group-wide', lbl:'Re-screen scope', tone:'#C2410C', delta:'Expanded lists' },
+        { icon:'fa-snowflake', val:'$0.3–0.6bn', lbl:'Exposure to exit/freeze', tone:'#EA580C', delta:'Designated names' },
+        { icon:'fa-user-gear', val:'+3–5x', lbl:'Alert volume', tone:'#991B1B', delta:'Surge review' },
+        { icon:'fa-gavel', val:'Elevated', lbl:'Enforcement risk', tone:'#C2410C', delta:'If screening lags' },
+      ],
+      bars:[
+        { label:'Remediation & surge cost', pct:50, disp:'$14m', tone:'#C2410C' },
+        { label:'Exposure to exit', pct:70, disp:'$0.45bn', tone:'#EA580C' },
+        { label:'Frozen / blocked balances', pct:35, disp:'$0.12bn', tone:'#F59E0B' },
+      ],
+    },
+    escalation:{
+      days:['Wk 1','Wk 2','Wk 4','Wk 8'],
+      rows:[
+        { stripe:'Financial Crime / Compliance', cells:['Critical','High','High','Elevated'] },
+        { stripe:'Credit / Counterparty', cells:['High','High','Elevated','Elevated'] },
+        { stripe:'Legal / Regulatory', cells:['High','High','High','Elevated'] },
+        { stripe:'Operational', cells:['Critical','High','Elevated','Normal'] },
+      ],
+    },
+    modelLimits:[
+      { title:'List-lag risk', desc:'Screening models depend on list updates; parallel legislation and indirect ownership create coverage gaps between updates.' },
+      { title:'Indirect ownership (50%+)', desc:'Ownership-aggregation rules are hard to model; exposure via subsidiaries and chains is easily missed.' },
+      { title:'Corridor correlation', desc:'Standard models treat corridors independently; sanctions hit multiple corridors and sectors simultaneously.' },
+    ],
+    regulatory:[
+      { icon:'fa-landmark', title:'OFAC / OFSI / EU', body:'Confirm obligations under all applicable regimes; apply the most restrictive standard across the group.' },
+      { icon:'fa-file-shield', title:'Blocking & reporting', body:'Freeze/block where required and file blocked-property and suspicious-activity reports within deadlines.' },
+      { icon:'fa-id-card', title:'Licensing / wind-down', body:'Apply for general/specific licences for permitted wind-down of pre-existing contracts.' },
+    ],
+    actions:{
+      immediate:[
+        { title:'Trigger group-wide re-screening', owner:'Financial Crime / Sanctions', deadline:'T+0', priority:'Critical', detail:'Load expanded lists; run full counterparty and cross-border re-screen; prioritise energy, financial-services and crypto exposure.' },
+        { title:'Freeze / hold flagged payments', owner:'Payments / Sanctions Ops', deadline:'T+0', priority:'Critical', detail:'Block or hold payments to potentially designated entities pending review; prevent breach.' },
+        { title:'Stand up sanctions response cell', owner:'CRO / Head of FC', deadline:'T+4h', priority:'High', detail:'Convene sanctions, legal, trade and markets; triage exposure; establish decision and reporting cadence.' },
+      ],
+      shortterm:[
+        { title:'Surge alert review capacity', owner:'Financial Crime Ops', deadline:'24–72h', priority:'High', detail:'Redeploy/augment analysts to clear the alert surge within regulatory expectations; track backlog and SLAs.' },
+        { title:'Exposure identification & exit plan', owner:'Credit / Trade', deadline:'1 week', priority:'High', detail:'Quantify direct and indirect exposure to designated names; plan compliant exit or licensed wind-down.' },
+      ],
+      ongoing:[
+        { title:'Enhance ownership-aggregation screening', owner:'FC Architecture', deadline:'1–2 quarters', priority:'High', detail:'Implement 50%-rule ownership aggregation and indirect-exposure detection across counterparties and chains.' },
+        { title:'Corridor & sector concentration limits', owner:'Risk / Trade', deadline:'1 quarter', priority:'Medium', detail:'Set limits on exposure to sanctions-sensitive corridors and sectors; embed geopolitical early-warning.' },
+      ],
+    },
+    chatbot:[
+      { q:'What if a top-20 counterparty is designated?', a:'Designation of a top-20 counterparty would move Credit/Counterparty and Legal/Regulatory stripes to Critical, require immediate freeze and licensed wind-down of pre-existing contracts, and raise exposure-to-exit toward the upper band (~$0.6bn) with material reporting obligations.' },
+      { q:'Which stripe leads?', a:'Financial Crime / Compliance leads, driven by the group-wide re-screening obligation, closely followed by Credit/Counterparty exposure to newly designated entities.' },
+      { q:'What is the first action?', a:'Trigger group-wide re-screening against the expanded lists (T+0) and simultaneously freeze/hold payments to potentially designated entities to prevent breach.' },
+    ],
+    reportSummary:`A sanctions-package expansion is a High-severity geopolitical/financial-crime event. Primary transmission is Financial Crime / Compliance via a group-wide re-screening obligation, with second-order legal, reputational and liquidity impact. Exposure to exit/freeze estimated $0.3–0.6bn; enforcement risk elevated if screening lags. Immediate action: trigger re-screening and freeze flagged payments.`,
+  },
+};
+
+function NewsAssessment({ onBack }) {
+  const [search,     setSearch]     = React.useState('');    // news search box text
+  const [searching,  setSearching]  = React.useState(false); // "connecting to internet" state
+  const [searched,   setSearched]   = React.useState(false); // results revealed after a search
+  const [srcHit,     setSrcHit]     = React.useState(0);     // animated source counter
+  const [phase,      setPhase]      = React.useState('select'); // select | running | results
+  const [runId,      setRunId]      = React.useState(null);   // event being assessed
+  const [stepIdx,     setStepIdx]     = React.useState(0);    // step index within the active agent
+  const [activeAgent, setActiveAgent] = React.useState(0);    // current agent tab (0–3)
+  const [agentStatus, setAgentStatus] = React.useState(['locked','locked','locked','locked']); // locked | processing | ready | done
+  const [actionTab,  setActionTab]  = React.useState('immediate');
+  const [openAct,    setOpenAct]    = React.useState(null);
+  const [openFlow,   setOpenFlow]   = React.useState(null);
+  const [openQuant,  setOpenQuant]  = React.useState(null);
+  const [hitl,       setHitl]       = React.useState(null);  // null | approved | rejected | sent
+  const [hitlComment,setHitlComment]= React.useState('');
+  const [chat,       setChat]       = React.useState([]);
+  const [chatInput,  setChatInput]  = React.useState('');
+  const [chatOpen,   setChatOpen]   = React.useState(false); // floating chatbot open
+
+  // Run one agent's 4 steps sequentially — no step starts before the previous finishes.
+  const startAgent = (i) => {
+    setActiveAgent(i);
+    setStepIdx(0);
+    setAgentStatus(prev => prev.map((s, idx) => idx === i ? 'processing' : s));
+    const nSteps = NA_AGENTS[i].steps.length;
+    let s = 0;
+    const tick = () => {
+      s += 1;
+      setStepIdx(s);
+      if (s < nSteps) {
+        const base = 700 + Math.random() * 600;
+        const slow = Math.random() < 0.3 ? 700 + Math.random() * 900 : 0;
+        setTimeout(tick, base + slow);
+      } else {
+        setTimeout(() => setAgentStatus(prev => prev.map((st, idx) => idx === i ? 'ready' : st)), 500);
+      }
+    };
+    setTimeout(tick, 500);
+  };
+  const genOutput    = (i) => setAgentStatus(prev => prev.map((st, idx) => idx === i ? 'done' : st));
+  const continueNext = (i) => { if (i < NA_AGENTS.length - 1) startAgent(i + 1); };
+
+  const runAssessment = (id) => {
+    setRunId(id);
+    setPhase('assess');
+    setActionTab('immediate'); setOpenAct(null); setOpenFlow(null); setOpenQuant(null);
+    setHitl(null); setHitlComment(''); setChat([]); setChatInput(''); setChatOpen(false);
+    setAgentStatus(['locked','locked','locked','locked']);
+    startAgent(0);
+  };
+
+  const backToSelect = () => { setPhase('select'); setRunId(null); setSearched(false); setSearching(false); };
+
+  const askChat = (q) => {
+    const item = NA_FEED.find(f => f.id === runId);
+    const d = NA_DATA[item.dataId];
+    const hit = d.chatbot.find(c => c.q === q) ||
+      d.chatbot.reduce((best, c) => {
+        const overlap = q.toLowerCase().split(/\s+/).filter(w => w.length > 3 && c.q.toLowerCase().includes(w)).length;
+        return overlap > (best._o || 0) ? { ...c, _o:overlap } : best;
+      }, { _o:0 });
+    const answer = hit && hit.a ? hit.a : d.reportSummary;
+    setChat(prev => [...prev, { role:'user', text:q }, { role:'bot', text:answer }]);
+    setChatInput('');
+  };
+
+  const SectionHeader = ({ letter, title }) => (
+    <div className="scenario-section-header"><span className="section-letter">{letter}</span>{title}</div>
+  );
+
+  // ── SELECT phase ──────────────────────────────────────────────────────────
+  if (phase === 'select') {
+    const q = search.trim().toLowerCase();
+    const toks = q.split(/\s+/).filter(w => w.length > 2);
+    // Relevance score: full-phrase and title matches weigh most, so a longer
+    // phrase like "ransomware halts payment" ranks the right event first.
+    const score = (ev) => {
+      if (!q) return 1;
+      const title = ev.title.toLowerCase();
+      const hay = (ev.title + ' ' + ev.type + ' ' + ev.synopsis).toLowerCase();
+      let s = 0;
+      if (title.includes(q)) s += 12;           // full phrase in title
+      else if (hay.includes(q)) s += 8;         // full phrase anywhere
+      toks.forEach(w => { if (title.includes(w)) s += 3; else if (hay.includes(w)) s += 1; });
+      return s;
+    };
+    const filtered = q
+      ? NA_FEED.map(ev => ({ ev, s: score(ev) })).filter(x => x.s > 0).sort((a, b) => b.s - a.s).slice(0, 8).map(x => x.ev)
+      : NA_FEED;
+    const SRC_LIST = ['Reuters','Bloomberg','Financial Times','WSJ','Dow Jones Newswire','S&P Global','Regulatory wires','Central bank feeds'];
+    const doSearch = () => {
+      setSearched(false); setSearching(true); setSrcHit(0);
+      let i = 0;
+      const tick = () => {
+        i += 1; setSrcHit(i);
+        if (i < SRC_LIST.length) setTimeout(tick, 620 + Math.random() * 340);
+        else setTimeout(() => { setSearching(false); setSearched(true); }, 900);
+      };
+      setTimeout(tick, 500);
+    };
+    const onType = (v) => { setSearch(v); setSearched(false); };
+    const hl = (text) => {
+      if (!q) return text;
+      const lt = text.toLowerCase();
+      const needle = lt.includes(q) ? q : (toks.find(w => lt.includes(w)) || '');
+      const idx = needle ? lt.indexOf(needle) : -1;
+      if (idx < 0) return text;
+      return <>{text.slice(0, idx)}<span className="na-feed-hl">{text.slice(idx, idx + needle.length)}</span>{text.slice(idx + needle.length)}</>;
+    };
+
+    return (
+      <div className="page" style={{maxWidth:'none'}}>
+        <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
+          <button className="btn-outline" style={{padding:'7px 14px',fontSize:13}} onClick={onBack}>
+            <i className="fa-solid fa-arrow-left"></i> Scenario Library
+          </button>
+        </div>
+        <div className="page-header" style={{marginBottom:16}}>
+          <div className="page-title">News Intelligence and Impact Assessment</div>
+          <div className="page-sub" style={{maxWidth:'none'}}>An agentic pipeline that reads the news, maps it to the risk transmission register and quantifies the impact.</div>
+        </div>
+
+        {/* Search box */}
+        <div className="ni-search-wrap">
+          <div className="ni-search-box">
+            <div style={{position:'relative',flex:1,display:'flex'}}>
+              <i className="fa-solid fa-magnifying-glass ni-search-icon"></i>
+              <input className="ni-search-input" autoFocus
+                placeholder="Search the news, e.g. 'ransomware payments', 'CRE exposure', 'sanctions'…"
+                value={search} onChange={e => onType(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') doSearch(); }} />
+            </div>
+            <button className="btn-primary" style={{fontSize:14,padding:'12px 22px',whiteSpace:'nowrap'}}
+              onClick={doSearch} disabled={searching}>
+              {searching
+                ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Searching…</>
+                : <><i className="fa-solid fa-globe"></i> Search News</>}
+            </button>
+          </div>
+          <div className="ni-chips">
+            <span style={{fontSize:11.5,fontWeight:700,color:'var(--text-3)',alignSelf:'center',textTransform:'uppercase',letterSpacing:0.5}}>Try:</span>
+            {NA_FEED.filter(f => f.canonical).map(ev => (
+              <span key={ev.id} className="ni-chip" onClick={() => onType(ev.title)}>
+                <i className="fa-solid fa-newspaper"></i>{ev.title}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Live internet search loader */}
+        {searching && (
+          <div className="na-loading">
+            <div className="na-loading-globe"><i className="fa-solid fa-globe fa-spin"></i></div>
+            <div className="na-loading-title">Searching the news{search.trim() ? ` for "${search.trim()}"` : ''}…</div>
+            <div className="na-loading-sub">Connecting to news &amp; wire services · retrieving latest articles · ranking by relevance</div>
+            <div className="na-loading-srcs">
+              {SRC_LIST.map((s, i) => (
+                <span key={s} className={`na-src-pill${i < srcHit ? ' hit' : ''}`}>
+                  {i < srcHit ? <i className="fa-solid fa-circle-check chk"></i> : <i className="fa-solid fa-rss" style={{fontSize:9}}></i>}
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Results — internet-style news results */}
+        {!searching && searched && (
+          filtered.length === 0 ? (
+            <div className="na-feed-empty">
+              No news found for "<strong>{search.trim()}</strong>". Try <em>ransomware</em>, <em>CRE</em>, <em>outage</em> or <em>sanctions</em>.
+            </div>
+          ) : (
+            <>
+              <div className="na-feed-count">
+                <i className="fa-solid fa-newspaper" style={{marginRight:6,color:'var(--primary)'}}></i>
+                About {filtered.length} result{filtered.length===1?'':'s'}{q?` for "${search.trim()}"`:''} · select a news to run the assessment
+              </div>
+              <div className="na-sr">
+                {filtered.map(ev => (
+                  <div key={ev.id} className="na-sr-card" onClick={() => runAssessment(ev.id)} title="Select this news to run the assessment">
+                    <div className="na-sr-top">
+                      <span className="na-sr-fav">{ev.source.charAt(0)}</span>
+                      <span className="na-sr-url">{ev.domain}</span>
+                      <span className="na-sr-dot">›</span>
+                      <span>{ev.source}</span>
+                      <span className="na-sr-dot">·</span>
+                      <span><i className="fa-solid fa-location-dot" style={{fontSize:10,marginRight:4}}></i>{ev.area}</span>
+                      <span className="na-sr-dot">·</span>
+                      <span><i className="fa-regular fa-calendar" style={{fontSize:10,marginRight:4}}></i>{ev.date}</span>
+                    </div>
+                    <div className="na-sr-title">{hl(ev.title)}</div>
+                    <div className="na-sr-snippet">{ev.synopsis}</div>
+                    <div className="na-sr-foot">
+                      <span className="na-type-pill">{ev.type}</span>
+                      <span className="na-sr-run">Run assessment <i className="fa-solid fa-arrow-right-long"></i></span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )
+        )}
+
+        {/* Prompt before first search */}
+        {!searching && !searched && (
+          <div className="na-feed-empty">
+            <i className="fa-solid fa-globe" style={{fontSize:20,color:'var(--primary)',marginBottom:10,display:'block'}}></i>
+            Type a news event above and select <strong>Search News</strong> to retrieve the latest stories.
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── ASSESS phase (tabbed, agent-by-agent) ─────────────────────────────────
+  const ev = NA_FEED.find(e => e.id === runId);
+  const d  = NA_DATA[ev.dataId];
+  const c  = d.categorisation;
+  const actList = d.actions[actionTab] || [];
+  const st = agentStatus[activeAgent];
+  const isLast = activeAgent === NA_AGENTS.length - 1;
+  const ag = NA_AGENTS[activeAgent];
+
+  return (
+    <div className="page" style={{maxWidth:'none'}}>
+      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
+        <button className="btn-outline" style={{padding:'7px 14px',fontSize:13}} onClick={backToSelect}>
+          <i className="fa-solid fa-arrow-left"></i> News Feed
+        </button>
+        <button className="btn-outline" style={{padding:'7px 14px',fontSize:13}} onClick={() => runAssessment(runId)}>
+          <i className="fa-solid fa-rotate-right"></i> Re-run
+        </button>
+      </div>
+
+      <div className="page-header" style={{marginBottom:16}}>
+        <div className="page-title">{ev.title}</div>
+        <div className="page-sub" style={{maxWidth:'none',whiteSpace:'nowrap'}}>{ev.date} · {ev.type} · Source: {ev.source} · News Intelligence and Impact Assessment</div>
+      </div>
+
+      {/* Agent process stepper — connected nodes, centered */}
+      <div className="na-proc-nav">
+        {NA_AGENTS.map((a, i) => {
+          const s = agentStatus[i];
+          const locked = s === 'locked';
+          return (
+            <React.Fragment key={a.n}>
+              {i > 0 && <div className={`na-proc-connector ${agentStatus[i-1]==='done' ? 'done' : ''}`}></div>}
+              <div className={`na-proc-node status-${s} ${activeAgent===i?'active':''} ${locked?'locked':''}`}
+                onClick={() => { if (!locked) setActiveAgent(i); }}>
+                <div className="na-proc-circle">
+                  {s==='done' ? <i className="fa-solid fa-check"></i>
+                    : s==='processing' ? <i className="fa-solid fa-circle-notch fa-spin"></i>
+                    : locked ? <i className="fa-solid fa-lock" style={{fontSize:13}}></i>
+                    : a.n}
+                </div>
+                <div className="na-proc-node-lbl">{a.short}</div>
+                <div className="na-proc-node-sub">Agent {a.n}</div>
+              </div>
+            </React.Fragment>
+          );
+        })}
+      </div>
+
+      {activeAgent === NA_AGENTS.length - 1 && (
+        <>
+          <div className="scenario-alert-banner">
+            <i className="fa-solid fa-triangle-exclamation" style={{fontSize:18}}></i>
+            {d.alert}
+          </div>
+          <div className="scenario-meta-grid">
+            {d.meta.map(m => (
+              <div key={m.label} className="scenario-meta-card">
+                <div className="scenario-meta-label">{m.label}</div>
+                <div className={`scenario-meta-value ${m.cls}`}>{m.value}</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Processing panel — the agent's 4 steps run in sequence */}
+      {(st === 'processing' || st === 'ready') && (
+        <div className="na-proc">
+          <div className="na-proc-title">
+            <span className="na-proc-circle" style={{width:38,height:38,fontSize:14,background:st==='ready'?'#15803D':'var(--primary)',color:'#fff',borderColor:st==='ready'?'#15803D':'var(--primary)'}}>{st==='ready' ? <i className="fa-solid fa-check"></i> : ag.n}</span>
+            <div style={{textAlign:'left'}}>
+              <div style={{fontSize:16,fontWeight:800,color:'var(--text)',lineHeight:1.2}}>{ag.short}</div>
+              <div style={{fontSize:10.5,fontWeight:700,textTransform:'uppercase',letterSpacing:0.6,color:'var(--text-3)'}}>Agent {ag.n}</div>
+            </div>
+          </div>
+          <div className="na-proc-role">{ag.role}</div>
+          <div className="na-proc-steps">
+            {ag.steps.map((s2, si) => {
+              const stepDone = st === 'ready' || stepIdx > si;
+              const stepRun  = st === 'processing' && stepIdx === si;
+              return (
+                <div key={si} className={`na-step ${stepDone?'ok':stepRun?'run':''}`}>
+                  <span className="na-step-ic">
+                    {stepDone ? <i className="fa-solid fa-check"></i>
+                      : stepRun ? <i className="fa-solid fa-circle-notch fa-spin"></i>
+                      : <i className="fa-regular fa-circle" style={{fontSize:9}}></i>}
+                  </span>
+                  <span>{s2.t}</span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="na-outbtn-wrap">
+            {st === 'processing'
+              ? <div style={{fontSize:12.5,color:'var(--text-3)'}}><i className="fa-solid fa-circle-notch fa-spin" style={{marginRight:8,color:'var(--primary)'}}></i>Agent {ag.n} processing — please wait for all steps to complete.</div>
+              : <button className="btn-primary" style={{fontSize:14,padding:'10px 22px'}} onClick={() => genOutput(activeAgent)}><i className="fa-solid fa-file-lines"></i> Generate Report</button>}
+          </div>
+        </div>
+      )}
+
+      {/* Agent output (shown once generated) */}
+      {st === 'done' && (
+        <>
+      {activeAgent === 0 && (
+        <>
+      {/* A — Event Intake & Categorisation (Agent 1) */}
+      <SectionHeader letter="A" title="Event Intake & Categorisation" />
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.65,marginBottom:14}}>
+          <i className="fa-solid fa-newspaper" style={{color:'var(--primary)',marginRight:6}}></i>
+          "{ev.synopsis}"
+        </div>
+        <div className="na-cat-cards">
+          <div className="na-cat-card">
+            <div className="na-cat-k">Event Type</div>
+            <div className="na-cat-v">{c.eventType}</div>
+          </div>
+          <div className="na-cat-card">
+            <div className="na-cat-k">Classifier Confidence</div>
+            <div className="na-cat-v" style={{color:'#15803D'}}>{c.confidence}%</div>
+            <div className="na-conf-track"><div className="na-conf-fill" style={{width:c.confidence+'%'}}></div></div>
+          </div>
+          <div className="na-cat-card">
+            <div className="na-cat-k">Sentiment</div>
+            <div className="na-cat-v na-sentiment" style={{color:c.sentiment.color}}>
+              <i className={`fa-solid ${c.sentiment.icon}`}></i>{c.sentiment.label}
+              <span style={{fontSize:11,color:'var(--text-3)',fontWeight:600}}>({c.sentiment.score})</span>
+            </div>
+          </div>
+          <div className="na-cat-card">
+            <div className="na-cat-k">Register Match</div>
+            <div className="na-cat-v" style={{fontSize:13}}>{c.registerMatch.id} · {c.registerMatch.similarity}%</div>
+            <div style={{fontSize:11,color:'var(--text-3)',marginTop:4}}>{c.registerMatch.title}</div>
+          </div>
+        </div>
+        <div style={{marginTop:6,marginBottom:12}}>
+          <div className="na-cat-k" style={{marginBottom:6}}>Extracted Entities</div>
+          {c.entities.map(e => <span key={e} className="na-chip">{e}</span>)}
+        </div>
+        <div className="na-cat-cards" style={{marginBottom:12}}>
+          {c.extracted.map(x => (
+            <div key={x.k} className="na-cat-card" style={{borderLeftColor:'var(--border)'}}>
+              <div className="na-cat-k">{x.k}</div>
+              <div className="na-cat-v" style={{fontSize:13}}>{x.v}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+        </>
+      )}
+
+      {activeAgent === 1 && (
+        <>
+      {/* B — Risk Transmission Flow (Agent 2) + human-in-the-loop */}
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{fontSize:12,color:'var(--text-3)',marginBottom:14,display:'flex',alignItems:'center',gap:6}}>
+          <i className="fa-solid fa-circle-info" style={{color:'var(--primary)'}}></i>
+          Click any stage to view the risk detail. Primary and secondary risk stripes mapped from the register.
+        </div>
+        <div className="risk-flow">
+          {d.flow.map((step, i) => (
+            <React.Fragment key={i}>
+              <div className={`risk-flow-step ${step.type||''} ${openFlow===i?'active-step':''}`} onClick={() => setOpenFlow(openFlow===i?null:i)} style={{cursor:'pointer'}}>
+                {step.label}
+                <span style={{marginLeft:8}}><i className={`fa-solid ${openFlow===i?'fa-circle-xmark':'fa-circle-info'}`} style={{fontSize:12,opacity:0.7}}></i></span>
+              </div>
+              {openFlow===i && (
+                <div style={{maxWidth:520,margin:'2px auto 6px',background:'var(--surface)',border:'1px solid var(--border)',borderRadius:'var(--radius-sm)',padding:'12px 16px',boxShadow:'var(--shadow)'}}>
+                  <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
+                    <span className={`sev-badge sev-${step.severity.toLowerCase()}`}>{step.severity}</span>
+                    <span style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:0.4}}>Stage {i+1}</span>
+                  </div>
+                  <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.6}}>{step.explanation}</div>
+                </div>
+              )}
+              {i < d.flow.length - 1 && <div className="risk-flow-arrow"><i className="fa-solid fa-chevron-down"></i></div>}
+            </React.Fragment>
+          ))}
+        </div>
+        {/* Human-in-the-loop validation */}
+        <div className="na-hitl">
+          <div className="na-hitl-title"><i className="fa-solid fa-user-check"></i>Human-in-the-loop — validate risk-stripe mapping</div>
+          <div style={{fontSize:12.5,color:'#78350F',lineHeight:1.6}}>
+            Agent 2 has mapped {d.flow.length} transmission stages and the primary/secondary risk stripes below. A risk owner should approve or reject the mapping before impact quantification.
+          </div>
+          {hitl === null && (
+            <div className="na-hitl-actions">
+              <button className="na-thumb up" onClick={() => setHitl('approved')}>
+                <i className="fa-solid fa-thumbs-up"></i> Approve
+              </button>
+              <button className="na-thumb down" onClick={() => setHitl('rejected')}>
+                <i className="fa-solid fa-thumbs-down"></i> Reject
+              </button>
+            </div>
+          )}
+          {hitl === 'approved' && (
+            <div className="na-hitl-note"><i className="fa-solid fa-circle-check"></i>Mapping approved by risk owner — impact quantification unlocked.</div>
+          )}
+          {hitl === 'rejected' && (
+            <div style={{marginTop:12}}>
+              <textarea className="na-hitl-comment" placeholder="Add your comments…" value={hitlComment} onChange={e => setHitlComment(e.target.value)} />
+              <div style={{display:'flex',gap:10,marginTop:8}}>
+                <button className="na-thumb down" style={{padding:'7px 16px',fontSize:12}} disabled={!hitlComment.trim()} onClick={() => setHitl('sent')}>
+                  <i className="fa-solid fa-paper-plane"></i> Submit
+                </button>
+                <button className="btn-outline" style={{fontSize:12,padding:'7px 16px'}} onClick={() => { setHitl(null); setHitlComment(''); }}>Cancel</button>
+              </div>
+            </div>
+          )}
+          {hitl === 'sent' && (
+            <div className="na-hitl-note reject"><i className="fa-solid fa-circle-xmark"></i>Mapping rejected — comments recorded for review.</div>
+          )}
+        </div>
+      </div>
+        </>
+      )}
+
+      {activeAgent === 2 && (
+        <>
+      {/* C — First Order Impact (Agent 3) */}
+      <SectionHeader letter="C" title="First Order Impact" />
+      <div className="card" style={{marginBottom:16}}>
+        <div className="impact-table-wrap">
+          <table className="impact-table">
+            <thead><tr><th>Risk Stripe</th><th>Risk Measurement</th><th>Impact</th><th>Severity</th></tr></thead>
+            <tbody>
+              {d.firstOrder.map((r, i) => (
+                <tr key={i}>
+                  <td><strong>{r.stripe}</strong></td>
+                  <td style={{whiteSpace:'nowrap'}}>{r.measure}</td>
+                  <td>{r.impact}</td>
+                  <td><span className={`sev-badge sev-${r.sev.toLowerCase()}`}>{r.sev}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* D — Second Order Impact (Agent 3) */}
+      <SectionHeader letter="D" title="Second Order Impact" />
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{fontSize:13,color:'var(--text-2)',marginBottom:12,lineHeight:1.6}}>
+          Second-order impacts emerge as the initial shock propagates across adjacent risk stripes — prioritised by certainty and impact size.
+        </div>
+        <div className="impact-table-wrap">
+          <table className="impact-table">
+            <thead><tr><th>Risk Stripe</th><th>Risk Measurement</th><th>Impact</th><th>Severity</th></tr></thead>
+            <tbody>
+              {d.secondOrder.map((r, i) => (
+                <tr key={i}>
+                  <td><strong>{r.stripe}</strong></td>
+                  <td style={{whiteSpace:'nowrap'}}>{r.measure}</td>
+                  <td>{r.impact}</td>
+                  <td><span className={`sev-badge sev-${r.sev.toLowerCase()}`}>{r.sev}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* E — Scope and Exposure (Agent 3) */}
+      <SectionHeader letter="E" title="Scope and Exposure" />
+      <div className="scope-grid">
+        {[
+          { title:'Group Entities Impacted', items:d.scope.entities },
+          { title:'Business Lines Impacted',  items:d.scope.businessLines },
+          { title:'Instruments Impacted',     items:d.scope.instruments },
+          { title:'Desks Impacted',           items:d.scope.desks },
+        ].map(sc => (
+          <div key={sc.title} className="scope-card">
+            <div className="scope-card-title">{sc.title}</div>
+            {sc.items.map((item, i) => (
+              <div key={i} className="scope-card-item"><i className="fa-solid fa-circle-dot"></i>{item}</div>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div style={{marginBottom:16}}>
+        <div style={{marginBottom:12}}>
+          <div style={{fontSize:13.5,fontWeight:700,color:'var(--text)'}}>Quantified Stress Intelligence</div>
+          <div style={{fontSize:12,color:'var(--text-3)',marginTop:2}}>Click any card for source evidence and impacted desk.</div>
+        </div>
+        <div className="quant-grid">
+          {d.quant.map((q, i) => {
+            const sevCls = q.severity === 'Critical' ? 'sev-critical' : q.severity === 'High' ? 'sev-high' : 'sev-medium';
+            const isOpen = openQuant === i;
+            return (
+              <div key={i} className={`quant-card ${isOpen ? 'qc-open' : ''}`} onClick={() => setOpenQuant(isOpen ? null : i)}>
+                <div className="quant-card-top">
+                  <div className="quant-label">{q.title}</div>
+                  <i className={`fa-solid ${isOpen ? 'fa-circle-xmark' : 'fa-circle-info'} quant-info-icon`}></i>
+                </div>
+                <div className="quant-narrative">"{q.narrative}"</div>
+                <div className="quant-card-meta">
+                  <span className={`sev-badge ${sevCls}`}>{q.severity}</span>
+                  <span className="quant-stripe">{q.riskStripe}</span>
+                </div>
+                {isOpen && (
+                  <div className="quant-popover" onClick={e => e.stopPropagation()}>
+                    <div className="quant-popover-row">
+                      <div className="quant-popover-label">Impacted Desk</div>
+                      <div className="quant-popover-val">{q.impactedDesk}</div>
+                    </div>
+                    <div className="quant-popover-row">
+                      <div className="quant-popover-label">Source Section</div>
+                      <div className="quant-popover-val" style={{color:'var(--primary)',fontWeight:600}}>{q.sourceSection}</div>
+                    </div>
+                    <div className="quant-popover-row">
+                      <div className="quant-popover-label"><i className="fa-solid fa-quote-left" style={{marginRight:4}}></i>Source Evidence</div>
+                      <div className="quant-popover-evidence">{q.sourceEvidence}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* F — Risk Transmission Map (Agent 2/3 combined) */}
+      <SectionHeader letter="F" title={`Risk Transmission Map — ${ev.title}`} />
+      <div className="card" style={{marginBottom:16}}>
+        <div className="na-map">
+          {d.map.map((col, ci) => (
+            <React.Fragment key={col.title}>
+              <div className="na-map-col">
+                <div className="na-map-col-title">{col.title}</div>
+                <div className="na-map-nodes">
+                  {col.nodes.map(n => (
+                    <div key={n.name} className="na-map-node" style={{'--na-sev':niSevColor(n.sev)}}>
+                      {n.name}<small style={{color:niSevColor(n.sev)}}>{n.sev}</small>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {ci < d.map.length - 1 && <div className="na-map-arrow"><i className="fa-solid fa-arrow-right-long"></i></div>}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+
+      {/* G — Financial Impact Dashboard (Agent 3, optional) */}
+      <SectionHeader letter="G" title="Financial Impact Dashboard" />
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{fontSize:12,color:'var(--text-3)',marginBottom:14,display:'flex',alignItems:'center',gap:6}}>
+          <i className="fa-solid fa-circle-check" style={{color:'#15803D'}}></i>
+          Data sufficiency: {d.financial.sufficiency}
+        </div>
+        <div className="na-fin-kpis">
+          {d.financial.kpis.map(k => (
+            <div key={k.lbl} className="na-fin-kpi" style={{borderTopColor:k.tone}}>
+              <div className="na-fin-kpi-ic" style={{color:k.tone}}><i className={`fa-solid ${k.icon}`}></i></div>
+              <div className="na-fin-kpi-val" style={{color:k.tone}}>{k.val}</div>
+              <div className="na-fin-kpi-lbl">{k.lbl}</div>
+              <div className="na-fin-kpi-delta" style={{color:k.tone}}>{k.delta}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:0.5,color:'var(--text-3)',margin:'6px 0 10px'}}>Estimated financial impact</div>
+        {d.financial.bars.map(b => (
+          <div key={b.label} className="na-bar-row">
+            <span className="na-bar-lbl">{b.label}</span>
+            <span className="na-bar-track"><span className="na-bar-fill" style={{width:b.pct+'%',background:b.tone}}>{b.disp}</span></span>
+          </div>
+        ))}
+      </div>
+
+      {/* H — Escalation Matrix (Agent 3) */}
+      <SectionHeader letter="H" title="Impact" />
+      <div className="card" style={{marginBottom:16}}>
+        <div className="na-esc-wrap">
+          <table className="na-esc">
+            <thead>
+              <tr><th className="na-esc-rh">Risk Stripe</th>{d.escalation.days.map(dd => <th key={dd}>{dd}</th>)}</tr>
+            </thead>
+            <tbody>
+              {d.escalation.rows.map(row => (
+                <tr key={row.stripe}>
+                  <td className="na-esc-rh">{row.stripe}</td>
+                  {row.cells.map((lv, i) => <td key={i} style={{background:naEscColor(lv)}}>{lv}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div style={{display:'flex',gap:12,marginTop:12,flexWrap:'wrap'}}>
+          {['Normal','Elevated','High','Critical'].map(l => (
+            <span key={l} style={{display:'flex',alignItems:'center',gap:5,fontSize:11}}>
+              <span style={{width:12,height:12,borderRadius:2,display:'inline-block',background:naEscColor(l)}}></span>{l}
+            </span>
+          ))}
+        </div>
+      </div>
+        </>
+      )}
+
+      {activeAgent === 3 && (
+        <>
+      {/* J — Regulatory Notifications (Agent 3/4) */}
+      <div className="scenario-section-header">Regulatory Notification Requirements</div>
+      <div className="reg-grid" style={{marginBottom:12}}>
+        {d.regulatory.map((r, i) => (
+          <div key={i} className="reg-card">
+            <div className="reg-card-title"><i className={`fa-solid ${r.icon}`} style={{color:'var(--primary)'}}></i>{r.title}</div>
+            <div className="reg-card-body">{r.body}</div>
+          </div>
+        ))}
+      </div>
+      <div className="reg-note"><i className="fa-solid fa-circle-info" style={{marginRight:6}}></i>Confirm all reporting obligations with Legal &amp; Compliance before submitting notifications.</div>
+
+      {/* K — Management Action Playbook (Agent 4) */}
+      <div className="scenario-section-header">Management Action Playbook</div>
+      <div className="card" style={{marginBottom:16}}>
+        <div className="action-tabs">
+          {[{id:'immediate',label:'Immediate'},{id:'shortterm',label:'Short-term'},{id:'ongoing',label:'Ongoing'}].map(t => (
+            <button key={t.id} className={`action-tab ${actionTab===t.id?'active':''}`} onClick={() => { setActionTab(t.id); setOpenAct(null); }}>
+              {t.label}
+              <span style={{marginLeft:6,background:'rgba(0,0,0,0.07)',borderRadius:10,padding:'1px 7px',fontSize:10,fontWeight:700}}>{(d.actions[t.id]||[]).length}</span>
+            </button>
+          ))}
+        </div>
+        <div>
+          {actList.map((a, i) => (
+            <div key={i} className="na-act-row">
+              <div className="na-act-head" onClick={() => setOpenAct(openAct===i?null:i)}>
+                <span className="na-act-num">{i+1}</span>
+                <span className="na-act-title">{a.title}</span>
+                <span className={`sev-badge sev-${a.priority.toLowerCase()}`}>{a.priority}</span>
+                <i className={`fa-solid fa-chevron-${openAct===i?'up':'down'}`} style={{fontSize:11,color:'var(--text-3)'}}></i>
+              </div>
+              {openAct===i && (
+                <div className="na-act-body">
+                  {a.detail}
+                  <div className="na-act-meta">
+                    <span><strong>Owner:</strong> {a.owner}</span>
+                    <span><strong>Deadline:</strong> {a.deadline}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Final synthesised report */}
+      <div style={{background:'rgba(255,173,40,0.07)',border:'1px solid rgba(255,173,40,0.25)',borderLeft:'4px solid var(--primary)',borderRadius:'var(--radius)',padding:'16px 20px',marginBottom:16}}>
+        <div style={{fontSize:12,fontWeight:800,textTransform:'uppercase',letterSpacing:0.5,color:'var(--primary)',marginBottom:8}}>
+          <i className="fa-solid fa-file-lines" style={{marginRight:6}}></i>Summary
+        </div>
+        <div style={{fontSize:13.5,color:'var(--text-2)',lineHeight:1.7}}>{d.reportSummary}</div>
+      </div>
+
+      <div className="ni-disclaimer">
+        <i className="fa-solid fa-circle-info" style={{marginRight:6,color:'var(--primary)'}}></i>
+        Assessment synthesised by the News Assessment engine from the retrieved article and the approved Risk Transmission Register. Confirm figures with the relevant risk owners before escalation.
+      </div>
+        </>
+      )}
+
+      {/* Continue to the next agent — the last agent has no button (use the floating assistant) */}
+      {!isLast && (
+        <div className="na-continue-wrap">
+          {agentStatus[activeAgent + 1] === 'locked'
+            ? <button className="btn-primary" style={{fontSize:14,padding:'10px 22px'}} onClick={() => continueNext(activeAgent)}>
+                Continue to Agent {activeAgent + 2} — {NA_AGENTS[activeAgent + 1].short} <i className="fa-solid fa-arrow-right-long" style={{marginLeft:6}}></i>
+              </button>
+            : <button className="btn-outline" style={{fontSize:14,padding:'10px 22px'}} onClick={() => setActiveAgent(activeAgent + 1)}>
+                Next: Agent {activeAgent + 2} — {NA_AGENTS[activeAgent + 1].short} <i className="fa-solid fa-arrow-right-long" style={{marginLeft:6}}></i>
+              </button>}
+        </div>
+      )}
+        </>
+      )}
+
+      {/* Floating Intelligence Chatbot — available once Agent 4 is complete */}
+      {agentStatus[3] === 'done' && (
+      <>
+      {chatOpen && (
+        <div className="na-chatwin">
+          <div className="na-chat-head">
+            <i className="fa-solid fa-robot" style={{color:'var(--primary)'}}></i>
+            Assessment Assistant
+            <button className="na-chatwin-close" onClick={() => setChatOpen(false)}><i className="fa-solid fa-xmark"></i></button>
+          </div>
+          <div className="na-chat-body">
+            {chat.length === 0 && (
+              <div className="na-chat-msg bot">
+                <span className="na-chat-av bot"><i className="fa-solid fa-robot"></i></span>
+                <span className="na-chat-bubble">I have synthesised all agent outputs for <strong>{ev.title}</strong>. Ask a what-if or follow-up question, or pick a suggestion below.</span>
+              </div>
+            )}
+            {chat.map((m, i) => (
+              <div key={i} className={`na-chat-msg ${m.role}`}>
+                <span className={`na-chat-av ${m.role}`}><i className={`fa-solid ${m.role==='bot'?'fa-robot':'fa-user'}`}></i></span>
+                <span className="na-chat-bubble">{m.text}</span>
+              </div>
+            ))}
+          </div>
+          <div className="na-chat-suggest">
+            {d.chatbot.map((c2, i) => (
+              <span key={i} className="na-chat-sg" onClick={() => askChat(c2.q)}>{c2.q}</span>
+            ))}
+          </div>
+          <div className="na-chat-input">
+            <input placeholder="Ask a what-if question…" value={chatInput}
+              onChange={e => setChatInput(e.target.value)}
+              onKeyDown={e => { if (e.key==='Enter' && chatInput.trim()) askChat(chatInput.trim()); }} />
+            <button className="btn-primary" style={{fontSize:13,padding:'0 16px'}} disabled={!chatInput.trim()} onClick={() => chatInput.trim() && askChat(chatInput.trim())}>
+              <i className="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      )}
+      <button className="na-fab" onClick={() => setChatOpen(o => !o)} title="Ask the Assessment Assistant">
+        {!chatOpen && <span className="na-fab-pulse"></span>}
+        <i className={`fa-solid ${chatOpen ? 'fa-xmark' : 'fa-robot'}`}></i>
+        {!chatOpen && chat.length === 0 && <span className="na-fab-badge">Ask</span>}
+      </button>
+      </>
+      )}
+    </div>
+  );
+}
+
 function ScenarioLibrary({ onSelect }) {
   return (
     <div className="page scenario-light">
@@ -3587,7 +5215,7 @@ function ScenarioLibrary({ onSelect }) {
             <div className="scenario-lib-desc">{s.desc}</div>
             <div className="scenario-lib-tags">{s.tags.map(t => <span key={t} className="scenario-lib-tag">{t}</span>)}</div>
             <div className="scenario-lib-footer">
-              <span className={`sev-badge ${s.severity==='Critical'?'sev-critical':'sev-high'}`}>{s.severity}</span>
+              <span className={`sev-badge ${s.severity==='Critical'?'sev-critical':s.severity==='Live'?'sev-medium':'sev-high'}`}>{s.severity}</span>
               {s.available
                 ? <span style={{fontSize:12,fontWeight:700,color:'var(--primary)',display:'flex',alignItems:'center',gap:4}}>Open Scenario <i className="fa-solid fa-arrow-right"></i></span>
                 : <span style={{fontSize:12,color:'var(--text-3)',fontStyle:'italic'}}>Detailed dashboard coming soon</span>}
@@ -4851,7 +6479,9 @@ function ScenarioPage() {
 
   const handleSelect = async (id) => {
     setTransitioning(true);
-    await minDelay(10000, 15000);
+    // News Intelligence and Impact Assessment opens quickly — its own run animation is the main event.
+    if (id === 101) { await minDelay(1200, 2000); }
+    else { await minDelay(10000, 15000); }
     setSelected(id);
     setTransitioning(false);
   };
@@ -4900,6 +6530,10 @@ function ScenarioPage() {
 
   if (selected === 5) {
     return <ArchegosDashboard onBack={() => setSelected(null)} />;
+  }
+
+  if (selected === 101) {
+    return <NewsAssessment onBack={() => setSelected(null)} />;
   }
 
   if (selected !== 4) {

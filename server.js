@@ -1928,6 +1928,106 @@ app.get('/api/scenario/source-data', (req, res) => {
   res.json({ available: true, ...result });
 });
 
+// ─── Real Scenario Test — Register Matching ──────────────────────────────────
+
+const REGISTER_MATCH_FILE = path.join(SCENARIO_DIR, 'RiskRegisterwithExternalEvent.xlsx');
+
+// ─── Embedding match engine — calls embed_match.py via subprocess ─────────────
+// No TF-IDF, no LLM. All scoring is deterministic inside the Python script.
+
+const { spawn } = require('child_process');
+const EMBED_SCRIPT  = path.join(__dirname, 'embed_match.py');
+const EMBED_CACHE   = path.join(SCENARIO_DIR, 'register_embeddings_cache.json');
+
+// Python executable — use user install which has sentence-transformers + certifi
+const PYTHON_EXE = process.env.PYTHON_EXE || 'python';
+
+// SSL + offline env vars for the Python embedding subprocess.
+// HF_HUB_OFFLINE / TRANSFORMERS_OFFLINE: use cached model only, no network check.
+// This is safe because the model is already downloaded to the HF cache.
+const CERT_BUNDLE = process.env.REQUESTS_CA_BUNDLE ||
+  'C:\\Users\\703313047\\AppData\\Roaming\\Python\\Python312\\site-packages\\certifi\\cacert.pem';
+const EMBED_ENV = Object.assign({}, process.env, {
+  REQUESTS_CA_BUNDLE:    CERT_BUNDLE,
+  SSL_CERT_FILE:         CERT_BUNDLE,
+  HF_HUB_OFFLINE:        '1',
+  TRANSFORMERS_OFFLINE:  '1',
+  HF_DATASETS_OFFLINE:   '1',
+});
+
+function runEmbedScript(args) {
+  return new Promise((resolve, reject) => {
+    const proc = spawn(PYTHON_EXE, [EMBED_SCRIPT, ...args], {
+      env: EMBED_ENV,
+      cwd: __dirname,
+    });
+    let stdout = '';
+    let stderr = '';
+    proc.stdout.on('data', d => { stdout += d.toString(); });
+    proc.stderr.on('data', d => { stderr += d.toString(); });
+    proc.on('close', code => {
+      if (code !== 0) return reject(new Error(stderr || `embed_match.py exited ${code}`));
+      try {
+        resolve(JSON.parse(stdout.trim()));
+      } catch (e) {
+        reject(new Error(`JSON parse error: ${e.message}\nstdout: ${stdout.slice(0, 500)}`));
+      }
+    });
+  });
+}
+
+// GET /api/scenario/register — return events list
+app.get('/api/scenario/register', (req, res) => {
+  if (!fs.existsSync(REGISTER_MATCH_FILE)) return res.json({ available: false });
+  try {
+    const wb  = XLSX.readFile(REGISTER_MATCH_FILE);
+    const enc = XLSX.utils.sheet_to_json(wb.Sheets['External News Capture'] || wb.Sheets[wb.SheetNames[0]], { defval: '' });
+    const reg = XLSX.utils.sheet_to_json(wb.Sheets['Register'] || wb.Sheets[wb.SheetNames[1]], { defval: '' });
+    res.json({
+      available: true,
+      events: enc.filter(r => r['Event ID'] || r['Headline']),
+      registerCount: reg.length,
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/scenario/register-match — embedding-based deterministic matching
+app.post('/api/scenario/register-match', async (req, res) => {
+  const { eventId } = req.body || {};
+  if (!fs.existsSync(REGISTER_MATCH_FILE)) return res.json({ available: false });
+  if (!fs.existsSync(EMBED_SCRIPT))
+    return res.status(500).json({ error: 'embed_match.py not found alongside server.js' });
+
+  try {
+    const args = [
+      '--excel', REGISTER_MATCH_FILE,
+      '--cache', EMBED_CACHE,
+    ];
+    if (eventId) args.push('--event-id', eventId);
+
+    const result = await runEmbedScript(args);
+
+    if (result.error) return res.status(404).json({ error: result.error });
+
+    res.json({
+      available:          true,
+      event_id:           result.event_id,
+      headline:           result.headline,
+      initial_cause_text: result.initial_cause_text,
+      semantic_separation: result.semantic_separation,
+      embedding_model:    result.embedding_model,
+      weights:            result.weights,
+      candidates:         result.candidates,
+      run_timestamp:      new Date().toISOString(),
+    });
+  } catch (e) {
+    console.error('Register match error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Serve React app for all non-API routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
