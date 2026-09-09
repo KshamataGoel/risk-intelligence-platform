@@ -2000,6 +2000,15 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .na-outbtn-wrap { margin-top:18px; padding-top:16px; border-top:1px dashed var(--border); display:flex; justify-content:center; }
 .na-continue-wrap { display:flex; justify-content:center; gap:12px; margin:6px 0 34px; }
 
+/* Print / PDF export — hide chrome, show the full report */
+@media print {
+  .topnav, .sidebar, .na-proc-nav, .na-proc, .na-continue-wrap, .na-fab, .na-chatwin, .na-no-print { display:none !important; }
+  body, .app, .main, .page { background:#fff !important; height:auto !important; overflow:visible !important; }
+  .scenario-section-header { break-after:avoid; }
+  .card, .ni-panel, .na-panel, .scenario-meta-card, .scope-card, .reg-card, .quant-card { box-shadow:none !important; break-inside:avoid; }
+  .impact-table-wrap, .na-esc-wrap, .na-heat-wrap { overflow:visible !important; }
+}
+
 /* Agent process stepper (connected nodes, centered) */
 .na-proc-nav { display:flex; align-items:flex-start; justify-content:center; margin:22px auto 26px; max-width:960px; }
 .na-proc-node { display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; width:158px; flex:0 0 auto; text-align:center; }
@@ -4031,16 +4040,16 @@ const NA_DATA = {
       { label:'RWA and capital ratios pressured', type:'escalation', severity:'Medium', explanation:'Risk-weighted assets rise on downgraded exposures, compressing CET1 headroom.' },
     ],
     firstOrder:[
-      { stripe:'Credit Risk (CRE)', measure:'PD / LGD', impact:'PD +180–260bps on maturing West Coast office loans; LGD +8–12pts', sev:'High' },
-      { stripe:'Credit Risk (ECL)', measure:'IFRS 9 provisions', impact:'Stage 2 migration on ~18% of office book; ECL +$0.9–1.4bn', sev:'High' },
-      { stripe:'Market Risk (traded)', measure:'CMBS spreads', impact:'Office CMBS spreads +90–140bps; AFS mark-downs', sev:'Medium' },
-      { stripe:'Concentration', measure:'Single-sector exposure', impact:'CRE >14% of loan book; office sub-segment flagged over appetite', sev:'High' },
+      { stripe:'Credit Risk (CRE)', measure:'PD / LGD', impact:'PD +180–260bps on maturing West Coast office loans; LGD +8–12pts', match:'TRR-0118 · 91%', sev:'High' },
+      { stripe:'Credit Risk (ECL)', measure:'IFRS 9 provisions', impact:'Stage 2 migration on ~18% of office book; ECL +$0.9–1.4bn', match:'TRR-0119 · 87%', sev:'High' },
+      { stripe:'Market Risk (traded)', measure:'CMBS spreads', impact:'Office CMBS spreads +90–140bps; AFS mark-downs', match:'TRR-0206 · 74%', sev:'Medium' },
+      { stripe:'Concentration', measure:'Single-sector exposure', impact:'CRE >14% of loan book; office sub-segment flagged over appetite', match:'TRR-0121 · 83%', sev:'High' },
     ],
     secondOrder:[
-      { stripe:'Capital / RWA', measure:'CET1 ratio', impact:'RWA uplift compresses CET1 by ~35–55bps', sev:'Medium' },
-      { stripe:'Earnings', measure:'Pre-provision profit', impact:'Provision charges reduce quarterly PPP; guidance revised', sev:'Medium' },
-      { stripe:'Liquidity & Funding', measure:'Wholesale funding cost', impact:'Modest funding spread widening on headline risk', sev:'Low' },
-      { stripe:'Reputational', measure:'Analyst / investor sentiment', impact:'Equity re-rating risk on CRE disclosure', sev:'Medium' },
+      { stripe:'Capital / RWA', measure:'CET1 ratio', impact:'RWA uplift compresses CET1 by ~35–55bps', match:'TRR-0304 · 72%', sev:'Medium' },
+      { stripe:'Earnings', measure:'Pre-provision profit', impact:'Provision charges reduce quarterly PPP; guidance revised', match:'TRR-0118 · 69%', sev:'Medium' },
+      { stripe:'Liquidity & Funding', measure:'Wholesale funding cost', impact:'Modest funding spread widening on headline risk', match:'TRR-0003 · 61%', sev:'Low' },
+      { stripe:'Reputational', measure:'Analyst / investor sentiment', impact:'Equity re-rating risk on CRE disclosure', match:'TRR-0402 · 66%', sev:'Medium' },
     ],
     scope:{
       entities:['US Bank Holding Co','West Coast commercial lending arm','CMBS conduit'],
@@ -4144,16 +4153,16 @@ const NA_DATA = {
       { label:'Regulatory & reputational escalation', type:'escalation', severity:'High', explanation:'Operational-resilience reporting triggers; reputational damage from visible outage.' },
     ],
     firstOrder:[
-      { stripe:'Operational Risk', measure:'Payment availability', impact:'Card auth/settlement unavailable via the affected gateway for 48–96h', sev:'Critical' },
-      { stripe:'Third-party / Vendor', measure:'Single-vendor dependency', impact:'No hot failover for ~40% of processed card volume', sev:'Critical' },
-      { stripe:'Client / Conduct', measure:'Service disruption', impact:'Merchant and public-sector clients unable to accept cards', sev:'High' },
-      { stripe:'Liquidity & Funding', measure:'Settlement timing', impact:'Delayed settlement files; intraday liquidity buffer drawn', sev:'High' },
+      { stripe:'Operational Risk', measure:'Payment availability', impact:'Card auth/settlement unavailable via the affected gateway for 48–96h', match:'TRR-0231 · 88%', sev:'Critical' },
+      { stripe:'Third-party / Vendor', measure:'Single-vendor dependency', impact:'No hot failover for ~40% of processed card volume', match:'TRR-0233 · 90%', sev:'Critical' },
+      { stripe:'Client / Conduct', measure:'Service disruption', impact:'Merchant and public-sector clients unable to accept cards', match:'TRR-0234 · 79%', sev:'High' },
+      { stripe:'Liquidity & Funding', measure:'Settlement timing', impact:'Delayed settlement files; intraday liquidity buffer drawn', match:'TRR-0004 · 76%', sev:'High' },
     ],
     secondOrder:[
-      { stripe:'Reputational', measure:'Brand / trust', impact:'Visible nationwide outage; media and social escalation', sev:'High' },
-      { stripe:'Financial (Revenue)', measure:'Interchange / fees', impact:'Lost transaction revenue; SLA credits and penalties', sev:'Medium' },
-      { stripe:'Legal / Regulatory', measure:'Incident reporting', impact:'Operational-resilience and breach reporting obligations', sev:'High' },
-      { stripe:'Concentration', measure:'Fourth-party', impact:'Other clients on the same processor simultaneously impacted', sev:'Medium' },
+      { stripe:'Reputational', measure:'Brand / trust', impact:'Visible nationwide outage; media and social escalation', match:'TRR-0402 · 77%', sev:'High' },
+      { stripe:'Financial (Revenue)', measure:'Interchange / fees', impact:'Lost transaction revenue; SLA credits and penalties', match:'TRR-0231 · 68%', sev:'Medium' },
+      { stripe:'Legal / Regulatory', measure:'Incident reporting', impact:'Operational-resilience and breach reporting obligations', match:'TRR-0235 · 81%', sev:'High' },
+      { stripe:'Concentration', measure:'Fourth-party', impact:'Other clients on the same processor simultaneously impacted', match:'TRR-0244 · 72%', sev:'Medium' },
     ],
     scope:{
       entities:['Merchant Acquiring entity','Card Issuing entity','Payments subsidiary'],
@@ -4257,16 +4266,16 @@ const NA_DATA = {
       { label:'Resilience & concentration escalation', type:'escalation', severity:'High', explanation:'Fourth-party concentration risk escalates to Board and regulators.' },
     ],
     firstOrder:[
-      { stripe:'Operational Risk', measure:'Channel availability', impact:'Digital banking & payment portals down for ~5.5h', sev:'High' },
-      { stripe:'Concentration (4th-party)', measure:'Shared dependency', impact:'Multiple critical services depend on one provider — no diversity', sev:'High' },
-      { stripe:'Client / Conduct', measure:'Customer access', impact:'Retail and corporate customers cannot transact digitally', sev:'Medium' },
-      { stripe:'Market Access', measure:'Trading / data', impact:'Ratings and exchange access impaired for the outage window', sev:'Medium' },
+      { stripe:'Operational Risk', measure:'Channel availability', impact:'Digital banking & payment portals down for ~5.5h', match:'TRR-0244 · 85%', sev:'High' },
+      { stripe:'Concentration (4th-party)', measure:'Shared dependency', impact:'Multiple critical services depend on one provider — no diversity', match:'TRR-0245 · 88%', sev:'High' },
+      { stripe:'Client / Conduct', measure:'Customer access', impact:'Retail and corporate customers cannot transact digitally', match:'TRR-0234 · 73%', sev:'Medium' },
+      { stripe:'Market Access', measure:'Trading / data', impact:'Ratings and exchange access impaired for the outage window', match:'TRR-0207 · 70%', sev:'Medium' },
     ],
     secondOrder:[
-      { stripe:'Reputational', measure:'Trust / attrition', impact:'Visible outage; customer trust and potential attrition', sev:'High' },
-      { stripe:'Operational (backlog)', measure:'Post-outage queue', impact:'Transaction and reconciliation backlog after restoration', sev:'Medium' },
-      { stripe:'Regulatory', measure:'Resilience reporting', impact:'Operational-resilience and concentration disclosure', sev:'High' },
-      { stripe:'Financial', measure:'Downtime cost', impact:'Lost digital revenue and remediation', sev:'Low' },
+      { stripe:'Reputational', measure:'Trust / attrition', impact:'Visible outage; customer trust and potential attrition', match:'TRR-0402 · 78%', sev:'High' },
+      { stripe:'Operational (backlog)', measure:'Post-outage queue', impact:'Transaction and reconciliation backlog after restoration', match:'TRR-0244 · 67%', sev:'Medium' },
+      { stripe:'Regulatory', measure:'Resilience reporting', impact:'Operational-resilience and concentration disclosure', match:'TRR-0235 · 80%', sev:'High' },
+      { stripe:'Financial', measure:'Downtime cost', impact:'Lost digital revenue and remediation', match:'TRR-0246 · 60%', sev:'Low' },
     ],
     scope:{
       entities:['Retail Bank','Digital Banking unit','Payments platform'],
@@ -4370,16 +4379,16 @@ const NA_DATA = {
       { label:'Regulatory & conduct escalation', type:'escalation', severity:'High', explanation:'Breach risk and reporting obligations escalate; enforcement exposure if screening lags.' },
     ],
     firstOrder:[
-      { stripe:'Financial Crime / Compliance', measure:'Screening coverage', impact:'Group-wide re-screen of counterparties & cross-border exposure against expanded lists', sev:'High' },
-      { stripe:'Credit / Counterparty', measure:'Exposure to sanctioned names', impact:'Identify and exit exposure to newly designated entities', sev:'High' },
-      { stripe:'Operational', measure:'Remediation capacity', impact:'Surge in alerts, manual review and payment holds', sev:'High' },
-      { stripe:'Market Risk', measure:'Energy / FX', impact:'Energy and FX volatility on affected corridors', sev:'Medium' },
+      { stripe:'Financial Crime / Compliance', measure:'Screening coverage', impact:'Group-wide re-screen of counterparties & cross-border exposure against expanded lists', match:'TRR-0189 · 83%', sev:'High' },
+      { stripe:'Credit / Counterparty', measure:'Exposure to sanctioned names', impact:'Identify and exit exposure to newly designated entities', match:'TRR-0191 · 80%', sev:'High' },
+      { stripe:'Operational', measure:'Remediation capacity', impact:'Surge in alerts, manual review and payment holds', match:'TRR-0235 · 76%', sev:'High' },
+      { stripe:'Market Risk', measure:'Energy / FX', impact:'Energy and FX volatility on affected corridors', match:'TRR-0207 · 71%', sev:'Medium' },
     ],
     secondOrder:[
-      { stripe:'Legal / Regulatory', measure:'Breach & reporting', impact:'Sanctions breach risk; mandatory reporting and licensing', sev:'High' },
-      { stripe:'Reputational', measure:'Enforcement exposure', impact:'Reputational and enforcement risk if screening lags', sev:'High' },
-      { stripe:'Liquidity', measure:'Frozen assets', impact:'Frozen balances and blocked payments reduce usable liquidity', sev:'Medium' },
-      { stripe:'Client / Conduct', measure:'Exited relationships', impact:'De-risking and offboarding of affected clients', sev:'Medium' },
+      { stripe:'Legal / Regulatory', measure:'Breach & reporting', impact:'Sanctions breach risk; mandatory reporting and licensing', match:'TRR-0192 · 82%', sev:'High' },
+      { stripe:'Reputational', measure:'Enforcement exposure', impact:'Reputational and enforcement risk if screening lags', match:'TRR-0402 · 75%', sev:'High' },
+      { stripe:'Liquidity', measure:'Frozen assets', impact:'Frozen balances and blocked payments reduce usable liquidity', match:'TRR-0189 · 68%', sev:'Medium' },
+      { stripe:'Client / Conduct', measure:'Exited relationships', impact:'De-risking and offboarding of affected clients', match:'TRR-0193 · 65%', sev:'Medium' },
     ],
     scope:{
       entities:['Correspondent Banking entity','Trade Finance unit','Markets / FX'],
@@ -4474,6 +4483,12 @@ function NewsAssessment({ onBack }) {
   const [chat,       setChat]       = React.useState([]);
   const [chatInput,  setChatInput]  = React.useState('');
   const [chatOpen,   setChatOpen]   = React.useState(false); // floating chatbot open
+  const [printAll,   setPrintAll]   = React.useState(false); // render all agent sections for PDF export
+
+  const exportPdf = () => {
+    setPrintAll(true);
+    setTimeout(() => { window.print(); setPrintAll(false); }, 200);
+  };
 
   // Run one agent's 4 steps sequentially — no step starts before the previous finishes.
   const startAgent = (i) => {
@@ -4682,7 +4697,7 @@ function NewsAssessment({ onBack }) {
 
   return (
     <div className="page" style={{maxWidth:'none'}}>
-      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
+      <div className="na-no-print" style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
         <button className="btn-outline" style={{padding:'7px 14px',fontSize:13}} onClick={backToSelect}>
           <i className="fa-solid fa-arrow-left"></i> News Feed
         </button>
@@ -4775,14 +4790,17 @@ function NewsAssessment({ onBack }) {
       {/* Agent output (shown once generated) */}
       {st === 'done' && (
         <>
-      {activeAgent === 0 && (
+      {(printAll || activeAgent === 0) && (
         <>
       {/* A — Event Intake & Categorisation (Agent 1) */}
-      <SectionHeader letter="A" title="Event Intake & Categorisation" />
+      <div className="scenario-section-header">Event Intake & Categorisation</div>
       <div className="card" style={{marginBottom:16}}>
-        <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.65,marginBottom:14}}>
-          <i className="fa-solid fa-newspaper" style={{color:'var(--primary)',marginRight:6}}></i>
-          "{ev.synopsis}"
+        <div style={{marginBottom:14}}>
+          <div className="na-cat-k" style={{marginBottom:6}}>Summary/Synopsis</div>
+          <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.65}}>
+            <i className="fa-solid fa-newspaper" style={{color:'var(--primary)',marginRight:6}}></i>
+            "{ev.synopsis}"
+          </div>
         </div>
         <div className="na-cat-cards">
           <div className="na-cat-card">
@@ -4823,9 +4841,10 @@ function NewsAssessment({ onBack }) {
         </>
       )}
 
-      {activeAgent === 1 && (
+      {(printAll || activeAgent === 1) && (
         <>
       {/* B — Risk Transmission Flow (Agent 2) + human-in-the-loop */}
+      <div className="scenario-section-header">Risk Transmission Flow</div>
       <div className="card" style={{marginBottom:16}}>
         <div style={{fontSize:12,color:'var(--text-3)',marginBottom:14,display:'flex',alignItems:'center',gap:6}}>
           <i className="fa-solid fa-circle-info" style={{color:'var(--primary)'}}></i>
@@ -4853,7 +4872,7 @@ function NewsAssessment({ onBack }) {
         </div>
         {/* Human-in-the-loop validation */}
         <div className="na-hitl">
-          <div className="na-hitl-title"><i className="fa-solid fa-user-check"></i>Human-in-the-loop — validate risk-stripe mapping</div>
+          <div className="na-hitl-title"><i className="fa-solid fa-user-check"></i>Validate risk-stripe mapping</div>
           <div style={{fontSize:12.5,color:'#78350F',lineHeight:1.6}}>
             Agent 2 has mapped {d.flow.length} transmission stages and the primary/secondary risk stripes below. A risk owner should approve or reject the mapping before impact quantification.
           </div>
@@ -4889,20 +4908,21 @@ function NewsAssessment({ onBack }) {
         </>
       )}
 
-      {activeAgent === 2 && (
+      {(printAll || activeAgent === 2) && (
         <>
       {/* C — First Order Impact (Agent 3) */}
-      <SectionHeader letter="C" title="First Order Impact" />
+      <div className="scenario-section-header">First Order Impact</div>
       <div className="card" style={{marginBottom:16}}>
         <div className="impact-table-wrap">
           <table className="impact-table">
-            <thead><tr><th>Risk Stripe</th><th>Risk Measurement</th><th>Impact</th><th>Severity</th></tr></thead>
+            <thead><tr><th>Risk Stripe</th><th>Metric</th><th>Impact</th><th>Similarity Match</th><th>Severity</th></tr></thead>
             <tbody>
               {d.firstOrder.map((r, i) => (
                 <tr key={i}>
                   <td><strong>{r.stripe}</strong></td>
                   <td style={{whiteSpace:'nowrap'}}>{r.measure}</td>
                   <td>{r.impact}</td>
+                  <td style={{whiteSpace:'nowrap',color:'var(--primary-dark)',fontWeight:600}}>{r.match}</td>
                   <td><span className={`sev-badge sev-${r.sev.toLowerCase()}`}>{r.sev}</span></td>
                 </tr>
               ))}
@@ -4912,20 +4932,21 @@ function NewsAssessment({ onBack }) {
       </div>
 
       {/* D — Second Order Impact (Agent 3) */}
-      <SectionHeader letter="D" title="Second Order Impact" />
+      <div className="scenario-section-header">Second Order Impact</div>
       <div className="card" style={{marginBottom:16}}>
         <div style={{fontSize:13,color:'var(--text-2)',marginBottom:12,lineHeight:1.6}}>
           Second-order impacts emerge as the initial shock propagates across adjacent risk stripes — prioritised by certainty and impact size.
         </div>
         <div className="impact-table-wrap">
           <table className="impact-table">
-            <thead><tr><th>Risk Stripe</th><th>Risk Measurement</th><th>Impact</th><th>Severity</th></tr></thead>
+            <thead><tr><th>Risk Stripe</th><th>Metric</th><th>Impact</th><th>Similarity Match</th><th>Severity</th></tr></thead>
             <tbody>
               {d.secondOrder.map((r, i) => (
                 <tr key={i}>
                   <td><strong>{r.stripe}</strong></td>
                   <td style={{whiteSpace:'nowrap'}}>{r.measure}</td>
                   <td>{r.impact}</td>
+                  <td style={{whiteSpace:'nowrap',color:'var(--primary-dark)',fontWeight:600}}>{r.match}</td>
                   <td><span className={`sev-badge sev-${r.sev.toLowerCase()}`}>{r.sev}</span></td>
                 </tr>
               ))}
@@ -4935,7 +4956,7 @@ function NewsAssessment({ onBack }) {
       </div>
 
       {/* E — Scope and Exposure (Agent 3) */}
-      <SectionHeader letter="E" title="Scope and Exposure" />
+      <div className="scenario-section-header">Scope and Exposure</div>
       <div className="scope-grid">
         {[
           { title:'Group Entities Impacted', items:d.scope.entities },
@@ -4994,7 +5015,7 @@ function NewsAssessment({ onBack }) {
       </div>
 
       {/* F — Risk Transmission Map (Agent 2/3 combined) */}
-      <SectionHeader letter="F" title={`Risk Transmission Map — ${ev.title}`} />
+      <div className="scenario-section-header">Risk Transmission Map — {ev.title}</div>
       <div className="card" style={{marginBottom:16}}>
         <div className="na-map">
           {d.map.map((col, ci) => (
@@ -5016,7 +5037,7 @@ function NewsAssessment({ onBack }) {
       </div>
 
       {/* G — Financial Impact Dashboard (Agent 3, optional) */}
-      <SectionHeader letter="G" title="Financial Impact Dashboard" />
+      <div className="scenario-section-header">Financial Impact Dashboard</div>
       <div className="card" style={{marginBottom:16}}>
         <div style={{fontSize:12,color:'var(--text-3)',marginBottom:14,display:'flex',alignItems:'center',gap:6}}>
           <i className="fa-solid fa-circle-check" style={{color:'#15803D'}}></i>
@@ -5042,7 +5063,7 @@ function NewsAssessment({ onBack }) {
       </div>
 
       {/* H — Escalation Matrix (Agent 3) */}
-      <SectionHeader letter="H" title="Impact" />
+      <div className="scenario-section-header">Impact Matrix</div>
       <div className="card" style={{marginBottom:16}}>
         <div className="na-esc-wrap">
           <table className="na-esc">
@@ -5070,7 +5091,7 @@ function NewsAssessment({ onBack }) {
         </>
       )}
 
-      {activeAgent === 3 && (
+      {(printAll || activeAgent === 3) && (
         <>
       {/* J — Regulatory Notifications (Agent 3/4) */}
       <div className="scenario-section-header">Regulatory Notification Requirements</div>
@@ -5129,6 +5150,11 @@ function NewsAssessment({ onBack }) {
       <div className="ni-disclaimer">
         <i className="fa-solid fa-circle-info" style={{marginRight:6,color:'var(--primary)'}}></i>
         Assessment synthesised by the News Assessment engine from the retrieved article and the approved Risk Transmission Register. Confirm figures with the relevant risk owners before escalation.
+      </div>
+      <div className="na-no-print" style={{display:'flex',justifyContent:'center',margin:'14px 0 10px'}}>
+        <button className="btn-primary" style={{fontSize:14,padding:'11px 26px'}} onClick={exportPdf}>
+          <i className="fa-solid fa-file-pdf"></i> Export full report to PDF
+        </button>
       </div>
         </>
       )}
