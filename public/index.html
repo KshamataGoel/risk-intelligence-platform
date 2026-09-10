@@ -1636,12 +1636,41 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .risk-flow-step.trigger    { background:#7f1d1d; color:#fff; border-color:#7f1d1d; }
 .risk-flow-step.escalation { background:linear-gradient(135deg,#7f1d1d,#991b1b); color:#fff; border-color:#7f1d1d; }
 .risk-flow-arrow { color:#FFAD28; font-size:18px; margin:4px 0; line-height:1; }
+.risk-flow-step.na-flow-uniform { background:var(--surface); color:var(--text); border:1.5px solid var(--border); border-left:4px solid var(--primary); width:540px; max-width:100%; box-sizing:border-box; display:flex; align-items:center; justify-content:center; gap:8px; }
+.risk-flow-step.na-flow-uniform:hover { border-color:var(--primary); }
+.risk-flow-step.na-flow-uniform.active-step { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-light); }
 
 .impact-table-wrap { overflow-x:auto; border-radius:var(--radius-sm); border:1px solid var(--border); }
 .impact-table { width:100%; border-collapse:collapse; font-size:13px; }
 .impact-table th { background:#F8FAFC; padding:10px 14px; text-align:left; font-weight:700; color:var(--text-2); border-bottom:2px solid var(--border); font-size:11px; text-transform:uppercase; letter-spacing:0.4px; }
 .impact-table td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:top; line-height:1.5; }
 .impact-table tr:hover td { background:#FAFAFA; }
+.na-metric-chk { display:flex; align-items:flex-start; gap:7px; font-size:12.5px; color:var(--text-2); margin-bottom:5px; cursor:pointer; line-height:1.4; }
+.na-metric-chk:last-child { margin-bottom:0; }
+.na-metric-chk input { margin:2px 0 0; accent-color:var(--primary); flex-shrink:0; width:14px; height:14px; }
+
+/* Transmission map (tiered tree, animated) */
+@keyframes naNodeIn { from{opacity:0;transform:translateY(10px) scale(.95);} to{opacity:1;transform:none;} }
+@keyframes naFadeIn { from{opacity:0;} to{opacity:1;} }
+.na-tmap { display:flex; flex-direction:column; }
+.na-tmap-tier-lbl { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.7px; color:var(--text-3); text-align:center; margin-bottom:8px; }
+.na-tmap-row { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+.na-tmap-node { background:var(--surface); border:1.5px solid var(--border); border-left:4px solid var(--primary); border-radius:8px; padding:9px 13px; font-size:12px; font-weight:600; color:var(--text); box-shadow:var(--shadow); max-width:280px; text-align:center; opacity:0; animation:naNodeIn 0.45s ease forwards; }
+.na-tmap-node.root { background:linear-gradient(135deg,#7f1d1d,#991b1b); color:#fff; border-color:#7f1d1d; border-left-color:#fff; max-width:none; font-weight:700; }
+.na-tmap-conn { text-align:center; margin:5px 0; opacity:0; animation:naFadeIn 0.5s ease forwards; }
+.na-tmap-conn::before { content:''; display:block; width:0; height:20px; margin:0 auto; border-left:2px dotted var(--primary); }
+.na-tmap-conn i { color:var(--primary); font-size:12px; display:block; margin-top:-3px; }
+
+/* Transmission map v2 — dark tiered tree with SVG dotted connectors */
+.na-tmap2 { position:relative; padding:6px 2px 10px; }
+.na-tmap2-svg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; transition:opacity 0.6s ease; overflow:visible; }
+.na-tmap2-bar { position:relative; z-index:1; background:#241712; border:1.5px solid var(--primary); border-radius:10px; color:var(--primary); font-weight:600; text-align:center; padding:13px 18px; margin:30px 0; font-size:13px; opacity:0; animation:naNodeIn 0.45s ease forwards; box-shadow:0 2px 6px rgba(0,0,0,0.25); }
+.na-tmap2-bar strong { color:#fff; letter-spacing:0.5px; }
+.na-tmap2-tier { position:relative; z-index:1; display:flex; align-items:center; gap:14px; margin:38px 0; }
+.na-tmap2-lbl { flex:0 0 120px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-3); padding-left:10px; border-left:3px solid transparent; }
+.na-tmap2-lbl.accent { border-left-color:#991B1B; }
+.na-tmap2-row { flex:1; display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+.na-tmap2-node { position:relative; z-index:1; background:#241712; border:1px solid rgba(255,173,40,0.42); border-radius:8px; color:var(--primary); font-weight:700; font-size:12px; padding:9px 14px; box-shadow:0 1px 4px rgba(0,0,0,0.28); opacity:0; animation:naNodeIn 0.45s ease forwards; }
 
 .sev-badge { display:inline-block; padding:3px 9px; border-radius:12px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; white-space:nowrap; }
 .sev-critical { background:#FEF2F2; color:#991B1B; border:1px solid #FCA5A5; }
@@ -1940,6 +1969,10 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .na-esc td.na-esc-rh { color:var(--text); font-weight:700; text-align:left; background:#F1F5F9; text-transform:none; letter-spacing:0; font-size:12.5px; }
 
 /* Playbook rows */
+.na-pb-row { display:flex; align-items:flex-start; gap:12px; padding:12px 4px; border-bottom:1px solid var(--border); }
+.na-pb-row:last-child { border-bottom:none; }
+.na-pb-action { font-size:13.5px; font-weight:700; color:var(--text); line-height:1.4; }
+.na-pb-strap { font-size:12.5px; color:var(--text-2); margin-top:3px; line-height:1.5; }
 .na-act-row { border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:8px; overflow:hidden; background:var(--surface); }
 .na-act-head { display:flex; align-items:center; gap:12px; padding:12px 16px; cursor:pointer; }
 .na-act-head:hover { background:rgba(0,0,0,0.02); }
@@ -1999,6 +2032,14 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .na-proc-steps { max-width:340px; margin:0 auto; text-align:left; }
 .na-outbtn-wrap { margin-top:18px; padding-top:16px; border-top:1px dashed var(--border); display:flex; justify-content:center; }
 .na-continue-wrap { display:flex; justify-content:center; gap:12px; margin:6px 0 34px; }
+
+/* Assess split — narrow steps panel on the left, report on the right */
+.na-assess-split { display:flex; gap:22px; align-items:flex-start; }
+.na-assess-left { flex:0 0 250px; position:sticky; top:70px; }
+.na-assess-right { flex:1; min-width:0; }
+.na-proc.na-proc-side { max-width:none; margin:0; text-align:left; padding:18px 18px; }
+.na-proc.na-proc-side .na-proc-role { padding-left:0; }
+@media (max-width:1000px){ .na-assess-split { flex-direction:column; } .na-assess-left { position:static; flex-basis:auto; width:100%; } }
 
 /* Print / PDF export — hide chrome, show the full report */
 @media print {
@@ -4027,29 +4068,39 @@ const NA_DATA = {
       context:`Disclosure surfaces in an annual report; consistent with a multi-quarter CRE refinancing overhang and weak office price discovery. Historical analogue: post-2008 CRE workout cycles and 2023 regional-bank office stress.`,
       eventType:'Credit / Concentration Risk', confidence:91,
       registerMatch:{ id:'TRR-0118', title:'CRE downturn — office valuation & refinancing stress', similarity:91, basis:'Sector/domain + trigger text match' },
+      synopsis:`A large international bank flagged its commercial real estate exposure as a key risk, warning that ongoing refinancing struggles and unstable valuations could push loan-loss provisions higher than expected.`,
+      summaryBullets:[`CRE loan book flagged as a key risk amid refinancing struggles and price instability`,`Concern concentrated in West Coast office-sector exposure`,`A credit-originated event that cascades into market, capital and regulatory risk`],
+      trigger:`Disclosure of asset-quality deterioration in CRE book`,
+      primaryEventType:`Credit`,
+      secondaryEventType:`Market Risk (Real Estate)`,
+      affectedStripes:[`Credit Risk`,`Market Risk`,`Capital & Liquidity Risk`,`Regulatory Risk`,`Reputational Risk`],
+      velocity:`Slow-onset (structural), slow-resolving (quarters/years)`,
       extracted:[
         { k:'Direction', v:'Deterioration / Adverse' }, { k:'Geography', v:'United States (West Coast)' },
         { k:'Primary L1', v:'CR — Credit Risk' }, { k:'Time Horizon', v:'2–4 quarters' },
       ],
     },
     flow:[
-      { label:'CRE valuations fall; refinancing stalls', type:'trigger', severity:'High', explanation:'Office values under pressure on the West Coast; higher-for-longer rates make refinancing uneconomic at maturity.' },
-      { label:'Borrower PD rises on maturing loans', type:'', severity:'High', explanation:'Probability of default increases as borrowers cannot refinance or inject equity at maturity.' },
-      { label:'LGD rises as collateral values soften', type:'', severity:'High', explanation:'Loss-given-default worsens because the underlying office collateral is falling in value.' },
-      { label:'Provisions & ECL charges increase', type:'', severity:'Medium', explanation:'IFRS 9 expected credit loss models push provisions up, hitting earnings.' },
-      { label:'RWA and capital ratios pressured', type:'escalation', severity:'Medium', explanation:'Risk-weighted assets rise on downgraded exposures, compressing CET1 headroom.' },
+      { label:`CRE valuations fall; refinancing stalls`, detail:`Independent appraisals and market comps show declining CRE valuations, particularly in office. Borrowers approaching loan maturity find refinancing conditions have tightened — lower valuations mean less loan proceeds available at the same LTV, and lenders are pulling back from the sector.`, signal:`Key signal: appraisal reduction %, refinancing rejection/renegotiation rate` },
+      { label:`LTV covenants breached on maturing loans`, detail:`As collateral values fall, outstanding loan balances now represent a higher proportion of asset value. Loans that were within covenant at origination are breaching maximum LTV thresholds at renewal, triggering lender review and reduced refinancing appetite.`, signal:`Key signal: % of book breaching LTV covenant, weighted average current LTV` },
+      { label:`Borrower PD rises as refinancing risk builds`, detail:`Borrowers unable to refinance on favorable terms face higher default risk — either from being forced into unfavorable terms, needing to inject fresh equity, or being unable to refinance at all. Internal PD models migrate these loans to higher-risk grades.`, signal:`Key signal: PD migration rate, watch-list additions, loans maturing within 12 months` },
+      { label:`LGD rises as collateral values soften`, detail:`If a loan does default, the recovery value is now lower because the underlying property is worth less. Loss Given Default assumptions increase to reflect reduced collateral coverage, even before any actual default occurs.`, signal:`Key signal: LGD assumption change, collateral coverage ratio` },
+      { label:`Provisions & ECL charges increase`, detail:`Higher PD × higher LGD directly increases Expected Credit Loss under IFRS 9 / CECL. The bank must book higher provisions against the CRE book, hitting the P&L even for loans that haven't yet defaulted.`, signal:`Key signal: ECL coverage ratio, stage migration (Stage 1→2→3), provision charge ($)` },
+      { label:`RWA density rises; capital ratios pressured`, detail:`Downgraded exposures carry higher risk weights, increasing Risk-Weighted Assets. Combined with the P&L hit from provisions eroding retained earnings, this compresses CET1 and other capital ratios — the point at which this becomes a board-level capital management issue.`, signal:`Key signal: RWA density (CRE book), CET1 ratio impact` },
     ],
     firstOrder:[
-      { stripe:'Credit Risk (CRE)', measure:'PD / LGD', impact:'PD +180–260bps on maturing West Coast office loans; LGD +8–12pts', match:'TRR-0118 · 91%', sev:'High' },
-      { stripe:'Credit Risk (ECL)', measure:'IFRS 9 provisions', impact:'Stage 2 migration on ~18% of office book; ECL +$0.9–1.4bn', match:'TRR-0119 · 87%', sev:'High' },
-      { stripe:'Market Risk (traded)', measure:'CMBS spreads', impact:'Office CMBS spreads +90–140bps; AFS mark-downs', match:'TRR-0206 · 74%', sev:'Medium' },
-      { stripe:'Concentration', measure:'Single-sector exposure', impact:'CRE >14% of loan book; office sub-segment flagged over appetite', match:'TRR-0121 · 83%', sev:'High' },
+      { stripe:`Credit Risk — Provisioning & ECL`, metric:`ECL coverage ratio; Non-performing loan ratio`, impact:`Rising CRE arrears trigger higher loan-loss provisions and ECL stage migration`, sev:'Critical' },
+      { stripe:`Credit Risk — Concentration`, metric:`Sector concentration limit usage %; CRE notional exposure`, impact:`CRE concentration approaches internal limits, reviving sector concentration concerns`, sev:'High' },
+      { stripe:`Market Risk — Valuation`, metric:`Loan-to-value migration; Collateral haircut %`, impact:`Falling office valuations erode collateral coverage on outstanding CRE loans`, sev:'High' },
+      { stripe:`Capital Risk — Capital Adequacy`, metric:`CET1 ratio impact; RWA density (CRE book)`, impact:`Higher provisions and risk-weight migration pressure capital buffers`, sev:'Medium' },
+      { stripe:`Reputational Risk — Market Confidence`, metric:`Credit spread widening (bps); Analyst rating actions`, impact:`Disclosure triggers investor concern and scrutiny of asset quality`, sev:'Medium' },
     ],
     secondOrder:[
-      { stripe:'Capital / RWA', measure:'CET1 ratio', impact:'RWA uplift compresses CET1 by ~35–55bps', match:'TRR-0304 · 72%', sev:'Medium' },
-      { stripe:'Earnings', measure:'Pre-provision profit', impact:'Provision charges reduce quarterly PPP; guidance revised', match:'TRR-0118 · 69%', sev:'Medium' },
-      { stripe:'Liquidity & Funding', measure:'Wholesale funding cost', impact:'Modest funding spread widening on headline risk', match:'TRR-0003 · 61%', sev:'Low' },
-      { stripe:'Reputational', measure:'Analyst / investor sentiment', impact:'Equity re-rating risk on CRE disclosure', match:'TRR-0402 · 66%', sev:'Medium' },
+      { stripe:`Credit Risk — Rating Migration`, metric:`Internal downgrade count; Watch-list additions`, impact:`Downgrade of CRE-linked exposures triggers broader rating migration across the book`, sev:'High' },
+      { stripe:`Market Risk — Funding Cost`, metric:`Credit spread (bps); Wholesale funding cost`, impact:`Widening spreads raise funding costs as the market reprices credit risk`, sev:'Medium' },
+      { stripe:`Regulatory Risk — Supervisory Scrutiny`, metric:`Capital add-on likelihood; Supervisory review frequency`, impact:`Regulators increase scrutiny of CRE concentration and provisioning adequacy`, sev:'High' },
+      { stripe:`Strategic Risk — Business Model`, metric:`CRE new-origination volume; Portfolio run-off rate`, impact:`Bank curtails new CRE lending, reshaping medium-term earnings mix`, sev:'Medium' },
+      { stripe:`Reputational Risk — Investor Confidence`, metric:`Share price movement %; CDS spread`, impact:`Sustained market concern pressures equity valuation and cost of capital`, sev:'Medium' },
     ],
     scope:{
       entities:['US Bank Holding Co','West Coast commercial lending arm','CMBS conduit'],
@@ -4140,29 +4191,39 @@ const NA_DATA = {
       context:`A critical third-party payments vendor is offline. Analogous to prior payment-network outages and ransomware disruptions; operational-resilience and third-party dependency risks crystallise immediately.`,
       eventType:'Operational / Cyber / Third-party Risk', confidence:88,
       registerMatch:{ id:'TRR-0231', title:'Critical third-party payment outage (ransomware)', similarity:88, basis:'Cyber+operational trigger match' },
+      synopsis:`A ransomware attack on a US payment gateway provider forced core systems offline, triggering a nationwide card-processing outage. Merchants and public-sector customers — including several municipalities — were unable to process card payments, with some reverting to cash-only operations while systems were restored.`,
+      summaryBullets:[`Ransomware attack on a payment gateway provider caused a nationwide card-processing outage`,`Impact hit both private merchants and public-sector customers, forcing some municipalities to cash-only operations`,`A cyber-originated event that cascades into credit, liquidity and reputational risk`],
+      trigger:`Ransomware attack on external vendor infrastructure`,
+      primaryEventType:`Operational, Cyber`,
+      secondaryEventType:`Third-party, Supply-chain`,
+      affectedStripes:[`Operational Risk`,`Credit Risk`,`Third-Party Risk`,`Regulatory Risk`,`Reputational Risk`],
+      velocity:`Fast-onset (hours), slow-resolving (days)`,
       extracted:[
         { k:'Direction', v:'Service disruption / Outage' }, { k:'Geography', v:'United States (nationwide)' },
         { k:'Primary L1', v:'OPS — Operational Risk' }, { k:'Time Horizon', v:'Hours to days' },
       ],
     },
     flow:[
-      { label:'Ransomware forces processor offline', type:'trigger', severity:'Critical', explanation:'Core payment-processing systems taken offline; nationwide card processing disrupted.' },
-      { label:'Card authorisation & settlement fail', type:'', severity:'Critical', explanation:'Merchant transactions decline or queue; settlement files delayed.' },
-      { label:'Merchant & client service impact', type:'', severity:'High', explanation:'Merchants and public-sector clients revert to cash-only; complaints and SLA breaches spike.' },
-      { label:'Settlement & liquidity timing stress', type:'', severity:'High', explanation:'Delayed settlement creates intraday liquidity and reconciliation exposure.' },
-      { label:'Regulatory & reputational escalation', type:'escalation', severity:'High', explanation:'Operational-resilience reporting triggers; reputational damage from visible outage.' },
+      { label:`Ransomware attack disables processor core systems`, detail:`Malicious encryption of core infrastructure at a third-party payment gateway takes systems offline. The processor loses the ability to authorize, clear, or settle card transactions across its client base.`, signal:`Key signal: system availability %, time to detection` },
+      { label:`Card authorisation & settlement processing halted`, detail:`With core systems down, real-time authorization requests cannot be processed and existing transactions cannot clear. Failover and business continuity plans are activated, but full redundancy for a single-vendor outage is rare.`, signal:`Key signal: transaction decline rate, failover activation time` },
+      { label:`Transaction backlog builds; merchants unable to pay`, detail:`Merchants and public-sector clients relying on the processor cannot complete card payments. Some revert to cash-only operations. The volume of failed/pending transactions accumulates for every hour the outage continues.`, signal:`Key signal: transaction backlog volume, affected merchant count` },
+      { label:`Settlement delay raises counterparty exposure`, detail:`Transactions that were authorized but not yet settled create temporary counterparty credit exposure — the bank has extended value without receiving final settlement. This exposure grows with the length of the outage.`, signal:`Key signal: net current exposure, unsettled transaction value ($)` },
+      { label:`Extended outage breaches RTO; operational losses accrue`, detail:`If recovery takes longer than the contractually committed Recovery Time Objective, the bank breaches its own resilience commitments and may face SLA penalties from the processor relationship, plus direct operational losses from the disruption itself.`, signal:`Key signal: RTO breach (hours over target), SLA penalty exposure ($)` },
+      { label:`Regulatory notification triggers; reputational impact`, detail:`An operational incident of this scale and duration typically crosses the threshold requiring regulatory notification. Concurrently, sustained media coverage and client complaints build reputational exposure that outlasts the technical recovery.`, signal:`Key signal: regulatory notification timeliness, media coverage volume, NPS delta` },
     ],
     firstOrder:[
-      { stripe:'Operational Risk', measure:'Payment availability', impact:'Card auth/settlement unavailable via the affected gateway for 48–96h', match:'TRR-0231 · 88%', sev:'Critical' },
-      { stripe:'Third-party / Vendor', measure:'Single-vendor dependency', impact:'No hot failover for ~40% of processed card volume', match:'TRR-0233 · 90%', sev:'Critical' },
-      { stripe:'Client / Conduct', measure:'Service disruption', impact:'Merchant and public-sector clients unable to accept cards', match:'TRR-0234 · 79%', sev:'High' },
-      { stripe:'Liquidity & Funding', measure:'Settlement timing', impact:'Delayed settlement files; intraday liquidity buffer drawn', match:'TRR-0004 · 76%', sev:'High' },
+      { stripe:`Operational Risk — Resilience`, metric:`Recovery Time Objective; System availability %`, impact:`Core transaction processing unavailable; failover and continuity plans activated for a multi-hour outage`, sev:'Critical' },
+      { stripe:`Operational Risk — Cyber Risk`, metric:`Third-party dependency score; Mean time to contain`, impact:`Ransomware at a single external processor exposes reliance on one vendor for downstream clearing`, sev:'High' },
+      { stripe:`Credit Risk — Settlement Risk`, metric:`Settlement exposure ($); Unsettled transaction volume`, impact:`Delayed settlement creates temporary counterparty exposure on unsettled card transactions`, sev:'High' },
+      { stripe:`Treasury Risk — Liquidity`, metric:`Intraday liquidity buffer; Liquidity survival horizon`, impact:`Outage disrupts intraday cash positioning from delayed card-settlement inflows`, sev:'Medium' },
+      { stripe:`Reputational Risk — Client Impact`, metric:`Client complaint / churn volume; NPS delta`, impact:`Merchants and public-sector clients unable to process transactions; reputational exposure builds`, sev:'Medium' },
     ],
     secondOrder:[
-      { stripe:'Reputational', measure:'Brand / trust', impact:'Visible nationwide outage; media and social escalation', match:'TRR-0402 · 77%', sev:'High' },
-      { stripe:'Financial (Revenue)', measure:'Interchange / fees', impact:'Lost transaction revenue; SLA credits and penalties', match:'TRR-0231 · 68%', sev:'Medium' },
-      { stripe:'Legal / Regulatory', measure:'Incident reporting', impact:'Operational-resilience and breach reporting obligations', match:'TRR-0235 · 81%', sev:'High' },
-      { stripe:'Concentration', measure:'Fourth-party', impact:'Other clients on the same processor simultaneously impacted', match:'TRR-0244 · 72%', sev:'Medium' },
+      { stripe:`Credit Risk — CCR`, metric:`Net current exposure; Potential future exposure`, impact:`Backlog of unsettled transactions increases counterparty credit exposure across merchants`, sev:'High' },
+      { stripe:`Operational Risk — Resilience`, metric:`RTO breach count; SLA penalty exposure ($)`, impact:`Extended recovery breaches RTO commitments, triggering contractual SLA penalties`, sev:'High' },
+      { stripe:`Third-Party Risk — Concentration`, metric:`Vendor concentration limit usage %; Single-point-of-failure count`, impact:`Client base reliant on one processor prompts review of vendor concentration limits`, sev:'Medium' },
+      { stripe:`Legal / Regulatory Risk — Compliance`, metric:`Regulatory notification timeliness; Potential fine/penalty exposure`, impact:`Operational incident affecting payment services triggers regulatory notification obligations`, sev:'High' },
+      { stripe:`Reputational Risk — Brand`, metric:`Media coverage volume; NPS delta`, impact:`Sustained negative coverage of the processor and downstream banks weighs on brand trust`, sev:'Medium' },
     ],
     scope:{
       entities:['Merchant Acquiring entity','Card Issuing entity','Payments subsidiary'],
@@ -4253,29 +4314,36 @@ const NA_DATA = {
       context:`A single configuration error at a shared infrastructure provider takes down many independent services at once — a textbook fourth-party concentration event. Analogous to prior CDN/cloud outages that cascaded across the financial system.`,
       eventType:'Operational / Third-party / Concentration Risk', confidence:85,
       registerMatch:{ id:'TRR-0244', title:'Shared cloud/CDN outage — fourth-party concentration', similarity:85, basis:'Third-party concentration trigger match' },
+      synopsis:`A configuration error at a major internet infrastructure provider triggered a ~5.5-hour global outage, taking down banking and payment portals, a credit ratings agency, a crypto exchange, and thousands of other services that all depend on the same shared provider — a textbook fourth-party concentration event.`,
+      summaryBullets:[],
+      trigger:`Infrastructure Outage`,
+      primaryEventType:`Third-party / Concentration — Cloud`,
+      secondaryEventType:`Reputational, Regulatory`,
+      affectedStripes:[`Operational`,`Third Party`,`Concentration`,`Market access`],
+      velocity:`Fast-onset (hours), slow-resolving (days)`,
       extracted:[
         { k:'Direction', v:'Service disruption / Outage' }, { k:'Geography', v:'Global' },
         { k:'Primary L1', v:'OPS — Operational Risk' }, { k:'Time Horizon', v:'Hours' },
       ],
     },
     flow:[
-      { label:'Config error at shared provider', type:'trigger', severity:'High', explanation:'A configuration change at a major internet infrastructure provider triggers a global ~5.5-hour outage.' },
-      { label:'Digital banking channels go down', type:'', severity:'High', explanation:'Customer-facing banking and payment portals dependent on the provider become unavailable.' },
-      { label:'Simultaneous multi-service failure', type:'', severity:'High', explanation:'Ratings agency, crypto exchange and thousands of services fail at once — shared dependency crystallises.' },
-      { label:'Customer & transaction disruption', type:'', severity:'Medium', explanation:'Digital transactions fail; call-centre volumes surge; some payments delayed.' },
-      { label:'Resilience & concentration escalation', type:'escalation', severity:'High', explanation:'Fourth-party concentration risk escalates to Board and regulators.' },
+      { label:`Configuration error at shared provider`, detail:`A configuration change made by a major internet infrastructure provider inadvertently triggers a significant global outage lasting approximately 5.5 hours. The disruption stems directly from a single change deep in the provider's system, cascading to services worldwide.`, signal:`Key signal: outage duration (hours), services affected (#)` },
+      { label:`Digital banking channels go down`, detail:`As a direct consequence, the bank's primary digital interfaces — customer-facing banking and payment portals — become unavailable. Customers cannot access accounts or conduct transactions through online channels.`, signal:`Key signal: channel availability %, transaction failure rate` },
+      { label:`Simultaneous multi-service failure`, detail:`The same outage simultaneously takes down a major ratings agency, a crypto exchange, and thousands of other services — exposing a shared dependency on a single upstream provider. This is the moment the event is confirmed as systemic rather than idiosyncratic.`, signal:`Key signal: correlated outage count across unrelated institutions` },
+      { label:`Customer & transaction disruption`, detail:`Failed digital transactions, a surge in call-centre volumes, and delayed payments signal that core payment processing has been compromised. Customers are pushed onto slower, less efficient channels to manage their finances.`, signal:`Key signal: call-centre volume spike, payment delay count, transaction failure volume` },
+      { label:`Resilience & concentration risk escalates`, detail:`Escalation of fourth-party concentration risk to the Board and regulators confirms this is now a governance issue, not just a technical one — interconnected upstream dependencies have become a systemic vulnerability requiring top-level oversight.`, signal:`Key signal: fourth-party concentration score, vendor-mapping completeness` },
     ],
     firstOrder:[
-      { stripe:'Operational Risk', measure:'Channel availability', impact:'Digital banking & payment portals down for ~5.5h', match:'TRR-0244 · 85%', sev:'High' },
-      { stripe:'Concentration (4th-party)', measure:'Shared dependency', impact:'Multiple critical services depend on one provider — no diversity', match:'TRR-0245 · 88%', sev:'High' },
-      { stripe:'Client / Conduct', measure:'Customer access', impact:'Retail and corporate customers cannot transact digitally', match:'TRR-0234 · 73%', sev:'Medium' },
-      { stripe:'Market Access', measure:'Trading / data', impact:'Ratings and exchange access impaired for the outage window', match:'TRR-0207 · 70%', sev:'Medium' },
+      { stripe:`Operational Risk`, metric:`Downtime Duration (in minutes); Mean Time to Recovery (MTTR); Number of Failed Transactions; Spike in customer support incidents`, impact:`Direct and immediate halt in the ability to conduct business for 5.5 hours, making websites and applications unusable — an inability to serve customers and a sharp decline in employee productivity, causing direct financial and reputational damage.`, sev:'Critical' },
+      { stripe:`Third-Party Risk`, metric:`SLA Breach Cost; Direct Revenue Loss; Vendor Time to Resolution; Security Exposure window`, impact:`Failures completely outside direct control, making the bank vulnerable to the operational and security shortcomings of its vendors — even perfect internal systems can be brought down by a partner's single point of failure.`, sev:'High' },
+      { stripe:`Concentration Risk`, metric:`Single Point of Failure count; Cost of mitigation`, impact:`A problem at one vendor results in a catastrophic, enterprise-wide failure rather than a limited disruption, amplifying the impact of any third-party incident.`, sev:'High' },
+      { stripe:`Market Access`, metric:`Trading / data`, impact:`Ratings and exchange access impaired for the outage window`, sev:'Critical' },
     ],
     secondOrder:[
-      { stripe:'Reputational', measure:'Trust / attrition', impact:'Visible outage; customer trust and potential attrition', match:'TRR-0402 · 78%', sev:'High' },
-      { stripe:'Operational (backlog)', measure:'Post-outage queue', impact:'Transaction and reconciliation backlog after restoration', match:'TRR-0244 · 67%', sev:'Medium' },
-      { stripe:'Regulatory', measure:'Resilience reporting', impact:'Operational-resilience and concentration disclosure', match:'TRR-0235 · 80%', sev:'High' },
-      { stripe:'Financial', measure:'Downtime cost', impact:'Lost digital revenue and remediation', match:'TRR-0246 · 60%', sev:'Low' },
+      { stripe:`Reputational Risk`, metric:`Customer Churn Rate; Negative media mentions and social media sentiment`, impact:`Customer churn and negative media/social sentiment weigh on brand trust following the visible outage.`, sev:'Critical' },
+      { stripe:`Regulatory & Compliance Risk`, metric:`Cost of Fines and Penalties; Mandated Remediation costs; Number of regulatory inquiries`, impact:`Fines, mandated remediation costs and regulatory inquiries follow the operational-resilience breach.`, sev:'High' },
+      { stripe:`Strategic / Market Risk`, metric:`Decline in New Customer Acquisition; Market Share; Competitor Marketing Spend`, impact:`Weaker new-customer acquisition and market-share erosion as competitors capitalise on the disruption.`, sev:'High' },
+      { stripe:`Financial Risk`, metric:`Capital Expenditure; Resource Re-allocation rate; Delay in Product Roadmap`, impact:`Additional capex and resource re-allocation to remediation delays the product roadmap.`, sev:'High' },
     ],
     scope:{
       entities:['Retail Bank','Digital Banking unit','Payments platform'],
@@ -4366,29 +4434,38 @@ const NA_DATA = {
       context:`A major sanctions package takes effect with parallel legislation the same week, expanding measures across energy, financial services and crypto. Requires immediate re-screening of counterparty and cross-border exposure. Analogous to prior sanctions-regime expansions.`,
       eventType:'Geopolitical / Financial Crime / Compliance Risk', confidence:83,
       registerMatch:{ id:'TRR-0189', title:'Sanctions regime expansion — counterparty re-screening', similarity:83, basis:'Geopolitical + financial-crime trigger match' },
+      synopsis:`A major sanctions package took effect, tightening measures across energy, financial services and crypto assets, while parallel legislation advanced the same week — together requiring firms to re-screen counterparty and cross-border exposure.`,
+      summaryBullets:[],
+      trigger:`Regulatory tightening`,
+      primaryEventType:`OPS / FC — Financial Crime & Compliance`,
+      secondaryEventType:`Strategic, Operational, Reputational`,
+      affectedStripes:[],
+      velocity:``,
       extracted:[
         { k:'Direction', v:'Regulatory tightening' }, { k:'Geography', v:'Cross-border / Multi-jurisdiction' },
         { k:'Primary L1', v:'OPS / FC — Financial Crime & Compliance' }, { k:'Time Horizon', v:'Immediate + ongoing' },
       ],
     },
     flow:[
-      { label:'Sanctions package takes effect', type:'trigger', severity:'High', explanation:'New measures across energy, financial services and crypto take effect, with parallel legislation advancing the same week.' },
-      { label:'Counterparty & cross-border re-screening', type:'', severity:'High', explanation:'Firms must re-screen counterparties and cross-border exposure against expanded lists.' },
-      { label:'Exposure identification & freezes', type:'', severity:'High', explanation:'Newly sanctioned entities identified; asset freezes and payment blocks required.' },
-      { label:'Trade, FX & correspondent impact', type:'', severity:'Medium', explanation:'Trade finance, FX and correspondent flows to affected sectors restricted or exited.' },
-      { label:'Regulatory & conduct escalation', type:'escalation', severity:'High', explanation:'Breach risk and reporting obligations escalate; enforcement exposure if screening lags.' },
+      { label:`Sanctions package takes effect`, detail:`New measures across energy, financial services and crypto take effect, with parallel legislation advancing the same week.`, signal:`` },
+      { label:`Counterparty & cross-border re-screening`, detail:`Firms must re-screen counterparties and cross-border exposure against expanded lists.`, signal:`` },
+      { label:`Exposure identification & freezes`, detail:`Newly sanctioned entities identified; asset freezes and payment blocks required.`, signal:`` },
+      { label:`Trade, FX & correspondent impact`, detail:`Trade finance, FX and correspondent flows to affected sectors restricted or exited.`, signal:`` },
+      { label:`Regulatory & conduct escalation`, detail:`Breach risk and reporting obligations escalate; enforcement exposure if screening lags.`, signal:`` },
     ],
     firstOrder:[
-      { stripe:'Financial Crime / Compliance', measure:'Screening coverage', impact:'Group-wide re-screen of counterparties & cross-border exposure against expanded lists', match:'TRR-0189 · 83%', sev:'High' },
-      { stripe:'Credit / Counterparty', measure:'Exposure to sanctioned names', impact:'Identify and exit exposure to newly designated entities', match:'TRR-0191 · 80%', sev:'High' },
-      { stripe:'Operational', measure:'Remediation capacity', impact:'Surge in alerts, manual review and payment holds', match:'TRR-0235 · 76%', sev:'High' },
-      { stripe:'Market Risk', measure:'Energy / FX', impact:'Energy and FX volatility on affected corridors', match:'TRR-0207 · 71%', sev:'Medium' },
+      { stripe:`Regulatory & Compliance Risk`, metric:`Number of transactions blocked / assets frozen for newly listed entities; Time to update sanctions screening lists (hours); Sanctions screening failure rate (%); Number of wind-down authorizations requested vs. granted`, impact:`Direct violation of binding regulations, exposing the bank to severe financial penalties, reputational collapse, and intense regulatory scrutiny. An immediate, resource-intensive operational lift is required to update all screening systems, carrying a high risk of error and secondary compliance failures.`, sev:'Critical' },
+      { stripe:`Trade & Project Finance Risk`, metric:`Value of client portfolio exposed to new LNG / energy restrictions`, impact:`Immediate uncertainty in high-value energy finance portfolios, stalling revenue-generating deals and forcing costly contract renegotiations, with relationship damage if clients cannot be guided through complex new notification and reporting requirements.`, sev:'High' },
+      { stripe:`Digital Assets Risk`, metric:`Volume of transactions with crypto platforms in targeted jurisdictions; % of EU crypto clients re-certified under the expanded ownership prohibition; Cost and time to implement jurisdictional-level crypto blocking`, impact:`Exposes the digital-assets division to a new vector of compliance failure and illicit-finance risk, particularly from a sudden country-wide ban; failure to re-certify EU crypto clients could invalidate the control framework for this business line.`, sev:'High' },
+      { stripe:`Legal & Sovereign Risk`, metric:`Number of active legal proceedings in foreign courts; Financial provisions for cross-jurisdictional litigation; Number of anti-suit / anti-enforcement orders sought`, impact:`Forces the bank into permanent, high-cost defensive litigation across jurisdictions; failure to use new legal shields could see unenforceable foreign judgments enforced against the bank's assets in third countries.`, sev:'Critical' },
+      { stripe:`Financial Crime / Compliance Risk`, metric:`Screening coverage efficacy (%); Number of false negatives post-screening; Time to deploy updated sanctions lists (hours); Regulatory fines from screening failures`, impact:`A failure in screening coverage is the most direct path to a severe regulatory breach; updating and running millions of names against new complex lists under time pressure carries a high risk of error and multi-million-dollar fines.`, sev:'High' },
+      { stripe:`Credit / Counterparty Risk`, metric:`Value of outstanding credit exposure to sanctioned entities; % of sanctioned exposures exited / written-down; P&L impact from write-downs and defaults; Number of legal disputes from forced exits`, impact:`An immediate, potentially irreversible threat to the balance sheet: loans and trade-finance lines to now-sanctioned entities risk default and becoming unrecoverable, necessitating credit write-downs and direct P&L losses.`, sev:'High' },
     ],
     secondOrder:[
-      { stripe:'Legal / Regulatory', measure:'Breach & reporting', impact:'Sanctions breach risk; mandatory reporting and licensing', match:'TRR-0192 · 82%', sev:'High' },
-      { stripe:'Reputational', measure:'Enforcement exposure', impact:'Reputational and enforcement risk if screening lags', match:'TRR-0402 · 75%', sev:'High' },
-      { stripe:'Liquidity', measure:'Frozen assets', impact:'Frozen balances and blocked payments reduce usable liquidity', match:'TRR-0189 · 68%', sev:'Medium' },
-      { stripe:'Client / Conduct', measure:'Exited relationships', impact:'De-risking and offboarding of affected clients', match:'TRR-0193 · 65%', sev:'Medium' },
+      { stripe:`Strategic & Market Risk`, metric:`Client attrition in high-risk adjacent sectors/geographies; Product lines or markets under review for exit; Reduction in revenue targets from de-risking`, impact:`The bank may preemptively exit profitable markets or client segments deemed too complex to manage, losing future revenue and market share and ceding ground to more risk-tolerant competitors.`, sev:'Critical' },
+      { stripe:`Operational & People Risk`, metric:`Employee turnover in Compliance, Legal & Operations (%); Time-to-fill for critical risk roles; Error rates in non-sanctions compliance tasks; Overtime costs for sanctions teams`, impact:`Constant high-stakes change causes compliance fatigue and burnout in critical functions, raising human-error and attrition risk and degrading other core compliance programmes (AML, ABC).`, sev:'High' },
+      { stripe:`Supervisory & Capital Risk`, metric:`Increase in Operational RWA; Ad-hoc inquiries from primary regulators; Senior-management time on regulatory engagement (hours); Cost of mandated remediation`, impact:`Regulators view the added complexity as an elevation of the institution's risk profile, triggering more intense supervision and potential demands for higher operational-risk capital reserves.`, sev:'High' },
+      { stripe:`Third-Party & Ecosystem Risk`, metric:`Concentration-risk score for critical compliance vendors; Vendors failing sanctions-related audits; Incident rate from third-party data or processing lags`, impact:`New-rule complexity cascades to the vendor ecosystem, amplifying third-party risk; a slow-to-update screening list from a key vendor translates directly into a compliance breach.`, sev:'High' },
     ],
     scope:{
       entities:['Correspondent Banking entity','Trade Finance unit','Markets / FX'],
@@ -4464,6 +4541,1711 @@ const NA_DATA = {
   },
 };
 
+/* NA_A3_START */
+// Agent-3 data generated from the News Intelligence Mock Up Data workbook
+const NA_A3 = {
+ "cre": {
+  "firstOrder": [
+   {
+    "stripe": "Credit Risk — Provisioning & ECL",
+    "metrics": [
+     "ECL coverage ratio",
+     "Non-performing loan ratio"
+    ],
+    "impact": "Rising CRE arrears trigger higher loan-loss provisions and ECL stage migration",
+    "sev": "Critical"
+   },
+   {
+    "stripe": "Credit Risk — Concentration",
+    "metrics": [
+     "Sector concentration limit usage %",
+     "CRE notional exposure"
+    ],
+    "impact": "CRE concentration approaches internal limits, reviving sector concentration concerns",
+    "sev": "High"
+   },
+   {
+    "stripe": "Market Risk — Valuation",
+    "metrics": [
+     "Loan-to-value migration",
+     "Collateral haircut %"
+    ],
+    "impact": "Falling office valuations erode collateral coverage on outstanding CRE loans",
+    "sev": "High"
+   },
+   {
+    "stripe": "Capital Risk — Capital Adequacy",
+    "metrics": [
+     "CET1 ratio impact",
+     "RWA density (CRE book)"
+    ],
+    "impact": "Higher provisions and risk-weight migration pressure capital buffers",
+    "sev": "Medium"
+   },
+   {
+    "stripe": "Reputational Risk — Market Confidence",
+    "metrics": [
+     "Credit spread widening (bps)",
+     "Analyst rating actions"
+    ],
+    "impact": "Disclosure triggers investor concern and scrutiny of asset quality",
+    "sev": "Medium"
+   }
+  ],
+  "secondOrder": [
+   {
+    "stripe": "Credit Risk — Rating Migration",
+    "metrics": [
+     "Internal downgrade count",
+     "Watch-list additions"
+    ],
+    "impact": "Downgrade of CRE-linked exposures triggers broader rating migration across the book",
+    "sev": "High"
+   },
+   {
+    "stripe": "Market Risk — Funding Cost",
+    "metrics": [
+     "Credit spread (bps)",
+     "Wholesale funding cost"
+    ],
+    "impact": "Widening spreads raise funding costs as the market reprices credit risk",
+    "sev": "Medium"
+   },
+   {
+    "stripe": "Regulatory Risk — Supervisory Scrutiny",
+    "metrics": [
+     "Capital add-on likelihood",
+     "Supervisory review frequency"
+    ],
+    "impact": "Regulators increase scrutiny of CRE concentration and provisioning adequacy",
+    "sev": "High"
+   },
+   {
+    "stripe": "Strategic Risk — Business Model",
+    "metrics": [
+     "CRE new-origination volume",
+     "Portfolio run-off rate"
+    ],
+    "impact": "Bank curtails new CRE lending, reshaping medium-term earnings mix",
+    "sev": "Medium"
+   },
+   {
+    "stripe": "Reputational Risk — Investor Confidence",
+    "metrics": [
+     "Share price movement %",
+     "CDS spread"
+    ],
+    "impact": "Sustained market concern pressures equity valuation and cost of capital",
+    "sev": "Medium"
+   }
+  ],
+  "escalation": [
+   {
+    "stripe": "Credit Risk — Provisioning & ECL",
+    "severity": "Critical",
+    "escalateTo": "Chief Credit Officer & Credit Risk Committee",
+    "timeframe": "Within 24 hours",
+    "criticality": "Immediate"
+   },
+   {
+    "stripe": "Credit Risk — Concentration",
+    "severity": "High",
+    "escalateTo": "Chief Credit Officer & Credit Risk Committee",
+    "timeframe": "Within 48 hours",
+    "criticality": "Urgent"
+   },
+   {
+    "stripe": "Market Risk — Valuation",
+    "severity": "High",
+    "escalateTo": "Chief Risk Officer & Market Risk Committee",
+    "timeframe": "Within 48 hours",
+    "criticality": "Urgent"
+   },
+   {
+    "stripe": "Regulatory Risk — Supervisory Scrutiny",
+    "severity": "High",
+    "escalateTo": "General Counsel, Chief Compliance Officer & Regulators",
+    "timeframe": "Within 1–2 weeks",
+    "criticality": "Urgent"
+   },
+   {
+    "stripe": "Capital Risk — Capital Adequacy",
+    "severity": "Medium",
+    "escalateTo": "CFO & Capital / ALCO Committee",
+    "timeframe": "Within 1 week",
+    "criticality": "Elevated"
+   },
+   {
+    "stripe": "Strategic Risk — Business Model",
+    "severity": "Medium",
+    "escalateTo": "Chief Strategy Officer & Executive Committee",
+    "timeframe": "Within 2 weeks",
+    "criticality": "Elevated"
+   },
+   {
+    "stripe": "Reputational Risk — Investor Confidence",
+    "severity": "Medium",
+    "escalateTo": "Head of IR/Communications & Executive Committee",
+    "timeframe": "Within 1 week",
+    "criticality": "Elevated"
+   },
+   {
+    "stripe": "Overall event (cross-cutting)",
+    "severity": "Critical",
+    "escalateTo": "CRO & Board Risk Committee; CEO informed",
+    "timeframe": "Within 24–48 hours",
+    "criticality": "Immediate"
+   }
+  ],
+  "map": [
+   {
+    "tier": "",
+    "card": "Trigger",
+    "parent": "Large international bank flags CRE exposure as key risk; refinancing stalls"
+   },
+   {
+    "tier": "",
+    "card": "Scope",
+    "parent": "Group"
+   },
+   {
+    "tier": "",
+    "card": "Scope",
+    "parent": "Business lines"
+   },
+   {
+    "tier": "",
+    "card": "Scope",
+    "parent": "Instruments (CRE loans, CMBS)"
+   },
+   {
+    "tier": "",
+    "card": "Scope",
+    "parent": "Desks (credit portfolio)"
+   },
+   {
+    "tier": "",
+    "card": "Scope",
+    "parent": "Geography (West Coast office)"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L1",
+    "parent": "Credit risk"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L1",
+    "parent": "Market risk"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L1",
+    "parent": "Capital risk"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L1",
+    "parent": "Regulatory risk"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L1",
+    "parent": "Reputational risk"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L2",
+    "parent": "Provisioning & ECL"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L2",
+    "parent": "Concentration"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L2",
+    "parent": "Rating migration"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L2",
+    "parent": "Valuation"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L2",
+    "parent": "Capital adequacy"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L2",
+    "parent": "Supervisory scrutiny"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L2",
+    "parent": "Confidence"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L3",
+    "parent": "Stage migration"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L3",
+    "parent": "Sector concentration"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L3",
+    "parent": "Watch-list additions"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L3",
+    "parent": "LTV migration"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L3",
+    "parent": "RWA density"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L3",
+    "parent": "Capital add-on risk"
+   },
+   {
+    "tier": "",
+    "card": "Risk stripe L3",
+    "parent": "Credit spread / CDS"
+   },
+   {
+    "tier": "",
+    "card": "Risk measurement",
+    "parent": "ECL coverage ratio"
+   },
+   {
+    "tier": "",
+    "card": "Risk measurement",
+    "parent": "Concentration limit usage %"
+   },
+   {
+    "tier": "",
+    "card": "Risk measurement",
+    "parent": "Rating downgrades (#)"
+   },
+   {
+    "tier": "",
+    "card": "Risk measurement",
+    "parent": "LTV ratio"
+   },
+   {
+    "tier": "",
+    "card": "Risk measurement",
+    "parent": "RWA density %"
+   },
+   {
+    "tier": "",
+    "card": "Risk measurement",
+    "parent": "Capital add-on probability"
+   },
+   {
+    "tier": "",
+    "card": "Risk measurement",
+    "parent": "Credit spread (bps)"
+   },
+   {
+    "tier": "",
+    "card": "Impact",
+    "parent": "RWA"
+   },
+   {
+    "tier": "",
+    "card": "Impact",
+    "parent": "Capital / CET1"
+   },
+   {
+    "tier": "",
+    "card": "Impact",
+    "parent": "PnL"
+   },
+   {
+    "tier": "",
+    "card": "Impact",
+    "parent": "Cost of funds"
+   },
+   {
+    "tier": "",
+    "card": "Impact",
+    "parent": "Share price / valuation"
+   },
+   {
+    "tier": "",
+    "card": "Limit breaches",
+    "parent": "CRE sector concentration limit; CET1 buffer threshold"
+   },
+   {
+    "tier": "",
+    "card": "Action",
+    "parent": "Reduce CRE concentration, rebuild capital buffer, engage regulators proactively"
+   }
+  ],
+  "playbook": {
+   "immediate": [
+    {
+     "action": "Reassess ECL models & stage migration for the CRE book",
+     "strapline": "Recalibrate loss assumptions before losses compound"
+    },
+    {
+     "action": "Review CRE concentration against risk appetite limits",
+     "strapline": "Confirm headroom before the next disclosure cycle"
+    },
+    {
+     "action": "Brief CRO & Board Risk Committee",
+     "strapline": "Get ahead of the narrative before markets do"
+    }
+   ],
+   "shortterm": [
+    {
+     "action": "Conduct portfolio-level stress test on the CRE book",
+     "strapline": "Quantify tail risk under adverse valuation scenarios"
+    },
+    {
+     "action": "Engage regulators proactively on provisioning adequacy",
+     "strapline": "Shape the supervisory conversation, don't just react to it"
+    },
+    {
+     "action": "Review capital plan & CET1 buffer sufficiency",
+     "strapline": "Confirm capital headroom holds under stress"
+    }
+   ],
+   "ongoing": [
+    {
+     "action": "Reduce / rebalance CRE sector concentration",
+     "strapline": "De-risk the book structurally, not just on paper"
+    },
+    {
+     "action": "Strengthen collateral revaluation frequency & triggers",
+     "strapline": "Catch valuation deterioration earlier next time"
+    },
+    {
+     "action": "Enhance market disclosure & investor communication strategy",
+     "strapline": "Rebuild confidence through transparency"
+    }
+   ]
+  },
+  "summary": [
+   "Rising CRE arrears and provisioning signal credit-quality deterioration concentrated in office-sector exposure",
+   "Immediate impact: Critical — ECL coverage and concentration limits under active review",
+   "Second-order risk: rating migration and regulatory scrutiny are highly likely; funding costs may rise if spreads widen",
+   "Board attention needed: concentration limits, capital buffer sufficiency, and regulator engagement strategy"
+  ]
+ },
+ "ransom": {
+  "firstOrder": [
+   {
+    "stripe": "Operational Risk — Resilience",
+    "metrics": [
+     "Recovery Time Objective",
+     "System availability %"
+    ],
+    "impact": "Core transaction processing unavailable; failover and continuity plans activated for a multi-hour outage",
+    "sev": "Critical"
+   },
+   {
+    "stripe": "Operational Risk — Cyber Risk",
+    "metrics": [
+     "Third-party dependency score",
+     "Mean time to contain"
+    ],
+    "impact": "Ransomware at a single external processor exposes reliance on one vendor for downstream clearing",
+    "sev": "High"
+   },
+   {
+    "stripe": "Credit Risk — Settlement Risk",
+    "metrics": [
+     "Settlement exposure ($)",
+     "Unsettled transaction volume"
+    ],
+    "impact": "Delayed settlement creates temporary counterparty exposure on unsettled card transactions",
+    "sev": "High"
+   },
+   {
+    "stripe": "Treasury Risk — Liquidity",
+    "metrics": [
+     "Intraday liquidity buffer",
+     "Liquidity survival horizon"
+    ],
+    "impact": "Outage disrupts intraday cash positioning from delayed card-settlement inflows",
+    "sev": "Medium"
+   },
+   {
+    "stripe": "Reputational Risk — Client Impact",
+    "metrics": [
+     "Client complaint / churn volume/ NPS delta"
+    ],
+    "impact": "Merchants and public-sector clients unable to process transactions; reputational exposure builds",
+    "sev": "Medium"
+   }
+  ],
+  "secondOrder": [
+   {
+    "stripe": "Credit Risk — CCR",
+    "metrics": [
+     "Net current exposure",
+     "Potential future exposure"
+    ],
+    "impact": "Backlog of unsettled transactions increases counterparty credit exposure across merchants",
+    "sev": "High"
+   },
+   {
+    "stripe": "Operational Risk — Resilience",
+    "metrics": [
+     "RTO breach count",
+     "SLA penalty exposure ($)"
+    ],
+    "impact": "Extended recovery breaches RTO commitments, triggering contractual SLA penalties",
+    "sev": "High"
+   },
+   {
+    "stripe": "Third-Party Risk — Concentration",
+    "metrics": [
+     "Vendor concentration limit usage %",
+     "Single-point-of-failure count"
+    ],
+    "impact": "Client base reliant on one processor prompts review of vendor concentration limits",
+    "sev": "Medium"
+   },
+   {
+    "stripe": "Legal / Regulatory Risk — Compliance",
+    "metrics": [
+     "Regulatory notification timeliness",
+     "Potential fine/penalty exposure"
+    ],
+    "impact": "Operational incident affecting payment services triggers regulatory notification obligations",
+    "sev": "High"
+   },
+   {
+    "stripe": "Reputational Risk — Brand",
+    "metrics": [
+     "Media coverage volume",
+     "NPS delta"
+    ],
+    "impact": "Sustained negative coverage of the processor and downstream banks weighs on brand trust",
+    "sev": "Medium"
+   }
+  ],
+  "escalation": [
+   {
+    "stripe": "Operational Risk — Resilience",
+    "severity": "Critical",
+    "escalateTo": "COO & Operational Resilience Committee",
+    "timeframe": "Within 1 hour",
+    "criticality": "Immediate"
+   },
+   {
+    "stripe": "Operational Risk — Cyber Risk",
+    "severity": "High",
+    "escalateTo": "CISO & Technology Risk Committee",
+    "timeframe": "Within 2 hours",
+    "criticality": "Immediate"
+   },
+   {
+    "stripe": "Credit Risk — Settlement / CCR",
+    "severity": "High",
+    "escalateTo": "Chief Credit Officer & Credit Risk Committee",
+    "timeframe": "Within 24 hours",
+    "criticality": "Urgent"
+   },
+   {
+    "stripe": "Legal / Regulatory Risk — Compliance",
+    "severity": "High",
+    "escalateTo": "General Counsel, Chief Compliance Officer & Regulators",
+    "timeframe": "Within 24–72h (per jurisdiction)",
+    "criticality": "Urgent"
+   },
+   {
+    "stripe": "Treasury Risk — Liquidity",
+    "severity": "Medium",
+    "escalateTo": "Treasurer & ALCO",
+    "timeframe": "Within 24 hours",
+    "criticality": "Urgent"
+   },
+   {
+    "stripe": "Third-Party Risk — Concentration",
+    "severity": "Medium",
+    "escalateTo": "Third-Party Risk Committee",
+    "timeframe": "Within 48 hours",
+    "criticality": "Elevated"
+   },
+   {
+    "stripe": "Reputational Risk — Brand",
+    "severity": "Medium",
+    "escalateTo": "Head of Communications & Executive Committee",
+    "timeframe": "Within 24 hours",
+    "criticality": "Elevated"
+   },
+   {
+    "stripe": "Overall event (cross-cutting)",
+    "severity": "Critical",
+    "escalateTo": "CRO & Board Risk Committee; CEO informed",
+    "timeframe": "Within 24 hours",
+    "criticality": "Immediate"
+   }
+  ],
+  "map": [
+   {
+    "tier": "Trigger",
+    "card": "Ransomware attack disables core systems at a payments processor",
+    "parent": "—"
+   },
+   {
+    "tier": "Scope",
+    "card": "Group",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Scope",
+    "card": "Merchant & public-sector clients",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Scope",
+    "card": "Instruments (card transactions)",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Scope",
+    "card": "Desks (payments operations)",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Scope",
+    "card": "Vendor (payments processor)",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Operational risk",
+    "parent": "Group"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Credit risk",
+    "parent": "Merchant & public-sector clients"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Third-party risk",
+    "parent": "Vendor (payments processor)"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Regulatory risk",
+    "parent": "Desks (payments operations)"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Reputational risk",
+    "parent": "Merchant & public-sector clients"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Resilience",
+    "parent": "Operational risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Cyber risk",
+    "parent": "Operational risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Settlement risk",
+    "parent": "Credit risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "CCR",
+    "parent": "Credit risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Liquidity",
+    "parent": "Credit risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Concentration",
+    "parent": "Third-party risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Compliance",
+    "parent": "Regulatory risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Client impact",
+    "parent": "Reputational risk"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Recovery time",
+    "parent": "Resilience"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Third-party dependency",
+    "parent": "Cyber risk"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Unsettled transactions",
+    "parent": "Settlement risk"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Net current exposure",
+    "parent": "CCR"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Intraday liquidity buffer",
+    "parent": "Liquidity"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Vendor concentration",
+    "parent": "Concentration"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Notification timeliness",
+    "parent": "Compliance"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Media coverage",
+    "parent": "Client impact"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "RTO breach (hours)",
+    "parent": "Recovery time"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Dependency score",
+    "parent": "Third-party dependency"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Unsettled volume ($)",
+    "parent": "Unsettled transactions"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Net current exposure ($)",
+    "parent": "Net current exposure"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Liquidity buffer (%)",
+    "parent": "Intraday liquidity buffer"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Concentration limit usage %",
+    "parent": "Vendor concentration"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Notification timeliness (hrs)",
+    "parent": "Notification timeliness"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Media coverage volume (#)",
+    "parent": "Media coverage"
+   },
+   {
+    "tier": "Impact",
+    "card": "Operational loss",
+    "parent": "RTO breach (hours); Dependency score"
+   },
+   {
+    "tier": "Impact",
+    "card": "Credit exposure",
+    "parent": "Unsettled volume ();Netcurrentexposure(); Net current exposure ( );Netcurrentexposure()"
+   },
+   {
+    "tier": "Impact",
+    "card": "Liquidity position",
+    "parent": "Liquidity buffer (%)"
+   },
+   {
+    "tier": "Impact",
+    "card": "Regulatory / legal exposure",
+    "parent": "Concentration limit usage %; Notification timeliness (hrs)"
+   },
+   {
+    "tier": "Impact",
+    "card": "Reputational / brand value",
+    "parent": "Media coverage volume (#)"
+   },
+   {
+    "tier": "Limit breaches",
+    "card": "Vendor concentration limit; RTO / SLA threshold breach",
+    "parent": "Operational loss; Regulatory / legal exposure"
+   },
+   {
+    "tier": "Action",
+    "card": "Diversify processing vendors, enforce SLA penalties, notify regulators within required window",
+    "parent": "Limit breaches"
+   }
+  ],
+  "playbook": {
+   "immediate": [
+    {
+     "action": "Activate incident response & business continuity plan",
+     "strapline": "Contain the outage, keep critical services alive"
+    },
+    {
+     "action": "Establish alternate processing / failover routes",
+     "strapline": "Reroute volume away from the compromised processor"
+    },
+    {
+     "action": "Notify regulators & key stakeholders",
+     "strapline": "Get ahead of disclosure obligations early"
+    }
+   ],
+   "shortterm": [
+    {
+     "action": "Conduct full settlement reconciliation",
+     "strapline": "Clear the backlog before it becomes credit risk"
+    },
+    {
+     "action": "Review vendor contract & SLA compliance",
+     "strapline": "Hold the processor accountable, quantify penalties owed"
+    },
+    {
+     "action": "Launch client communication & remediation programme",
+     "strapline": "Protect relationships before reputational damage compounds"
+    }
+   ],
+   "ongoing": [
+    {
+     "action": "Diversify payment-processing vendor panel",
+     "strapline": "Reduce single-point-of-failure dependency"
+    },
+    {
+     "action": "Update third-party risk & concentration limits",
+     "strapline": "Bake this into the risk appetite framework"
+    },
+    {
+     "action": "Conduct post-incident review & controls uplift",
+     "strapline": "Turn this into a stronger control environment"
+    }
+   ]
+  },
+  "summary": [
+   "Ransomware at a critical payment vendor caused a nationwide outage, exposing single-vendor concentration risk",
+   "Immediate impact: Critical — failover held, but reliance on one processor is confirmed",
+   "Second-order: rising credit exposure from unsettled transactions; regulatory notification highly likely",
+   "Board attention needed: vendor concentration limits, SLA enforcement, notification timeline"
+  ]
+ },
+ "infra": {
+  "firstOrder": [
+   {
+    "stripe": "operation risk",
+    "metrics": [
+     "Downtime Duration (in minutes)",
+     "Mean Time to Recovery (MTTR)",
+     "Number of Failed Transactions",
+     "Spike in customer support incidents"
+    ],
+    "impact": "direct and immediate halt in the ability to conduct business for 5.5 hours, making websites and applications unusable. Consequently, this leads to an inability to serve customers and a sharp decline in employee productivity, causing direct financial and reputational damage.",
+    "sev": "Critical"
+   },
+   {
+    "stripe": "Third-Party Risk",
+    "metrics": [
+     "SLA Breach Cost",
+     "Direct Revenue Loss",
+     "Vendor Time to Resolution",
+     "Security Exposure window"
+    ],
+    "impact": "failures that are completely outside of its direct control, making it vulnerable to the operational and security shortcomings of its vendors. This dependency means that even with perfect internal systems, your entire service can be brought down by a partner's single point of failure.",
+    "sev": "High"
+   },
+   {
+    "stripe": "Concentration risk",
+    "metrics": [
+     "Single Point of Failure count",
+     "Cost of mitigation"
+    ],
+    "impact": "Concentration risk means a problem at one vendor results in a catastrophic, enterprise-wide failure rather than a limited, single-service disruption. This over-reliance amplifies the impact of any third-party incident, turning a manageable problem into an existential threat to business continuity",
+    "sev": "High"
+   },
+   {
+    "stripe": "Market Access",
+    "metrics": [
+     "Trading / data"
+    ],
+    "impact": "Ratings and exchange access impaired for the outage window",
+    "sev": "Critical"
+   }
+  ],
+  "secondOrder": [
+   {
+    "stripe": "reputational risk",
+    "metrics": [
+     "Customer Churn Rate",
+     "Negative media mentions and social media sentiment"
+    ],
+    "impact": "Customer Churn Rate, Negative media mentions and social media sentiment",
+    "sev": "Critical"
+   },
+   {
+    "stripe": "regulatory and compliance risk",
+    "metrics": [
+     "Cost of Fines and Penalties",
+     "Mandated Remediation costs",
+     "number of regulatory inquiries"
+    ],
+    "impact": "Cost of Fines and Penalties, Mandated Remediation costs, number of regulatory inquiries",
+    "sev": "High"
+   },
+   {
+    "stripe": "strategic/ market risk",
+    "metrics": [
+     "Decline in New Customer Acquisition",
+     "Market Share",
+     "Competitor Merketing Spend"
+    ],
+    "impact": "Decline in New Customer Acquisition, Market Share, Competitor Merketing Spend",
+    "sev": "High"
+   },
+   {
+    "stripe": "financial risk",
+    "metrics": [
+     "Capital Expenditure",
+     "Resource Re-allocation rate",
+     "delay in Product Roadmap"
+    ],
+    "impact": "Capital Expenditure, Resource Re-allocation rate, delay in Product Roadmap",
+    "sev": "High"
+   }
+  ],
+  "escalation": [
+   {
+    "stripe": "Operational Risk — Digital Channel Unavailability (1st Order)",
+    "severity": "Critical",
+    "escalateTo": "CTO, COO & Technology Incident Command",
+    "timeframe": "Immediate (< 15 mins)",
+    "criticality": "Immediate"
+   },
+   {
+    "stripe": "Reputational Risk — Public/Media/Customer Impact (2nd Order)",
+    "severity": "High",
+    "escalateTo": "Head of Communications, CMO & Executive Committee",
+    "timeframe": "Within 1 hour",
+    "criticality": "Urgent"
+   },
+   {
+    "stripe": "Regulatory Risk — Potential Compliance/SLA Breach (2nd Order)",
+    "severity": "High",
+    "escalateTo": "General Counsel, Chief Compliance Officer & Regulatory Liaison",
+    "timeframe": "Within 4 hours",
+    "criticality": "Urgent"
+   },
+   {
+    "stripe": "Fourth-Party Risk — Concentration Failure (Root Cause)",
+    "severity": "Medium",
+    "escalateTo": "Head of Vendor Management & Third-Party Risk Committee",
+    "timeframe": "Within 48 hours (Post-Incident)",
+    "criticality": "Elevated"
+   },
+   {
+    "stripe": "Overall Event — Cross-Cutting Business Impact",
+    "severity": "Critical",
+    "escalateTo": "CEO, CRO & Board Risk Committee",
+    "timeframe": "Within 2 hours (Initial) & 24 hours (Briefing)",
+    "criticality": "Immediate"
+   }
+  ],
+  "map": [
+   {
+    "tier": "Trigger",
+    "card": "Configuration error at a shared infrastructure provider triggers a global outage",
+    "parent": "—"
+   },
+   {
+    "tier": "Scope",
+    "card": "Group",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Scope",
+    "card": "Digital banking channels",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Scope",
+    "card": "Trading & data services",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Scope",
+    "card": "Vendor (shared infra provider)",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Scope",
+    "card": "Customers & call centre",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Operational risk",
+    "parent": "Digital banking channels"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Third-party risk",
+    "parent": "Vendor (shared infra provider)"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Reputational risk",
+    "parent": "Customers & call centre"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Regulatory risk",
+    "parent": "Vendor (shared infra provider)"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Strategic risk",
+    "parent": "Customers & call centre"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Financial risk",
+    "parent": "Group"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Service availability",
+    "parent": "Operational risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Market access",
+    "parent": "Operational risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "SLA breach",
+    "parent": "Third-party risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Concentration risk",
+    "parent": "Third-party risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Customer sentiment",
+    "parent": "Reputational risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Fines & remediation",
+    "parent": "Regulatory risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Customer acquisition",
+    "parent": "Strategic risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Capital reallocation",
+    "parent": "Financial risk"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Downtime duration",
+    "parent": "Service availability"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Trading / data access impairment",
+    "parent": "Market access"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "SLA breach cost",
+    "parent": "SLA breach"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Single point of failure count",
+    "parent": "Concentration risk"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Customer churn rate",
+    "parent": "Customer sentiment"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Regulatory inquiries",
+    "parent": "Fines & remediation"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "New acquisition decline",
+    "parent": "Customer acquisition"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Capex reallocation",
+    "parent": "Capital reallocation"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Downtime duration (min)",
+    "parent": "Downtime duration"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Market access impairment (hrs)",
+    "parent": "Trading / data access impairment"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "SLA breach cost ($)",
+    "parent": "SLA breach cost"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "SPOF count",
+    "parent": "Single point of failure count"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Customer churn rate (%)",
+    "parent": "Customer churn rate"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Regulatory inquiries (#)",
+    "parent": "Regulatory inquiries"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "New acquisition decline (%)",
+    "parent": "New acquisition decline"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Capex reallocation ($)",
+    "parent": "Capex reallocation"
+   },
+   {
+    "tier": "Impact",
+    "card": "Operational loss",
+    "parent": "Downtime duration (min); Market access impairment (hrs)"
+   },
+   {
+    "tier": "Impact",
+    "card": "Third-party / vendor exposure",
+    "parent": "SLA breach cost ($); SPOF count"
+   },
+   {
+    "tier": "Impact",
+    "card": "Reputational / brand value",
+    "parent": "Customer churn rate (%)"
+   },
+   {
+    "tier": "Impact",
+    "card": "Regulatory / legal exposure",
+    "parent": "Regulatory inquiries (#)"
+   },
+   {
+    "tier": "Impact",
+    "card": "Financial / strategic position",
+    "parent": "New acquisition decline (%); Capex reallocation ($)"
+   },
+   {
+    "tier": "Limit breaches",
+    "card": "Vendor concentration limit; SLA breach threshold",
+    "parent": "Operational loss; Third-party / vendor exposure"
+   },
+   {
+    "tier": "Action",
+    "card": "Diversify infrastructure providers (multi-CDN / multi-region), set concentration limits, review vendor SLAs",
+    "parent": "Limit breaches"
+   }
+  ],
+  "playbook": {
+   "immediate": [
+    {
+     "action": "Activate \"Code Red\" Command Center",
+     "strapline": "Assemble the core crisis response team: CIO, CISO, COO, Head of Comms, General Counsel, CRO. Establish a dedicated communication channel (war room) and a clear cadence for updates (e.g., every 30 minutes). Delegate authority and establish clear workstreams (Technical, Security, Comms, Business Ops)."
+    },
+    {
+     "action": "Execute Digital Channel BCP",
+     "strapline": "Fail over to alternate data centers, routing, or CDNs where available. Activate \"degraded service\" or \"read-only\" modes for non-critical functions to preserve core services. Immediately redirect traffic from failed fourth-party dependencies if technically feasible."
+    },
+    {
+     "action": "Deploy Operational Contingencies",
+     "strapline": "Activate branch, call center, and manual processing contingencies to handle critical customer transactions. Provide front-line teams with approved scripts and FAQs about the outage and workarounds."
+    },
+    {
+     "action": "Initial Stakeholder Communications",
+     "strapline": "Publish initial, transparent status updates across all channels (website, app, social media). Set clear expectations about service availability and the next update time. Avoid speculation. Surge contact-center capacity with pre-briefed agents and enable chatbot/IVR messaging."
+    },
+    {
+     "action": "Security Triage & Threat Monitoring",
+     "strapline": "Verify the event is availability-only and not a security breach involving data exfiltration. Deploy heightened monitoring for opportunistic attacks (e.g., phishing campaigns) that exploit the confusion. Preserve all relevant logs from all affected systems for forensic analysis."
+    }
+   ],
+   "shortterm": [
+    {
+     "action": "Demand Vendor Root Cause Analysis (RCA)",
+     "strapline": "Demand a detailed, transparent RCA from the third-party vendor that explicitly identifies the fourth-party point of failure. Assess the vendor's remediation plan for credibility and timelines."
+    },
+    {
+     "action": "Quantify Business & Financial Impact",
+     "strapline": "Conduct a full impact assessment: lost revenue, SLA penalties owed, overtime costs, customer compensation. Begin logging all costs associated with the incident for potential insurance claims or legal action."
+    },
+    {
+     "action": "Proactive Regulatory Engagement",
+     "strapline": "Proactively notify key regulators of the incident, its systemic nature, and the steps being taken. Frame the narrative around being a victim of a wider ecosystem failure while demonstrating a robust response."
+    },
+    {
+     "action": "Develop Customer Remediation Plan",
+     "strapline": "Plan for customer recovery: clearing transaction backlogs, proactive outreach to heavily impacted clients. Evaluate goodwill gestures (e.g., fee waivers, service credits) to rebuild trust."
+    },
+    {
+     "action": "Review Contractual & Legal Position",
+     "strapline": "Analyze the contract with the third-party vendor for breach of contract, SLA violations, and liability clauses. Issue a formal reservation of rights notice to the vendor to preserve legal options."
+    }
+   ],
+   "ongoing": [
+    {
+     "action": "Overhaul Vendor Risk Management Framework",
+     "strapline": "Update the TPRM framework to explicitly include fourth-party concentration risk assessment. Mandate that all critical vendors provide transparency into their own key dependencies (their \"fourth parties\"). Introduce \"concentration scores\" for critical vendors based on shared dependencies across the ecosystem."
+    },
+    {
+     "action": "Strategic Architectural Review",
+     "strapline": "Re-evaluate technology architecture for single points of failure. Prioritize investment in multi-cloud, multi-vendor, or active-active strategies for critical services to eliminate single-vendor dependency."
+    },
+    {
+     "action": "Update Board & Governance Reporting",
+     "strapline": "Establish a permanent agenda item at the Board Risk Committee to review third and fourth-party concentration risk. Develop key risk indicators (KRIs) to track and report on these dependencies."
+    },
+    {
+     "action": "Contract Renegotiation and Templating",
+     "strapline": "Amend standard Master Service Agreement (MSA) templates to include clauses requiring: Right-to-audit clauses that extend to sub-contractors. Mandatory disclosure of critical fourth-party dependencies. Specific resilience and recovery time objectives (RTOs)."
+    }
+   ]
+  },
+  "summary": [
+   "A shared-infrastructure outage at a critical upstream provider caused a nationwide digital-channel disruption, exposing fourth-party concentration risk",
+   "Immediate impact: Critical — ~5.5 hours of downtime, estimated $12–20M in direct costs",
+   "Second-order: reputational fallout building; regulatory scrutiny of resilience arrangements likely",
+   "Board attention needed: concentration limits on upstream providers, provider diversity (multi-CDN/multi-region), review of vendor due-diligence scope"
+  ]
+ },
+ "sanctions": {
+  "firstOrder": [
+   {
+    "stripe": "Regulatory & Compliance Risk",
+    "metrics": [
+     "Sanctions screening failure rate (%)",
+     "Wind-down authorisations granted vs. requested"
+    ],
+    "impact": "Direct violation of binding regulations exposes the bank to fines, reputational damage and regulatory scrutiny",
+    "sev": "Critical"
+   },
+   {
+    "stripe": "Credit Risk — Trade & Project Finance",
+    "metrics": [
+     "Client portfolio value exposed to LNG/energy restrictions",
+     "Contract renegotiation volume"
+    ],
+    "impact": "New energy-sector restrictions stall revenue-generating deals and force costly renegotiations",
+    "sev": "High"
+   },
+   {
+    "stripe": "Digital Assets Risk",
+    "metrics": [
+     "EU crypto clients re-certified under ownership ban (%)",
+     "Volume with targeted-jurisdiction platforms"
+    ],
+    "impact": "Missing the re-certification deadline could invalidate the digital-assets control framework entirely",
+    "sev": "High"
+   },
+   {
+    "stripe": "Legal & Sovereign Risk",
+    "metrics": [
+     "Active legal proceedings in sanctioning-country courts",
+     "Litigation provisions allocated ($)"
+    ],
+    "impact": "Bank faces permanent, high-cost defensive litigation, with unenforceable foreign judgments a live risk",
+    "sev": "Critical"
+   },
+   {
+    "stripe": "Financial Crime Risk — Screening Effectiveness",
+    "metrics": [
+     "Screening coverage efficacy (%)",
+     "False-negative rate post-screening"
+    ],
+    "impact": "Coverage gaps are the most direct path to a severe regulatory breach as list volumes surge",
+    "sev": "High"
+   },
+   {
+    "stripe": "Credit Risk — Counterparty Exposure",
+    "metrics": [
+     "Credit exposure to sanctioned entities ($)",
+     "Exposure exited/written down (%)"
+    ],
+    "impact": "Payment prohibitions force write-downs on loans and trade finance to now-sanctioned entities",
+    "sev": "Critical"
+   }
+  ],
+  "secondOrder": [
+   {
+    "stripe": "Strategic & Market Risk",
+    "metrics": [
+     "Client attrition rate in high-risk adjacent sectors/geographies (%)",
+     "Revenue at risk from market exit ($)"
+    ],
+    "impact": "Bank may proactively exit profitable markets or client segments seen as high sanctions risk, forgoing revenue",
+    "sev": "High"
+   },
+   {
+    "stripe": "Operational & People Risk",
+    "metrics": [
+     "Employee turnover in Compliance/Legal/Ops (%)",
+     "Sanctions-related error rate in screening overrides (%)"
+    ],
+    "impact": "Constant rule changes drive compliance fatigue and burnout in critical functions, raising human-error risk",
+    "sev": "High"
+   },
+   {
+    "stripe": "Supervisory & Capital Risk",
+    "metrics": [
+     "Increase in Operational RWA",
+     "Number of ad-hoc inquiries from primary regulators"
+    ],
+    "impact": "Regulators view rising complexity and legal exposure as an elevated institutional risk profile",
+    "sev": "High"
+   },
+   {
+    "stripe": "Third-Party & Ecosystem Risk",
+    "metrics": [
+     "Concentration risk score for critical compliance vendors",
+     "Vendor re-certification lag (days)"
+    ],
+    "impact": "New rules cascade to the vendor ecosystem — data providers, correspondent banks, and software firms",
+    "sev": "High"
+   },
+   {
+    "stripe": "Reputational Risk",
+    "metrics": [
+     "Negative media mentions (#)",
+     "Client churn rate (%)"
+    ],
+    "impact": "Public perception of a sanctions failure risks rapid, severe trust erosion — more costly than direct fines",
+    "sev": "Critical"
+   }
+  ],
+  "escalation": [
+   {
+    "stripe": "Operational Risk — Sanctions Screening Failure (1st Order)",
+    "severity": "Critical",
+    "escalateTo": "Head of Financial Crime Compliance, Head of Operations & Sanctions Incident Team",
+    "timeframe": "Immediate (< 15 mins)",
+    "criticality": "Immediate"
+   },
+   {
+    "stripe": "Legal / Regulatory Risk — Potential Sanctions Breach & Reporting Obligation (2nd Order)",
+    "severity": "High",
+    "escalateTo": "General Counsel, Chief Compliance Officer & Regulatory Liaison",
+    "timeframe": "Within 1 hour",
+    "criticality": "Urgent"
+   },
+   {
+    "stripe": "Reputational Risk — Potential Enforcement & Media Exposure (2nd Order)",
+    "severity": "High",
+    "escalateTo": "Head of Communications, Chief Marketing Officer (CMO) & Executive Committee",
+    "timeframe": "Within 2 hours",
+    "criticality": "Urgent"
+   },
+   {
+    "stripe": "Client / Conduct Risk — Required De-risking & Offboarding Strategy (2nd Order)",
+    "severity": "Medium",
+    "escalateTo": "Heads of Business Lines, Head of Client Management & Conduct Risk Committee",
+    "timeframe": "Within 24 hours",
+    "criticality": "Elevated"
+   },
+   {
+    "stripe": "Overall Event — Cross-Cutting Business Impact",
+    "severity": "Critical",
+    "escalateTo": "CEO, Chief Risk Officer (CRO) & Board Risk Committee",
+    "timeframe": "Within 2 hours (Initial) & 24 hours (Full Briefing)",
+    "criticality": "Immediate"
+   }
+  ],
+  "map": [
+   {
+    "tier": "Trigger",
+    "card": "Sanctions package takes effect amid parallel legislation",
+    "parent": "—"
+   },
+   {
+    "tier": "Scope",
+    "card": "Group",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Scope",
+    "card": "Counterparty universe",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Scope",
+    "card": "Trade finance & correspondent banking",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Scope",
+    "card": "Digital assets & vendors",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Scope",
+    "card": "Legal & compliance functions",
+    "parent": "Trigger"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Regulatory & compliance risk",
+    "parent": "Legal & compliance functions"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Credit risk",
+    "parent": "Counterparty universe"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Legal & sovereign risk",
+    "parent": "Trade finance & correspondent banking"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Third-party risk",
+    "parent": "Digital assets & vendors"
+   },
+   {
+    "tier": "Risk stripe L1",
+    "card": "Reputational & liquidity risk",
+    "parent": "Counterparty universe"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Screening effectiveness",
+    "parent": "Regulatory & compliance risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Counterparty exposure",
+    "parent": "Credit risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Cross-jurisdictional litigation",
+    "parent": "Legal & sovereign risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Vendor & digital concentration",
+    "parent": "Third-party risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Reputational trust",
+    "parent": "Reputational & liquidity risk"
+   },
+   {
+    "tier": "Risk stripe L2",
+    "card": "Correspondent liquidity",
+    "parent": "Reputational & liquidity risk"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Screening coverage gap",
+    "parent": "Screening effectiveness"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Sanctioned entity exposure",
+    "parent": "Counterparty exposure"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Active legal proceedings",
+    "parent": "Cross-jurisdictional litigation"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Vendor / crypto concentration",
+    "parent": "Vendor & digital concentration"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Negative media mentions",
+    "parent": "Reputational trust"
+   },
+   {
+    "tier": "Risk stripe L3",
+    "card": "Funds trapped in correspondents",
+    "parent": "Correspondent liquidity"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Screening coverage efficacy (%)",
+    "parent": "Screening coverage gap"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Credit exposure to sanctioned entities ($)",
+    "parent": "Sanctioned entity exposure"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Active legal proceedings (#)",
+    "parent": "Active legal proceedings"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Vendor concentration score",
+    "parent": "Vendor / crypto concentration"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Negative media mentions (#)",
+    "parent": "Negative media mentions"
+   },
+   {
+    "tier": "Risk measurement",
+    "card": "Funds trapped in correspondents ($)",
+    "parent": "Funds trapped in correspondents"
+   },
+   {
+    "tier": "Impact",
+    "card": "Regulatory / legal exposure",
+    "parent": "Screening coverage efficacy (%)"
+   },
+   {
+    "tier": "Impact",
+    "card": "Credit exposure",
+    "parent": "Credit exposure to sanctioned entities ($)"
+   },
+   {
+    "tier": "Impact",
+    "card": "Legal / sovereign exposure",
+    "parent": "Active legal proceedings (#)"
+   },
+   {
+    "tier": "Impact",
+    "card": "Third-party / vendor exposure",
+    "parent": "Vendor concentration score"
+   },
+   {
+    "tier": "Impact",
+    "card": "Reputational / liquidity position",
+    "parent": "Negative media mentions (#); Funds trapped in correspondents ($)"
+   },
+   {
+    "tier": "Limit breaches",
+    "card": "Sanctions screening failure threshold; correspondent liquidity ratio breach",
+    "parent": "Regulatory / legal exposure; Reputational / liquidity position"
+   },
+   {
+    "tier": "Action",
+    "card": "Accelerate screening system upgrade, exit high-risk market segments proactively, escalate to Board Risk Committee",
+    "parent": "Limit breaches"
+   }
+  ],
+  "playbook": {
+   "immediate": [
+    {
+     "action": "Activate Sanctions Incident Response Protocol",
+     "strapline": "Assemble the core crisis team: Head of Financial Crime, General Counsel, CRO, COO, and Head of Comms. Establish a secure \"war room\" channel and set a high-frequency update cadence (e.g., hourly) to manage the response."
+    },
+    {
+     "action": "Isolate & Contain",
+     "strapline": "Immediately block all related payments and freeze associated client assets. Implement emergency overrides to prevent further processing of transactions linked to the identified screening gap. Isolate the affected systems or processes."
+    },
+    {
+     "action": "Initial Regulatory Notification & Triage",
+     "strapline": "Prepare and deliver a preliminary notification to the relevant regulatory bodies (e.g., OFAC, HMT) within the legally mandated timeframe. Clearly state the known facts, the immediate containment actions taken, and the commitment to a full investigation."
+    },
+    {
+     "action": "Preserve All Records",
+     "strapline": "Secure and preserve all relevant data and system logs, including transaction records, screening logs, system change histories, and all communications related to the incident. Issue a legal hold notice to prevent inadvertent data deletion."
+    },
+    {
+     "action": "Prepare Internal & External Communications",
+     "strapline": "Provide front-line teams with approved scripts and FAQs to handle internal and potential client inquiries. Draft holding statements for media and external stakeholders, to be approved by Legal and the Executive Committee, focusing on action and accountability."
+    }
+   ],
+   "shortterm": [
+    {
+     "action": "Conduct Full Root Cause Analysis (RCA)",
+     "strapline": "Forensically investigate the end-to-end process to identify the precise point of failure (e.g., screening engine logic, list data failure, API error, human error). Document findings meticulously for regulatory review."
+    },
+    {
+     "action": "Quantify Total Risk Exposure",
+     "strapline": "Conduct a full financial impact assessment: value of breached transactions, total assets frozen, potential regulatory fines, and operational costs. Model the second-order impacts on liquidity and reputation."
+    },
+    {
+     "action": "Manage Regulatory Engagement",
+     "strapline": "Proactively engage with regulators, providing regular, transparent updates on the RCA, remediation progress, and impact assessment. Frame the narrative by demonstrating accountability and robust control of the situation."
+    },
+    {
+     "action": "Develop Client Remediation & De-risking Plan",
+     "strapline": "Formulate a strategy for managing impacted client relationships, including the plan for off-boarding high-risk clients identified during the review. Develop clear communication scripts and handling procedures for client-facing teams."
+    },
+    {
+     "action": "Assess Legal & Contractual Position",
+     "strapline": "Engage legal counsel to analyze the firm's liability, potential for fines, and any contractual breaches with third-party data or software providers. Issue reservation of rights notices to any vendors implicated in the failure."
+    }
+   ],
+   "ongoing": [
+    {
+     "action": "Overhaul Sanctions Compliance Framework",
+     "strapline": "Revise and strengthen the entire sanctions framework, including policies, operating procedures, and governance structures. Incorporate lessons learned from the incident to address identified weaknesses in the control environment."
+    },
+    {
+     "action": "Enhance Screening Technology & Controls",
+     "strapline": "Re-evaluate and invest in upgrading sanctions screening platforms. Prioritize improvements such as fuzzy logic tuning, enhanced data sources, and real-time screening capabilities to reduce false negatives and improve detection accuracy."
+    },
+    {
+     "action": "Execute Comprehensive Lookback Review",
+     "strapline": "As directed by legal and compliance, conduct a formal lookback review of historical transactions to determine if the same control failure led to other previously undetected breaches. Scope and methodology must be defensible to regulators."
+    },
+    {
+     "action": "Strengthen Governance & Board Reporting",
+     "strapline": "Establish permanent agenda items at senior risk committees and the Board to review sanctions compliance effectiveness. Develop and track new Key Risk Indicators (KRIs) focused on screening performance, list management, and model effectiveness."
+    },
+    {
+     "action": "Implement Enhanced Training & Culture Program",
+     "strapline": "Roll out mandatory, scenario-based training for all relevant staff, from front-line operations to senior management. Launch a communications campaign to reinforce the critical importance of sanctions compliance and embed a culture of vigilance."
+    }
+   ]
+  },
+  "summary": [
+   "Failure at critical data provider for sanctions screening exposed single-vendor concentration risk and systemic control gaps.",
+   "Immediate Impact: Critical — Initial automated checks failed to flag transactions, confirming a significant weakness in the screening process.",
+   "Second-Order: Potential for regulatory scrutiny and fines; reputational damage to the firm; internal review of data source integrity and vendor oversight required.",
+   "Board Attention Needed: Review of sanctions screening technology effectiveness, vendor due diligence processes, data source reliability, and escalation protocols for control failures."
+  ]
+ }
+};
+/* NA_A3_END */
+
+
+
+// Risk Transmission Map — dark tiered tree with animated node creation and
+// dotted orange parent→child connectors (matches the Excel snapshot).
+function NaTransMap({ map }) {
+  const containerRef = React.useRef(null);
+  const nodeRefs     = React.useRef({});
+  const [edges, setEdges] = React.useState([]);
+  const [ready, setReady] = React.useState(false);
+
+  const { tiers, nodes, N } = React.useMemo(() => {
+    const tiers = []; const nodes = []; let gi = 0;
+    (map || []).forEach(m => {
+      let t = tiers.find(x => x.tier === m.tier);
+      if (!t) { t = { tier:m.tier, nodes:[] }; tiers.push(t); }
+      const node = { id:'n'+gi, gi, tier:m.tier, card:m.card, parent:m.parent };
+      t.nodes.push(node); nodes.push(node); gi++;
+    });
+    return { tiers, nodes, N: nodes.length };
+  }, [map]);
+
+  const measure = React.useCallback(() => {
+    const cont = containerRef.current; if (!cont) return;
+    const cr = cont.getBoundingClientRect();
+    const byCard = {}, byTier = {};
+    nodes.forEach(n => { byCard[n.card.trim().toLowerCase()] = n.id; if (!(n.tier.trim().toLowerCase() in byTier)) byTier[n.tier.trim().toLowerCase()] = n.id; });
+    const es = [];
+    nodes.forEach(n => {
+      if (!n.parent || n.parent === '—') return;
+      const pkey = n.parent.trim().toLowerCase();
+      const pid = byCard[pkey] || byTier[pkey];
+      const pEl = nodeRefs.current[pid], cEl = nodeRefs.current[n.id];
+      if (!pEl || !cEl) return;
+      const pr = pEl.getBoundingClientRect(), crc = cEl.getBoundingClientRect();
+      es.push({ key:n.id, x1: pr.left - cr.left + pr.width/2, y1: pr.bottom - cr.top, x2: crc.left - cr.left + crc.width/2, y2: crc.top - cr.top });
+    });
+    setEdges(es);
+  }, [nodes]);
+
+  React.useEffect(() => {
+    const t = setTimeout(() => { measure(); setReady(true); }, N * 90 + 500);
+    const onResize = () => measure();
+    window.addEventListener('resize', onResize);
+    let ro; if (window.ResizeObserver && containerRef.current) { ro = new ResizeObserver(() => measure()); ro.observe(containerRef.current); }
+    return () => { clearTimeout(t); window.removeEventListener('resize', onResize); if (ro) ro.disconnect(); };
+  }, [measure, N]);
+
+  const setRef = (id) => (el) => { if (el) nodeRefs.current[id] = el; };
+
+  return (
+    <div className="na-tmap2" ref={containerRef}>
+      <svg className="na-tmap2-svg" style={{opacity: ready ? 1 : 0}}>
+        {edges.map(e => {
+          const my = (e.y1 + e.y2) / 2;
+          return <path key={e.key} d={`M ${e.x1} ${e.y1} C ${e.x1} ${my}, ${e.x2} ${my}, ${e.x2} ${e.y2}`} fill="none" stroke="rgba(233,120,45,0.9)" strokeWidth="1.4" strokeDasharray="2 5" strokeLinecap="round" />;
+        })}
+      </svg>
+      {tiers.map((t, ti) => (
+        t.nodes.length === 1 ? (
+          <div key={ti} className="na-tmap2-bar" ref={setRef(t.nodes[0].id)} style={{animationDelay:(t.nodes[0].gi * 0.09).toFixed(2) + 's'}}>
+            <strong>{t.tier}</strong> · {t.nodes[0].card}
+          </div>
+        ) : (
+          <div key={ti} className="na-tmap2-tier">
+            <div className={`na-tmap2-lbl ${/l2|l3/i.test(t.tier) ? 'accent' : ''}`}>{t.tier}</div>
+            <div className="na-tmap2-row">
+              {t.nodes.map(n => (
+                <div key={n.id} className="na-tmap2-node" ref={setRef(n.id)} style={{animationDelay:(n.gi * 0.09).toFixed(2) + 's'}}>{n.card}</div>
+              ))}
+            </div>
+          </div>
+        )
+      ))}
+    </div>
+  );
+}
+
 function NewsAssessment({ onBack }) {
   const [search,     setSearch]     = React.useState('');    // news search box text
   const [searching,  setSearching]  = React.useState(false); // "connecting to internet" state
@@ -4505,7 +6287,7 @@ function NewsAssessment({ onBack }) {
         const slow = Math.random() < 0.3 ? 700 + Math.random() * 900 : 0;
         setTimeout(tick, base + slow);
       } else {
-        setTimeout(() => setAgentStatus(prev => prev.map((st, idx) => idx === i ? 'ready' : st)), 500);
+        setTimeout(() => setAgentStatus(prev => prev.map((st, idx) => idx === i ? 'done' : st)), 700);
       }
     };
     setTimeout(tick, 500);
@@ -4583,11 +6365,6 @@ function NewsAssessment({ onBack }) {
 
     return (
       <div className="page" style={{maxWidth:'none'}}>
-        <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
-          <button className="btn-outline" style={{padding:'7px 14px',fontSize:13}} onClick={onBack}>
-            <i className="fa-solid fa-arrow-left"></i> Scenario Library
-          </button>
-        </div>
         <div className="page-header" style={{marginBottom:16}}>
           <div className="page-title">News Intelligence and Impact Assessment</div>
           <div className="page-sub" style={{maxWidth:'none'}}>An agentic pipeline that reads the news, maps it to the risk transmission register and quantifies the impact.</div>
@@ -4626,14 +6403,6 @@ function NewsAssessment({ onBack }) {
             <div className="na-loading-globe"><i className="fa-solid fa-globe fa-spin"></i></div>
             <div className="na-loading-title">Searching the news{search.trim() ? ` for "${search.trim()}"` : ''}…</div>
             <div className="na-loading-sub">Connecting to news &amp; wire services · retrieving latest articles · ranking by relevance</div>
-            <div className="na-loading-srcs">
-              {SRC_LIST.map((s, i) => (
-                <span key={s} className={`na-src-pill${i < srcHit ? ' hit' : ''}`}>
-                  {i < srcHit ? <i className="fa-solid fa-circle-check chk"></i> : <i className="fa-solid fa-rss" style={{fontSize:9}}></i>}
-                  {s}
-                </span>
-              ))}
-            </div>
           </div>
         )}
 
@@ -4690,6 +6459,9 @@ function NewsAssessment({ onBack }) {
   const ev = NA_FEED.find(e => e.id === runId);
   const d  = NA_DATA[ev.dataId];
   const c  = d.categorisation;
+  const a3 = (typeof NA_A3 !== 'undefined' && NA_A3[ev.dataId]) || {};
+  const foRows = a3.firstOrder || d.firstOrder;
+  const soRows = a3.secondOrder || d.secondOrder;
   const actList = d.actions[actionTab] || [];
   const st = agentStatus[activeAgent];
   const isLast = activeAgent === NA_AGENTS.length - 1;
@@ -4735,25 +6507,8 @@ function NewsAssessment({ onBack }) {
         })}
       </div>
 
-      {activeAgent === NA_AGENTS.length - 1 && (
-        <>
-          <div className="scenario-alert-banner">
-            <i className="fa-solid fa-triangle-exclamation" style={{fontSize:18}}></i>
-            {d.alert}
-          </div>
-          <div className="scenario-meta-grid">
-            {d.meta.map(m => (
-              <div key={m.label} className="scenario-meta-card">
-                <div className="scenario-meta-label">{m.label}</div>
-                <div className={`scenario-meta-value ${m.cls}`}>{m.value}</div>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-
-      {/* Processing panel — the agent's 4 steps run in sequence */}
-      {(st === 'processing' || st === 'ready') && (
+      {/* Processing panel — the agent's 4 steps run in sequence (full page) */}
+      {st === 'processing' && (
         <div className="na-proc">
           <div className="na-proc-title">
             <span className="na-proc-circle" style={{width:38,height:38,fontSize:14,background:st==='ready'?'#15803D':'var(--primary)',color:'#fff',borderColor:st==='ready'?'#15803D':'var(--primary)'}}>{st==='ready' ? <i className="fa-solid fa-check"></i> : ag.n}</span>
@@ -4787,56 +6542,76 @@ function NewsAssessment({ onBack }) {
         </div>
       )}
 
-      {/* Agent output (shown once generated) */}
+      {/* Agent output — steps shrink to a left panel, report on the right */}
       {st === 'done' && (
-        <>
+        <div className="na-assess-split">
+          <div className="na-assess-left na-no-print">
+            <div className="na-proc na-proc-side">
+              <div className="na-proc-title" style={{justifyContent:'flex-start'}}>
+                <span className="na-proc-circle" style={{width:34,height:34,fontSize:13,background:'#15803D',color:'#fff',borderColor:'#15803D'}}><i className="fa-solid fa-check"></i></span>
+                <div style={{textAlign:'left'}}>
+                  <div style={{fontSize:15,fontWeight:800,color:'var(--text)',lineHeight:1.2}}>{ag.short}</div>
+                  <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:0.6,color:'var(--text-3)'}}>Agent {ag.n}</div>
+                </div>
+              </div>
+              <div className="na-proc-role" style={{textAlign:'left'}}>{ag.role}</div>
+              <div className="na-proc-steps" style={{maxWidth:'none'}}>
+                {ag.steps.map((s2, si) => (
+                  <div key={si} className="na-step ok"><span className="na-step-ic"><i className="fa-solid fa-check"></i></span><span>{s2.t}</span></div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="na-assess-right">
       {(printAll || activeAgent === 0) && (
         <>
       {/* A — Event Intake & Categorisation (Agent 1) */}
       <div className="scenario-section-header">Event Intake & Categorisation</div>
       <div className="card" style={{marginBottom:16}}>
-        <div style={{marginBottom:14}}>
-          <div className="na-cat-k" style={{marginBottom:6}}>Summary/Synopsis</div>
+        {/* Synopsis */}
+        <div style={{marginBottom:c.summaryBullets && c.summaryBullets.length > 0 ? 4 : 14}}>
+          <div className="na-cat-k" style={{marginBottom:6}}>Summary</div>
           <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.65}}>
             <i className="fa-solid fa-newspaper" style={{color:'var(--primary)',marginRight:6}}></i>
-            "{ev.synopsis}"
+            {c.synopsis || ev.synopsis}
           </div>
         </div>
-        <div className="na-cat-cards">
-          <div className="na-cat-card">
-            <div className="na-cat-k">Event Type</div>
-            <div className="na-cat-v">{c.eventType}</div>
+        {/* Summary (bullets) */}
+        {c.summaryBullets && c.summaryBullets.length > 0 && (
+          <div style={{marginBottom:14}}>
+            <ul style={{margin:0,paddingLeft:20,fontSize:13,color:'var(--text-2)',lineHeight:1.75}}>
+              {c.summaryBullets.map((b, i) => <li key={i}>{b}</li>)}
+            </ul>
           </div>
-          <div className="na-cat-card">
-            <div className="na-cat-k">Classifier Confidence</div>
-            <div className="na-cat-v" style={{color:'#15803D'}}>{c.confidence}%</div>
-            <div className="na-conf-track"><div className="na-conf-fill" style={{width:c.confidence+'%'}}></div></div>
-          </div>
-          <div className="na-cat-card">
-            <div className="na-cat-k">Sentiment</div>
-            <div className="na-cat-v na-sentiment" style={{color:c.sentiment.color}}>
-              <i className={`fa-solid ${c.sentiment.icon}`}></i>{c.sentiment.label}
-              <span style={{fontSize:11,color:'var(--text-3)',fontWeight:600}}>({c.sentiment.score})</span>
-            </div>
-          </div>
-          <div className="na-cat-card">
-            <div className="na-cat-k">Register Match</div>
-            <div className="na-cat-v" style={{fontSize:13}}>{c.registerMatch.id} · {c.registerMatch.similarity}%</div>
-            <div style={{fontSize:11,color:'var(--text-3)',marginTop:4}}>{c.registerMatch.title}</div>
-          </div>
-        </div>
+        )}
+        {/* Extracted Entities */}
         <div style={{marginTop:6,marginBottom:12}}>
           <div className="na-cat-k" style={{marginBottom:6}}>Extracted Entities</div>
           {c.entities.map(e => <span key={e} className="na-chip">{e}</span>)}
         </div>
+        {/* New cards: Trigger, Primary/Secondary Event Type, Geography, Velocity */}
         <div className="na-cat-cards" style={{marginBottom:12}}>
-          {c.extracted.map(x => (
-            <div key={x.k} className="na-cat-card" style={{borderLeftColor:'var(--border)'}}>
-              <div className="na-cat-k">{x.k}</div>
-              <div className="na-cat-v" style={{fontSize:13}}>{x.v}</div>
-            </div>
+          {c.trigger && <div className="na-cat-card"><div className="na-cat-k">Trigger</div><div className="na-cat-v" style={{fontSize:13}}>{c.trigger}</div></div>}
+          {c.primaryEventType && <div className="na-cat-card"><div className="na-cat-k">Primary Event Type</div><div className="na-cat-v" style={{fontSize:13}}>{c.primaryEventType}</div></div>}
+          {c.secondaryEventType && <div className="na-cat-card"><div className="na-cat-k">Secondary Event Type</div><div className="na-cat-v" style={{fontSize:13}}>{c.secondaryEventType}</div></div>}
+          {c.extracted.filter(x => x.k === 'Geography').map(x => (
+            <div key={x.k} className="na-cat-card"><div className="na-cat-k">Geography</div><div className="na-cat-v" style={{fontSize:13}}>{x.v}</div></div>
           ))}
+          {c.velocity && <div className="na-cat-card"><div className="na-cat-k">Velocity</div><div className="na-cat-v" style={{fontSize:13}}>{c.velocity}</div></div>}
+          <div className="na-cat-card">
+            <div className="na-cat-k">Classifier Confidence &amp; Register Match</div>
+            <div className="na-cat-v" style={{color:'#15803D'}}>{c.confidence}%</div>
+            <div className="na-conf-track"><div className="na-conf-fill" style={{width:c.confidence+'%'}}></div></div>
+            <div style={{fontSize:11.5,color:'var(--text-2)',marginTop:8,fontWeight:600}}>{c.registerMatch.id} — {c.registerMatch.title}</div>
+          </div>
         </div>
+        {/* Affected risk stripes */}
+        {c.affectedStripes && c.affectedStripes.length > 0 && (
+          <div style={{marginBottom:4}}>
+            <div className="na-cat-k" style={{marginBottom:6}}>Affected Risk Stripes</div>
+            {c.affectedStripes.map(s => <span key={s} className="na-chip">{s}</span>)}
+          </div>
+        )}
       </div>
         </>
       )}
@@ -4853,56 +6628,19 @@ function NewsAssessment({ onBack }) {
         <div className="risk-flow">
           {d.flow.map((step, i) => (
             <React.Fragment key={i}>
-              <div className={`risk-flow-step ${step.type||''} ${openFlow===i?'active-step':''}`} onClick={() => setOpenFlow(openFlow===i?null:i)} style={{cursor:'pointer'}}>
+              <div className={`risk-flow-step na-flow-uniform ${openFlow===i?'active-step':''}`} onClick={() => setOpenFlow(openFlow===i?null:i)} style={{cursor:'pointer'}}>
                 {step.label}
                 <span style={{marginLeft:8}}><i className={`fa-solid ${openFlow===i?'fa-circle-xmark':'fa-circle-info'}`} style={{fontSize:12,opacity:0.7}}></i></span>
               </div>
               {openFlow===i && (
-                <div style={{maxWidth:520,margin:'2px auto 6px',background:'var(--surface)',border:'1px solid var(--border)',borderRadius:'var(--radius-sm)',padding:'12px 16px',boxShadow:'var(--shadow)'}}>
-                  <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
-                    <span className={`sev-badge sev-${step.severity.toLowerCase()}`}>{step.severity}</span>
-                    <span style={{fontSize:11,color:'var(--text-3)',fontWeight:600,textTransform:'uppercase',letterSpacing:0.4}}>Stage {i+1}</span>
-                  </div>
-                  <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.6}}>{step.explanation}</div>
+                <div style={{maxWidth:560,margin:'2px auto 6px',background:'var(--surface)',border:'1px solid var(--border)',borderRadius:'var(--radius-sm)',padding:'12px 16px',boxShadow:'var(--shadow)'}}>
+                  <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.6}}>{step.detail}</div>
+                  {step.signal && <div style={{marginTop:8,fontSize:11.5,color:'var(--primary-dark)',fontWeight:700}}>{step.signal}</div>}
                 </div>
               )}
               {i < d.flow.length - 1 && <div className="risk-flow-arrow"><i className="fa-solid fa-chevron-down"></i></div>}
             </React.Fragment>
           ))}
-        </div>
-        {/* Human-in-the-loop validation */}
-        <div className="na-hitl">
-          <div className="na-hitl-title"><i className="fa-solid fa-user-check"></i>Validate risk-stripe mapping</div>
-          <div style={{fontSize:12.5,color:'#78350F',lineHeight:1.6}}>
-            Agent 2 has mapped {d.flow.length} transmission stages and the primary/secondary risk stripes below. A risk owner should approve or reject the mapping before impact quantification.
-          </div>
-          {hitl === null && (
-            <div className="na-hitl-actions">
-              <button className="na-thumb up" onClick={() => setHitl('approved')}>
-                <i className="fa-solid fa-thumbs-up"></i> Approve
-              </button>
-              <button className="na-thumb down" onClick={() => setHitl('rejected')}>
-                <i className="fa-solid fa-thumbs-down"></i> Reject
-              </button>
-            </div>
-          )}
-          {hitl === 'approved' && (
-            <div className="na-hitl-note"><i className="fa-solid fa-circle-check"></i>Mapping approved by risk owner — impact quantification unlocked.</div>
-          )}
-          {hitl === 'rejected' && (
-            <div style={{marginTop:12}}>
-              <textarea className="na-hitl-comment" placeholder="Add your comments…" value={hitlComment} onChange={e => setHitlComment(e.target.value)} />
-              <div style={{display:'flex',gap:10,marginTop:8}}>
-                <button className="na-thumb down" style={{padding:'7px 16px',fontSize:12}} disabled={!hitlComment.trim()} onClick={() => setHitl('sent')}>
-                  <i className="fa-solid fa-paper-plane"></i> Submit
-                </button>
-                <button className="btn-outline" style={{fontSize:12,padding:'7px 16px'}} onClick={() => { setHitl(null); setHitlComment(''); }}>Cancel</button>
-              </div>
-            </div>
-          )}
-          {hitl === 'sent' && (
-            <div className="na-hitl-note reject"><i className="fa-solid fa-circle-xmark"></i>Mapping rejected — comments recorded for review.</div>
-          )}
         </div>
       </div>
         </>
@@ -4915,15 +6653,18 @@ function NewsAssessment({ onBack }) {
       <div className="card" style={{marginBottom:16}}>
         <div className="impact-table-wrap">
           <table className="impact-table">
-            <thead><tr><th>Risk Stripe</th><th>Metric</th><th>Impact</th><th>Similarity Match</th><th>Severity</th></tr></thead>
+            <thead><tr><th>Risk Stripe</th><th style={{minWidth:220}}>Metric</th><th>Impact</th><th>Severity</th></tr></thead>
             <tbody>
-              {d.firstOrder.map((r, i) => (
+              {foRows.map((r, i) => (
                 <tr key={i}>
                   <td><strong>{r.stripe}</strong></td>
-                  <td style={{whiteSpace:'nowrap'}}>{r.measure}</td>
+                  <td>
+                    {(r.metrics || String(r.metric||r.measure||'').split(';').map(s=>s.trim()).filter(Boolean)).map((m, j) => (
+                      <label key={j} className="na-metric-chk"><input type="checkbox" defaultChecked /> <span>{m}</span></label>
+                    ))}
+                  </td>
                   <td>{r.impact}</td>
-                  <td style={{whiteSpace:'nowrap',color:'var(--primary-dark)',fontWeight:600}}>{r.match}</td>
-                  <td><span className={`sev-badge sev-${r.sev.toLowerCase()}`}>{r.sev}</span></td>
+                  <td><span className={`sev-badge sev-${(r.sev||'').toLowerCase()}`}>{r.sev}</span></td>
                 </tr>
               ))}
             </tbody>
@@ -4935,24 +6676,56 @@ function NewsAssessment({ onBack }) {
       <div className="scenario-section-header">Second Order Impact</div>
       <div className="card" style={{marginBottom:16}}>
         <div style={{fontSize:13,color:'var(--text-2)',marginBottom:12,lineHeight:1.6}}>
-          Second-order impacts emerge as the initial shock propagates across adjacent risk stripes — prioritised by certainty and impact size.
+          Second-order impacts emerge as the initial shock propagates across adjacent risk stripes.
         </div>
         <div className="impact-table-wrap">
           <table className="impact-table">
-            <thead><tr><th>Risk Stripe</th><th>Metric</th><th>Impact</th><th>Similarity Match</th><th>Severity</th></tr></thead>
+            <thead><tr><th>Risk Stripe</th><th style={{minWidth:220}}>Metric</th><th>Impact</th><th>Severity</th></tr></thead>
             <tbody>
-              {d.secondOrder.map((r, i) => (
+              {soRows.map((r, i) => (
                 <tr key={i}>
                   <td><strong>{r.stripe}</strong></td>
-                  <td style={{whiteSpace:'nowrap'}}>{r.measure}</td>
+                  <td>
+                    {(r.metrics || String(r.metric||r.measure||'').split(';').map(s=>s.trim()).filter(Boolean)).map((m, j) => (
+                      <label key={j} className="na-metric-chk"><input type="checkbox" defaultChecked /> <span>{m}</span></label>
+                    ))}
+                  </td>
                   <td>{r.impact}</td>
-                  <td style={{whiteSpace:'nowrap',color:'var(--primary-dark)',fontWeight:600}}>{r.match}</td>
-                  <td><span className={`sev-badge sev-${r.sev.toLowerCase()}`}>{r.sev}</span></td>
+                  <td><span className={`sev-badge sev-${(r.sev||'').toLowerCase()}`}>{r.sev}</span></td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Human-in-the-loop validation (moved to Agent 3, after second-order impact) */}
+      <div className="na-hitl">
+        <div className="na-hitl-title"><i className="fa-solid fa-user-check"></i>Validate risk-stripe mapping</div>
+        <div style={{fontSize:12.5,color:'#78350F',lineHeight:1.6}}>
+          The pipeline mapped {d.flow.length} transmission stages and the first- and second-order risk stripes above. A risk owner should approve or reject the mapping before it is finalised.
+        </div>
+        {hitl === null && (
+          <div className="na-hitl-actions">
+            <button className="na-thumb up" onClick={() => setHitl('approved')}><i className="fa-solid fa-thumbs-up"></i> Approve</button>
+            <button className="na-thumb down" onClick={() => setHitl('rejected')}><i className="fa-solid fa-thumbs-down"></i> Reject</button>
+          </div>
+        )}
+        {hitl === 'approved' && (
+          <div className="na-hitl-note"><i className="fa-solid fa-circle-check"></i>Mapping approved by risk owner.</div>
+        )}
+        {hitl === 'rejected' && (
+          <div style={{marginTop:12}}>
+            <textarea className="na-hitl-comment" placeholder="Add your comments…" value={hitlComment} onChange={e => setHitlComment(e.target.value)} />
+            <div style={{display:'flex',gap:10,marginTop:8}}>
+              <button className="na-thumb down" style={{padding:'7px 16px',fontSize:12}} disabled={!hitlComment.trim()} onClick={() => setHitl('sent')}><i className="fa-solid fa-paper-plane"></i> Submit</button>
+              <button className="btn-outline" style={{fontSize:12,padding:'7px 16px'}} onClick={() => { setHitl(null); setHitlComment(''); }}>Cancel</button>
+            </div>
+          </div>
+        )}
+        {hitl === 'sent' && (
+          <div className="na-hitl-note reject"><i className="fa-solid fa-circle-xmark"></i>Mapping rejected — comments recorded for review.</div>
+        )}
       </div>
 
       {/* E — Scope and Exposure (Agent 3) */}
@@ -4972,120 +6745,37 @@ function NewsAssessment({ onBack }) {
           </div>
         ))}
       </div>
-      <div style={{marginBottom:16}}>
-        <div style={{marginBottom:12}}>
-          <div style={{fontSize:13.5,fontWeight:700,color:'var(--text)'}}>Quantified Stress Intelligence</div>
-          <div style={{fontSize:12,color:'var(--text-3)',marginTop:2}}>Click any card for source evidence and impacted desk.</div>
-        </div>
-        <div className="quant-grid">
-          {d.quant.map((q, i) => {
-            const sevCls = q.severity === 'Critical' ? 'sev-critical' : q.severity === 'High' ? 'sev-high' : 'sev-medium';
-            const isOpen = openQuant === i;
-            return (
-              <div key={i} className={`quant-card ${isOpen ? 'qc-open' : ''}`} onClick={() => setOpenQuant(isOpen ? null : i)}>
-                <div className="quant-card-top">
-                  <div className="quant-label">{q.title}</div>
-                  <i className={`fa-solid ${isOpen ? 'fa-circle-xmark' : 'fa-circle-info'} quant-info-icon`}></i>
-                </div>
-                <div className="quant-narrative">"{q.narrative}"</div>
-                <div className="quant-card-meta">
-                  <span className={`sev-badge ${sevCls}`}>{q.severity}</span>
-                  <span className="quant-stripe">{q.riskStripe}</span>
-                </div>
-                {isOpen && (
-                  <div className="quant-popover" onClick={e => e.stopPropagation()}>
-                    <div className="quant-popover-row">
-                      <div className="quant-popover-label">Impacted Desk</div>
-                      <div className="quant-popover-val">{q.impactedDesk}</div>
-                    </div>
-                    <div className="quant-popover-row">
-                      <div className="quant-popover-label">Source Section</div>
-                      <div className="quant-popover-val" style={{color:'var(--primary)',fontWeight:600}}>{q.sourceSection}</div>
-                    </div>
-                    <div className="quant-popover-row">
-                      <div className="quant-popover-label"><i className="fa-solid fa-quote-left" style={{marginRight:4}}></i>Source Evidence</div>
-                      <div className="quant-popover-evidence">{q.sourceEvidence}</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* F — Risk Transmission Map (Agent 2/3 combined) */}
+      {/* F — Risk Transmission Map (from Excel, dark tiered tree, animated) */}
       <div className="scenario-section-header">Risk Transmission Map — {ev.title}</div>
       <div className="card" style={{marginBottom:16}}>
-        <div className="na-map">
-          {d.map.map((col, ci) => (
-            <React.Fragment key={col.title}>
-              <div className="na-map-col">
-                <div className="na-map-col-title">{col.title}</div>
-                <div className="na-map-nodes">
-                  {col.nodes.map(n => (
-                    <div key={n.name} className="na-map-node" style={{'--na-sev':niSevColor(n.sev)}}>
-                      {n.name}<small style={{color:niSevColor(n.sev)}}>{n.sev}</small>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {ci < d.map.length - 1 && <div className="na-map-arrow"><i className="fa-solid fa-arrow-right-long"></i></div>}
-            </React.Fragment>
-          ))}
-        </div>
+        {a3.map && a3.map.length > 0
+          ? <NaTransMap map={a3.map} />
+          : <div style={{fontSize:13,color:'var(--text-3)'}}>No transmission map data for this event.</div>}
       </div>
 
-      {/* G — Financial Impact Dashboard (Agent 3, optional) */}
-      <div className="scenario-section-header">Financial Impact Dashboard</div>
+      {/* H — Escalation Matrix (Agent 3) — from Excel */}
+      <div className="scenario-section-header">Escalation Matrix</div>
       <div className="card" style={{marginBottom:16}}>
-        <div style={{fontSize:12,color:'var(--text-3)',marginBottom:14,display:'flex',alignItems:'center',gap:6}}>
-          <i className="fa-solid fa-circle-check" style={{color:'#15803D'}}></i>
-          Data sufficiency: {d.financial.sufficiency}
-        </div>
-        <div className="na-fin-kpis">
-          {d.financial.kpis.map(k => (
-            <div key={k.lbl} className="na-fin-kpi" style={{borderTopColor:k.tone}}>
-              <div className="na-fin-kpi-ic" style={{color:k.tone}}><i className={`fa-solid ${k.icon}`}></i></div>
-              <div className="na-fin-kpi-val" style={{color:k.tone}}>{k.val}</div>
-              <div className="na-fin-kpi-lbl">{k.lbl}</div>
-              <div className="na-fin-kpi-delta" style={{color:k.tone}}>{k.delta}</div>
-            </div>
-          ))}
-        </div>
-        <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:0.5,color:'var(--text-3)',margin:'6px 0 10px'}}>Estimated financial impact</div>
-        {d.financial.bars.map(b => (
-          <div key={b.label} className="na-bar-row">
-            <span className="na-bar-lbl">{b.label}</span>
-            <span className="na-bar-track"><span className="na-bar-fill" style={{width:b.pct+'%',background:b.tone}}>{b.disp}</span></span>
-          </div>
-        ))}
-      </div>
-
-      {/* H — Escalation Matrix (Agent 3) */}
-      <div className="scenario-section-header">Impact Matrix</div>
-      <div className="card" style={{marginBottom:16}}>
-        <div className="na-esc-wrap">
-          <table className="na-esc">
-            <thead>
-              <tr><th className="na-esc-rh">Risk Stripe</th>{d.escalation.days.map(dd => <th key={dd}>{dd}</th>)}</tr>
-            </thead>
+        <div className="impact-table-wrap">
+          <table className="impact-table">
+            <thead><tr><th>Risk Stripe</th><th>Severity</th><th>Escalate To</th><th>Timeframe</th><th>Criticality</th></tr></thead>
             <tbody>
-              {d.escalation.rows.map(row => (
-                <tr key={row.stripe}>
-                  <td className="na-esc-rh">{row.stripe}</td>
-                  {row.cells.map((lv, i) => <td key={i} style={{background:naEscColor(lv)}}>{lv}</td>)}
-                </tr>
-              ))}
+              {(a3.escalation || []).map((e, i) => {
+                const crit = (e.criticality || '').toLowerCase();
+                const critCls = crit === 'immediate' ? 'sev-critical' : crit === 'urgent' ? 'sev-high' : 'sev-medium';
+                return (
+                  <tr key={i}>
+                    <td><strong>{e.stripe}</strong></td>
+                    <td><span className={`sev-badge sev-${(e.severity||'').toLowerCase()}`}>{e.severity}</span></td>
+                    <td>{e.escalateTo}</td>
+                    <td style={{whiteSpace:'nowrap'}}>{e.timeframe}</td>
+                    <td><span className={`sev-badge ${critCls}`}>{e.criticality}</span></td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
-        </div>
-        <div style={{display:'flex',gap:12,marginTop:12,flexWrap:'wrap'}}>
-          {['Normal','Elevated','High','Critical'].map(l => (
-            <span key={l} style={{display:'flex',alignItems:'center',gap:5,fontSize:11}}>
-              <span style={{width:12,height:12,borderRadius:2,display:'inline-block',background:naEscColor(l)}}></span>{l}
-            </span>
-          ))}
         </div>
       </div>
         </>
@@ -5105,46 +6795,60 @@ function NewsAssessment({ onBack }) {
       </div>
       <div className="reg-note"><i className="fa-solid fa-circle-info" style={{marginRight:6}}></i>Confirm all reporting obligations with Legal &amp; Compliance before submitting notifications.</div>
 
-      {/* K — Management Action Playbook (Agent 4) */}
-      <div className="scenario-section-header">Management Action Playbook</div>
-      <div className="card" style={{marginBottom:16}}>
-        <div className="action-tabs">
-          {[{id:'immediate',label:'Immediate'},{id:'shortterm',label:'Short-term'},{id:'ongoing',label:'Ongoing'}].map(t => (
-            <button key={t.id} className={`action-tab ${actionTab===t.id?'active':''}`} onClick={() => { setActionTab(t.id); setOpenAct(null); }}>
-              {t.label}
-              <span style={{marginLeft:6,background:'rgba(0,0,0,0.07)',borderRadius:10,padding:'1px 7px',fontSize:10,fontWeight:700}}>{(d.actions[t.id]||[]).length}</span>
-            </button>
-          ))}
-        </div>
-        <div>
-          {actList.map((a, i) => (
-            <div key={i} className="na-act-row">
-              <div className="na-act-head" onClick={() => setOpenAct(openAct===i?null:i)}>
-                <span className="na-act-num">{i+1}</span>
-                <span className="na-act-title">{a.title}</span>
-                <span className={`sev-badge sev-${a.priority.toLowerCase()}`}>{a.priority}</span>
-                <i className={`fa-solid fa-chevron-${openAct===i?'up':'down'}`} style={{fontSize:11,color:'var(--text-3)'}}></i>
+      {/* K — Management Action Playbook (Agent 4) — from Excel */}
+      {(() => {
+        const pb = (a3.playbook && (a3.playbook.immediate.length || a3.playbook.shortterm.length || a3.playbook.ongoing.length)) ? a3.playbook : null;
+        const pbList = pb ? (pb[actionTab] || []) : null;
+        return (
+          <>
+            <div className="scenario-section-header">Management Action Playbook</div>
+            <div className="card" style={{marginBottom:16}}>
+              <div className="action-tabs">
+                {[{id:'immediate',label:'Immediate'},{id:'shortterm',label:'Short-term'},{id:'ongoing',label:'Ongoing'}].map(t => (
+                  <button key={t.id} className={`action-tab ${actionTab===t.id?'active':''}`} onClick={() => { setActionTab(t.id); setOpenAct(null); }}>
+                    {t.label}
+                    <span style={{marginLeft:6,background:'rgba(0,0,0,0.07)',borderRadius:10,padding:'1px 7px',fontSize:10,fontWeight:700}}>{pb ? (pb[t.id]||[]).length : (d.actions[t.id]||[]).length}</span>
+                  </button>
+                ))}
               </div>
-              {openAct===i && (
-                <div className="na-act-body">
-                  {a.detail}
-                  <div className="na-act-meta">
-                    <span><strong>Owner:</strong> {a.owner}</span>
-                    <span><strong>Deadline:</strong> {a.deadline}</span>
+              <div>
+                {pbList ? pbList.map((a, i) => (
+                  <div key={i} className="na-pb-row">
+                    <span className="na-act-num">{i+1}</span>
+                    <div>
+                      <div className="na-pb-action">{a.action}</div>
+                      {a.strapline && <div className="na-pb-strap">{a.strapline}</div>}
+                    </div>
                   </div>
-                </div>
-              )}
+                )) : actList.map((a, i) => (
+                  <div key={i} className="na-act-row">
+                    <div className="na-act-head" onClick={() => setOpenAct(openAct===i?null:i)}>
+                      <span className="na-act-num">{i+1}</span>
+                      <span className="na-act-title">{a.title}</span>
+                      <span className={`sev-badge sev-${a.priority.toLowerCase()}`}>{a.priority}</span>
+                      <i className={`fa-solid fa-chevron-${openAct===i?'up':'down'}`} style={{fontSize:11,color:'var(--text-3)'}}></i>
+                    </div>
+                    {openAct===i && (
+                      <div className="na-act-body">{a.detail}
+                        <div className="na-act-meta"><span><strong>Owner:</strong> {a.owner}</span><span><strong>Deadline:</strong> {a.deadline}</span></div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </>
+        );
+      })()}
 
-      {/* Final synthesised report */}
+      {/* Summary — from Excel "Management Summary box" (heading kept as Summary) */}
       <div style={{background:'rgba(255,173,40,0.07)',border:'1px solid rgba(255,173,40,0.25)',borderLeft:'4px solid var(--primary)',borderRadius:'var(--radius)',padding:'16px 20px',marginBottom:16}}>
         <div style={{fontSize:12,fontWeight:800,textTransform:'uppercase',letterSpacing:0.5,color:'var(--primary)',marginBottom:8}}>
           <i className="fa-solid fa-file-lines" style={{marginRight:6}}></i>Summary
         </div>
-        <div style={{fontSize:13.5,color:'var(--text-2)',lineHeight:1.7}}>{d.reportSummary}</div>
+        {a3.summary && a3.summary.length > 0
+          ? <ul style={{margin:0,paddingLeft:20,fontSize:13.5,color:'var(--text-2)',lineHeight:1.8}}>{a3.summary.map((s, i) => <li key={i}>{s}</li>)}</ul>
+          : <div style={{fontSize:13.5,color:'var(--text-2)',lineHeight:1.7}}>{d.reportSummary}</div>}
       </div>
 
       <div className="ni-disclaimer">
@@ -5171,7 +6875,8 @@ function NewsAssessment({ onBack }) {
               </button>}
         </div>
       )}
-        </>
+          </div>
+        </div>
       )}
 
       {/* Floating Intelligence Chatbot — available once Agent 4 is complete */}
@@ -6482,7 +8187,7 @@ function ArchegosDashboard({ onBack }) {
 }
 
 function ScenarioPage() {
-  const [selected,           setSelected]           = useState(null);
+  const [selected,           setSelected]           = useState(101); // open News Intelligence directly (no card grid)
   const [transitioning,      setTransitioning]      = useState(false);
   const [scenarioData,       setScenarioData]       = useState(null);
   const [chartData,          setChartData]          = useState(null);
