@@ -1643,7 +1643,15 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .impact-table-wrap { overflow-x:auto; border-radius:var(--radius-sm); border:1px solid var(--border); }
 .impact-table { width:100%; border-collapse:collapse; font-size:13px; }
 .impact-table th { background:#F8FAFC; padding:10px 14px; text-align:left; font-weight:700; color:var(--text-2); border-bottom:2px solid var(--border); font-size:11px; text-transform:uppercase; letter-spacing:0.4px; }
-.impact-table td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:top; line-height:1.5; overflow-wrap:break-word; }
+.impact-table td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:top; line-height:1.5; overflow-wrap:anywhere; word-break:break-word; white-space:normal; }
+/* Expand/collapse impact cell */
+.na-imp-cell { display:flex; flex-direction:column; align-items:flex-start; gap:4px; }
+.na-imp-text { white-space:normal; overflow-wrap:anywhere; word-break:break-word; }
+.na-imp-text:not(.open) { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.na-imp-text:not(.open) > div { display:inline; }
+.na-imp-toggle { background:none; border:none; padding:0; margin-top:2px; font-size:11px; font-weight:700; color:var(--primary); cursor:pointer; display:inline-flex; align-items:center; gap:4px; }
+.na-imp-toggle:hover { text-decoration:underline; }
+.na-imp-toggle i { font-size:9px; }
 .impact-table tr:hover td { background:#FAFAFA; }
 .na-metric-chk { display:flex; align-items:flex-start; gap:7px; font-size:12.5px; color:var(--text-2); margin-bottom:5px; cursor:pointer; line-height:1.4; }
 .na-metric-chk:last-child { margin-bottom:0; }
@@ -1651,8 +1659,9 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .na-metric-chk input:disabled { cursor:not-allowed; }
 .na-stripe-chk { accent-color:var(--primary); width:15px; height:15px; cursor:pointer; margin-top:2px; }
 .na-addstripe { display:grid; grid-template-columns:1fr 1fr 150px; gap:10px; margin-top:14px; background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px; align-items:start; }
-.na-addstripe input, .na-addstripe textarea, .na-addstripe select { padding:8px 11px; font-size:13px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; background:#FFFFFF; color:#0F172A; color-scheme:light; caret-color:#0F172A; outline:none; box-sizing:border-box; width:100%; }
-.na-addstripe input:focus, .na-addstripe textarea:focus, .na-addstripe select:focus { border-color:var(--primary); background:#FFFFFF; color:#0F172A; }
+.na-addstripe input, .na-addstripe textarea, .na-addstripe select { padding:8px 11px; font-size:13px; border:1.5px solid var(--border) !important; border-radius:var(--radius-sm); font-family:inherit; background:#FFFFFF !important; color:#0F172A !important; color-scheme:light; caret-color:#0F172A; outline:none; box-sizing:border-box; width:100%; }
+.na-addstripe input:focus, .na-addstripe textarea:focus, .na-addstripe select:focus { border-color:var(--primary) !important; background:#FFFFFF !important; color:#0F172A !important; }
+.na-addstripe input::placeholder, .na-addstripe textarea::placeholder { color:#94A3B8 !important; }
 .na-addstripe input:-webkit-autofill, .na-addstripe input:-webkit-autofill:hover, .na-addstripe input:-webkit-autofill:focus, .na-addstripe textarea:-webkit-autofill { -webkit-text-fill-color:#0F172A !important; -webkit-box-shadow:0 0 0 40px #FFFFFF inset !important; box-shadow:0 0 0 40px #FFFFFF inset !important; caret-color:#0F172A; }
 .na-addstripe .full { grid-column:1 / -1; }
 .na-addstripe textarea { min-height:56px; resize:vertical; }
@@ -1807,6 +1816,24 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .ni-home-card-risk { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:var(--primary); margin-top:7px; }
 .ni-home-card-risk i { font-size:10px; }
 .ni-home-card-impact { font-size:11.5px; color:var(--text-2); line-height:1.5; margin-top:5px; }
+.ni-home-card-cta { font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary); margin-top:8px; opacity:0; transition:opacity 0.15s; }
+.ni-home-card:hover .ni-home-card-cta { opacity:1; }
+.ni-home-card.selected { border-color:var(--primary); background:var(--primary-light); }
+/* Selected-article panel (middle) */
+.na-article { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px 24px; }
+.na-article-top { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+.na-article-title { font-size:18px; font-weight:800; color:var(--text); line-height:1.35; letter-spacing:-0.3px; }
+.na-article-row { display:flex; gap:12px; margin-top:14px; }
+.na-article-k { flex:0 0 96px; font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-3); padding-top:2px; }
+.na-article-v { flex:1; font-size:13px; color:var(--text-2); line-height:1.6; }
+.na-article-note { margin-top:18px; font-size:12px; color:var(--text-2); background:#FFF7ED; border:1px solid #FDBA74; border-radius:var(--radius-sm); padding:10px 13px; line-height:1.55; }
+.na-article-note i { color:var(--primary); margin-right:6px; }
+.na-article.runnable { cursor:pointer; transition:border-color 0.15s, box-shadow 0.15s; }
+.na-article.runnable:hover { border-color:var(--primary); box-shadow:0 4px 16px rgba(0,0,0,0.10); }
+.na-article-actions { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+.na-article-hint { font-size:12px; color:var(--text-3); line-height:1.5; }
+.na-article-body { margin-top:18px; padding-top:16px; border-top:1px solid var(--border); }
+.na-article-text { font-size:13px; color:var(--text-2); line-height:1.7; white-space:pre-line; }
 @media (max-width:980px){ .ni-landing { flex-direction:column; } .ni-home { flex-basis:auto; width:100%; position:static; max-height:520px; } }
 .ni-search-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px; margin-bottom:24px; box-shadow:var(--shadow); }
 .ni-search-box { display:flex; gap:10px; align-items:center; }
@@ -2017,6 +2044,9 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .na-esc td.na-esc-rh { color:var(--text); font-weight:700; text-align:left; background:#F1F5F9; text-transform:none; letter-spacing:0; font-size:12.5px; }
 
 /* Playbook rows */
+.na-pb-exposure { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; background:#FFF7ED; border:1px solid #FDBA74; border-radius:var(--radius-sm); padding:10px 14px; margin:2px 0 12px; }
+.na-pb-exposure-k { font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:#C2410C; }
+.na-pb-exposure-v { font-size:12.5px; font-weight:700; color:var(--text); line-height:1.5; }
 .na-pb-row { display:flex; align-items:flex-start; gap:12px; padding:12px 4px; border-bottom:1px solid var(--border); }
 .na-pb-row:last-child { border-bottom:none; }
 .na-pb-action { font-size:13.5px; font-weight:700; color:var(--text); line-height:1.4; }
@@ -4080,7 +4110,7 @@ const NA_AGENTS = [
       { t:'Matching event against the risk register' },
       { t:'Classifying event type & confidence' },
     ] },
-  { n:2, short:'Risk Transmission', name:'Risk Transmission Agent', role:'Maps primary & secondary risk stripes and builds the end-to-end transmission structure',
+  { n:2, short:'Risk Event Flow', name:'Risk Event Flow Agent', role:'Maps primary & secondary risk stripes and builds the end-to-end transmission structure',
     steps:[
       { t:'Retrieving comparable events from the register' },
       { t:'Mapping primary & secondary risk stripes' },
@@ -4601,193 +4631,232 @@ const NA_HOME = [
   "type": "Credit",
   "severity": "High",
   "primaryRisk": "Credit risk",
-  "impact": "Signals sector-wide CRE provisioning risk — clients with office/CRE concentration should reassess loss coverage"
+  "impact": "Signals sector-wide CRE provisioning risk — clients with office/CRE concentration should reassess loss coverage",
+  "article": "By Arno Schuetze\nMarch 12, 2026 at 10:49 AM GMT\nBank X said its exposure to US commercial real estate remains a “key risk” that could force it to raise provisions for credit losses, as the asset class struggles with refinancings and a stabilization of prices remains uncertain, particularly in the US.\n“Significant impairment risk remains depending on property types and regions,” Germany’s largest bank said in its annual report on Thursday, highlighting US office space on the West Coast. That “could result in Bank X experiencing loan loss provisions higher than expected.”"
  },
  {
   "title": "Ransomware disrupts a payments processor, halting clearing for hours",
   "type": "Cyber/operational",
   "severity": "Severe",
   "primaryRisk": "Technology & cyber risk",
-  "impact": "Direct settlement delays and counterparty exposure for every bank routed through the affected processor"
+  "impact": "Direct settlement delays and counterparty exposure for every bank routed through the affected processor",
+  "article": ""
  },
  {
   "title": "Cloud-region outage takes banking apps and channels offline",
   "type": "Cyber/operational",
   "severity": "High",
   "primaryRisk": "Technology & cyber risk",
-  "impact": "Client-facing channel outage drives immediate reputational and operational-loss exposure"
+  "impact": "Client-facing channel outage drives immediate reputational and operational-loss exposure",
+  "article": ""
  },
  {
   "title": "Sanctions package expands, requiring exposure re-screening",
   "type": "Geopolitical",
   "severity": "High",
   "primaryRisk": "Geopolitical risk",
-  "impact": "Requires urgent re-screening of counterparty and cross-border exposure against new designations"
+  "impact": "Requires urgent re-screening of counterparty and cross-border exposure against new designations",
+  "article": ""
  },
  {
   "title": "Bank of England holds Bank Rate at 3.75% in a 6-3 vote as third member backs a hike",
   "type": "Monetary/rates",
   "severity": "High",
   "primaryRisk": "Interest-rate risk in the banking book",
-  "impact": "Higher-for-longer signal firms up funding costs and NIM outlook for GBP-exposed banking books"
+  "impact": "Higher-for-longer signal firms up funding costs and NIM outlook for GBP-exposed banking books",
+  "article": ""
  },
  {
   "title": "ECB leaves the deposit rate unchanged at 2.25% with energy-driven inflation still elevated",
   "type": "Monetary/rates",
   "severity": "Medium",
   "primaryRisk": "Interest-rate risk in the banking book",
-  "impact": "Persistent energy-driven inflation keeps EUR funding costs elevated longer than markets priced"
+  "impact": "Persistent energy-driven inflation keeps EUR funding costs elevated longer than markets priced",
+  "article": ""
  },
  {
   "title": "US Federal Reserve holds, with three members dissenting in favour of a hike",
   "type": "Monetary/rates",
   "severity": "Medium",
   "primaryRisk": "Interest-rate risk in the banking book",
-  "impact": "Split committee raises odds of a surprise hike, adding volatility to USD rate-sensitive positions"
+  "impact": "Split committee raises odds of a surprise hike, adding volatility to USD rate-sensitive positions",
+  "article": ""
  },
  {
   "title": "Leveraged-loan repricing pressures private-credit and CLO holdings",
   "type": "Credit",
   "severity": "High",
   "primaryRisk": "Credit risk",
-  "impact": "Widening spreads pressure mark-to-market on private-credit and CLO holdings across the book"
+  "impact": "Widening spreads pressure mark-to-market on private-credit and CLO holdings across the book",
+  "article": ""
  },
  {
   "title": "Large corporate cut multiple notches to junk after refinancing shock",
   "type": "Credit",
   "severity": "Severe",
   "primaryRisk": "Credit risk",
-  "impact": "Forces immediate reclassification and provisioning on exposures to the downgraded name and its sector peers"
+  "impact": "Forces immediate reclassification and provisioning on exposures to the downgraded name and its sector peers",
+  "article": ""
  },
  {
   "title": "Equity volatility spikes on a large-cap tech earnings miss",
   "type": "Market",
   "severity": "High",
   "primaryRisk": "Traded market risk",
-  "impact": "Elevated VaR on equity and derivatives books tied to large-cap tech exposure"
+  "impact": "Elevated VaR on equity and derivatives books tied to large-cap tech exposure",
+  "article": ""
  },
  {
   "title": "Gilt yields jump on fiscal-supply concerns",
   "type": "Market",
   "severity": "Medium",
   "primaryRisk": "Traded market risk",
-  "impact": "Raises mark-to-market losses on GBP rates books and duration-heavy portfolios"
+  "impact": "Raises mark-to-market losses on GBP rates books and duration-heavy portfolios",
+  "article": ""
  },
  {
   "title": "Energy prices spike as a key shipping route is disrupted",
   "type": "Market",
   "severity": "High",
   "primaryRisk": "Traded market risk",
-  "impact": "Feeds through to inflation and margin pressure for energy-intensive corporate borrowers"
+  "impact": "Feeds through to inflation and margin pressure for energy-intensive corporate borrowers",
+  "article": ""
  },
  {
   "title": "Deposit outflows accelerate at a challenger bank",
   "type": "Liquidity",
   "severity": "High",
   "primaryRisk": "Liquidity & funding risk",
-  "impact": "Raises contagion and confidence-risk questions for peer institutions with similar deposit profiles"
+  "impact": "Raises contagion and confidence-risk questions for peer institutions with similar deposit profiles",
+  "article": ""
  },
  {
   "title": "Money-market funds see redemption pressure amid rate uncertainty",
   "type": "Liquidity",
   "severity": "Medium",
   "primaryRisk": "Liquidity & funding risk",
-  "impact": "Tightens short-term funding markets, raising rollover risk for wholesale-funded banks"
+  "impact": "Tightens short-term funding markets, raising rollover risk for wholesale-funded banks",
+  "article": ""
  },
  {
   "title": "Core-banking migration failure causes a settlement backlog",
   "type": "Cyber/operational",
   "severity": "High",
   "primaryRisk": "Operational risk",
-  "impact": "Creates a reconciliation and credit-exposure backlog until settlement catches up"
+  "impact": "Creates a reconciliation and credit-exposure backlog until settlement catches up",
+  "article": ""
  },
  {
   "title": "Critical KYC vendor breaches SLA, delaying onboarding and screening",
   "type": "Third-party",
   "severity": "Medium",
   "primaryRisk": "Third-party & supply-chain risk",
-  "impact": "Onboarding and screening delays create a growing compliance backlog and client-experience risk"
+  "impact": "Onboarding and screening delays create a growing compliance backlog and client-experience risk",
+  "article": ""
  },
  {
   "title": "Fourth-party concentration alert in market-data supply chain",
   "type": "Third-party",
   "severity": "High",
   "primaryRisk": "Third-party & supply-chain risk",
-  "impact": "Flags a shared single point of failure across multiple critical vendors — concentration risk hiding one layer upstream"
+  "impact": "Flags a shared single point of failure across multiple critical vendors — concentration risk hiding one layer upstream",
+  "article": ""
  },
  {
   "title": "Bank hit with a major AML enforcement action and a growth restriction",
   "type": "Financial crime",
   "severity": "Severe",
   "primaryRisk": "Financial crime risk",
-  "impact": "Direct financial penalty plus a binding constraint on new business growth until remediation is verified"
+  "impact": "Direct financial penalty plus a binding constraint on new business growth until remediation is verified",
+  "article": ""
  },
  {
   "title": "Sanctions-screening gap surfaces after new designations",
   "type": "Financial crime",
   "severity": "High",
   "primaryRisk": "Financial crime risk",
-  "impact": "Raises immediate breach risk on any transaction processed against the incomplete list"
+  "impact": "Raises immediate breach risk on any transaction processed against the incomplete list",
+  "article": ""
  },
  {
   "title": "Regulator raises an MRA on model-risk governance",
   "type": "Regulatory",
   "severity": "High",
   "primaryRisk": "Regulatory & compliance risk",
-  "impact": "Formal supervisory finding — requires a remediation plan and raises exam scrutiny across all model-dependent functions"
+  "impact": "Formal supervisory finding — requires a remediation plan and raises exam scrutiny across all model-dependent functions",
+  "article": ""
  },
  {
   "title": "Mis-selling findings drive redress on a retail lending product",
   "type": "Conduct",
   "severity": "High",
   "primaryRisk": "Conduct risk",
-  "impact": "Direct redress liability plus reputational exposure across the affected product line"
+  "impact": "Direct redress liability plus reputational exposure across the affected product line",
+  "article": ""
  },
  {
   "title": "Product-governance breach flagged in a fair-value review",
   "type": "Conduct",
   "severity": "Medium",
   "primaryRisk": "Conduct risk",
-  "impact": "Raises conduct-risk provisioning and could trigger a wider product review"
+  "impact": "Raises conduct-risk provisioning and could trigger a wider product review",
+  "article": ""
  },
  {
   "title": "Strait shipping disruption raises energy and supply-chain risk",
   "type": "Geopolitical",
   "severity": "High",
   "primaryRisk": "Geopolitical risk",
-  "impact": "Energy and supply-chain cost pass-through raises credit risk for trade-finance and corporate exposures"
+  "impact": "Energy and supply-chain cost pass-through raises credit risk for trade-finance and corporate exposures",
+  "article": ""
  },
  {
   "title": "Wildfire and flood losses drive insurer and utility repricing",
   "type": "Climate",
   "severity": "High",
   "primaryRisk": "Climate & environmental risk",
-  "impact": "Insurance and utility cost repricing raises credit risk for exposed corporate and mortgage portfolios"
+  "impact": "Insurance and utility cost repricing raises credit risk for exposed corporate and mortgage portfolios",
+  "article": ""
  },
  {
   "title": "Data-quality break in the risk-aggregation feed (BCBS 239)",
   "type": "Model/data",
   "severity": "Medium",
   "primaryRisk": "Data risk (BCBS 239)",
-  "impact": "Undermines confidence in every risk number derived from the affected feed until remediated"
+  "impact": "Undermines confidence in every risk number derived from the affected feed until remediated",
+  "article": ""
  },
  {
   "title": "NBFI margin-call cascade after a volatility spike",
   "type": "Credit",
   "severity": "High",
   "primaryRisk": "Counterparty credit risk",
-  "impact": "Raises counterparty credit exposure to non-bank financial institutions caught in the margin spiral"
+  "impact": "Raises counterparty credit exposure to non-bank financial institutions caught in the margin spiral",
+  "article": ""
  }
 ];
 /* NA_HOME_END */
+
+
 
 /* NA_A3_START */
 // Agent-3 data generated from the News Intelligence Mock Up Data workbook
 const NA_A3 = {
  "cre": {
+  "trigger": "Disclosure of asset-quality deterioration in CRE book",
+  "primaryEventType": "Credit",
+  "secondaryEventType": "Capital & Liquidity Risk",
+  "velocity": "Slow-onset (structural), slow-resolving (quarters/years)",
+  "affectedStripes": [
+   "Credit Risk",
+   "Capital & Liquidity Risk",
+   "Regulatory Risk",
+   "Reputational Risk",
+   "Market Risk"
+  ],
   "firstOrder": [
    {
-    "stripe": "Credit Risk — Provisioning & ECL",
+    "stripe": "Credit Risk (Provisioning & ECL)",
     "sev": "Critical",
     "items": [
      {
@@ -4801,7 +4870,7 @@ const NA_A3 = {
     ]
    },
    {
-    "stripe": "Credit Risk — Concentration",
+    "stripe": "Credit Risk (Concentration)",
     "sev": "High",
     "items": [
      {
@@ -4815,7 +4884,7 @@ const NA_A3 = {
     ]
    },
    {
-    "stripe": "Market Risk — Valuation",
+    "stripe": "Credit Risk (Collateral Valuation)",
     "sev": "High",
     "items": [
      {
@@ -4829,7 +4898,7 @@ const NA_A3 = {
     ]
    },
    {
-    "stripe": "Capital Risk — Capital Adequacy",
+    "stripe": "Capital Risk (Capital Adequacy)",
     "sev": "Medium",
     "items": [
      {
@@ -4843,7 +4912,7 @@ const NA_A3 = {
     ]
    },
    {
-    "stripe": "Reputational Risk — Market Confidence",
+    "stripe": "Reputational Risk (Market Confidence)",
     "sev": "Medium",
     "items": [
      {
@@ -4859,7 +4928,7 @@ const NA_A3 = {
   ],
   "secondOrder": [
    {
-    "stripe": "Credit Risk — Rating Migration",
+    "stripe": "Credit Risk (Rating Migration)",
     "sev": "High",
     "items": [
      {
@@ -4873,7 +4942,7 @@ const NA_A3 = {
     ]
    },
    {
-    "stripe": "Market Risk — Funding Cost",
+    "stripe": "Treasury Risk (Funding & Market Perception)",
     "sev": "Medium",
     "items": [
      {
@@ -4887,7 +4956,7 @@ const NA_A3 = {
     ]
    },
    {
-    "stripe": "Regulatory Risk — Supervisory Scrutiny",
+    "stripe": "Regulatory Risk (Supervisory Scrutiny)",
     "sev": "High",
     "items": [
      {
@@ -4901,7 +4970,7 @@ const NA_A3 = {
     ]
    },
    {
-    "stripe": "Strategic Risk — Business Model",
+    "stripe": "Strategic Risk (Business Model)",
     "sev": "Medium",
     "items": [
      {
@@ -4915,7 +4984,7 @@ const NA_A3 = {
     ]
    },
    {
-    "stripe": "Reputational Risk — Investor Confidence",
+    "stripe": "Reputational Risk (Investor Confidence)",
     "sev": "Medium",
     "items": [
      {
@@ -4931,60 +5000,67 @@ const NA_A3 = {
   ],
   "escalation": [
    {
-    "stripe": "Credit Risk — Provisioning & ECL",
+    "stripe": "Overall event (cross-cutting)",
+    "severity": "Critical",
+    "escalateTo": "CRO & Board Risk Committee; CEO informed",
+    "timeframe": "Within 24–48 hours",
+    "criticality": "Immediate"
+   },
+   {
+    "stripe": "Credit Risk (Provisioning & ECL)",
     "severity": "Critical",
     "escalateTo": "Chief Credit Officer & Credit Risk Committee",
     "timeframe": "Within 24 hours",
     "criticality": "Immediate"
    },
    {
-    "stripe": "Credit Risk — Concentration",
+    "stripe": "Credit Risk (Concentration)",
     "severity": "High",
     "escalateTo": "Chief Credit Officer & Credit Risk Committee",
     "timeframe": "Within 48 hours",
     "criticality": "Urgent"
    },
    {
-    "stripe": "Market Risk — Valuation",
+    "stripe": "Credit Risk (Collateral Valuation)",
     "severity": "High",
-    "escalateTo": "Chief Risk Officer & Market Risk Committee",
+    "escalateTo": "Chief Credit Officer & Credit Risk Committee",
     "timeframe": "Within 48 hours",
     "criticality": "Urgent"
    },
    {
-    "stripe": "Regulatory Risk — Supervisory Scrutiny",
+    "stripe": "Regulatory Risk (Supervisory Scrutiny)",
     "severity": "High",
     "escalateTo": "General Counsel, Chief Compliance Officer & Regulators",
     "timeframe": "Within 1–2 weeks",
     "criticality": "Urgent"
    },
    {
-    "stripe": "Capital Risk — Capital Adequacy",
+    "stripe": "Treasury Risk (Funding & Market Perception)",
+    "severity": "Medium",
+    "escalateTo": "CFO, Treasurer & ALCO",
+    "timeframe": "Within 1 week",
+    "criticality": "Elevated"
+   },
+   {
+    "stripe": "Capital Risk (Capital Adequacy)",
     "severity": "Medium",
     "escalateTo": "CFO & Capital / ALCO Committee",
     "timeframe": "Within 1 week",
     "criticality": "Elevated"
    },
    {
-    "stripe": "Strategic Risk — Business Model",
+    "stripe": "Strategic Risk (Business Model)",
     "severity": "Medium",
     "escalateTo": "Chief Strategy Officer & Executive Committee",
     "timeframe": "Within 2 weeks",
     "criticality": "Elevated"
    },
    {
-    "stripe": "Reputational Risk — Investor Confidence",
+    "stripe": "Reputational Risk (Investor Confidence)",
     "severity": "Medium",
     "escalateTo": "Head of IR/Communications & Executive Committee",
     "timeframe": "Within 1 week",
     "criticality": "Elevated"
-   },
-   {
-    "stripe": "Overall event (cross-cutting)",
-    "severity": "Critical",
-    "escalateTo": "CRO & Board Risk Committee; CEO informed",
-    "timeframe": "Within 24–48 hours",
-    "criticality": "Immediate"
    }
   ],
   "map": [
@@ -5249,6 +5325,17 @@ const NA_A3 = {
   "chatbot": []
  },
  "ransom": {
+  "trigger": "Ransomware attack on external vendor infrastructure",
+  "primaryEventType": "Operational, Cyber",
+  "secondaryEventType": "Third-party, Supply-chain",
+  "velocity": "Fast-onset (hours), slow-resolving (days)",
+  "affectedStripes": [
+   "Operational Risk",
+   "Credit Risk",
+   "Third-Party Risk",
+   "Regulatory Risk",
+   "Reputational Risk"
+  ],
   "firstOrder": [
    {
     "stripe": "Operational Risk — Resilience",
@@ -5712,6 +5799,13 @@ const NA_A3 = {
   "chatbot": []
  },
  "infra": {
+  "trigger": "Infrastructure Outage",
+  "primaryEventType": "Third-party / Concentration — Cloud",
+  "secondaryEventType": "reputational, regulatory",
+  "velocity": "Fast-onset (hours), slow-resolving (days)",
+  "affectedStripes": [
+   "Operational, Third Party, Concentration, Market access"
+  ],
   "firstOrder": [
    {
     "stripe": "operation risk",
@@ -6204,6 +6298,17 @@ const NA_A3 = {
   ]
  },
  "sanctions": {
+  "trigger": "Regulatory tightening",
+  "primaryEventType": "OPS / FC — Financial Crime & Compliance",
+  "secondaryEventType": "strategic, operational,reputational",
+  "velocity": "Fast-onset (effective immediately on designation), slow-resolving (weeks-to-months for compliance re-screening and wind-down of exposure)",
+  "affectedStripes": [
+   "Regulatory & Compliance Risk",
+   "Credit Risk",
+   "Operational Risk",
+   "Reputational Risk",
+   "Strategic Risk"
+  ],
   "firstOrder": [
    {
     "stripe": "Regulatory & Compliance Risk",
@@ -6691,6 +6796,12 @@ const NA_A3 = {
 
 
 
+
+
+
+
+
+
 // Risk Transmission Map — dark tiered tree with animated node creation and
 // dotted orange parent→child connectors (matches the Excel snapshot).
 function NaTransMap({ map }) {
@@ -6718,12 +6829,16 @@ function NaTransMap({ map }) {
     const es = [];
     nodes.forEach(n => {
       if (!n.parent || n.parent === '—') return;
-      const pkey = n.parent.trim().toLowerCase();
-      const pid = byCard[pkey] || byTier[pkey];
-      const pEl = nodeRefs.current[pid], cEl = nodeRefs.current[n.id];
-      if (!pEl || !cEl) return;
-      const pr = pEl.getBoundingClientRect(), crc = cEl.getBoundingClientRect();
-      es.push({ key:n.id, x1: pr.left - cr.left + pr.width/2, y1: pr.bottom - cr.top, x2: crc.left - cr.left + crc.width/2, y2: crc.top - cr.top });
+      // A node can list several parents separated by ';' — draw a connector to each.
+      const parents = String(n.parent).split(';').map(p => p.trim()).filter(Boolean);
+      parents.forEach((p, pi) => {
+        const pkey = p.toLowerCase();
+        const pid = byCard[pkey] || byTier[pkey];
+        const pEl = nodeRefs.current[pid], cEl = nodeRefs.current[n.id];
+        if (!pEl || !cEl) return;
+        const pr = pEl.getBoundingClientRect(), crc = cEl.getBoundingClientRect();
+        es.push({ key: n.id + '-' + pi, x1: pr.left - cr.left + pr.width/2, y1: pr.bottom - cr.top, x2: crc.left - cr.left + crc.width/2, y2: crc.top - cr.top });
+      });
     });
     setEdges(es);
   }, [nodes]);
@@ -6792,6 +6907,8 @@ function NewsAssessment({ onBack }) {
   const [customSO,   setCustomSO]   = React.useState([]);    // user-added second-order stripes
   const [addForm,    setAddForm]    = React.useState(null);  // {section, stripe, metric, impact, sev}
   const [homeFilter, setHomeFilter] = React.useState('all'); // Home feed severity filter
+  const [impactOpen, setImpactOpen] = React.useState({});    // expanded impact per stripe (key -> true)
+  const [selectedHome, setSelectedHome] = React.useState(null); // home feed article shown in the middle
 
   const exportPdf = () => {
     setPrintAll(true);
@@ -6826,7 +6943,7 @@ function NewsAssessment({ onBack }) {
     setPhase('assess');
     setActionTab('immediate'); setOpenAct(null); setOpenFlow(null); setOpenQuant(null);
     setHitl(null); setHitlComment(''); setChat([]); setChatInput(''); setChatOpen(false);
-    setMetricOff({}); setStripeOff({}); setCustomFO([]); setCustomSO([]); setAddForm(null);
+    setMetricOff({}); setStripeOff({}); setCustomFO([]); setCustomSO([]); setAddForm(null); setImpactOpen({});
     setAgentStatus(['locked','locked','locked','locked']);
     startAgent(0);
   };
@@ -6873,6 +6990,7 @@ function NewsAssessment({ onBack }) {
       : NA_FEED;
     const SRC_LIST = ['Reuters','Bloomberg','Financial Times','WSJ','Dow Jones Newswire','S&P Global','Regulatory wires','Central bank feeds'];
     const doSearch = () => {
+      setSelectedHome(null);
       setSearched(false); setSearching(true); setSrcHit(0);
       let i = 0;
       const tick = () => {
@@ -6882,7 +7000,7 @@ function NewsAssessment({ onBack }) {
       };
       setTimeout(tick, 500);
     };
-    const onType = (v) => { setSearch(v); setSearched(false); };
+    const onType = (v) => { setSearch(v); setSearched(false); setSelectedHome(null); };
     const hl = (text) => {
       if (!q) return text;
       const lt = text.toLowerCase();
@@ -6911,11 +7029,20 @@ function NewsAssessment({ onBack }) {
       if (s.includes('model') || s.includes('data')) return 'fa-database';
       return 'fa-newspaper';
     };
-    const homeSorted = home
-      .filter(x => homeFilter === 'all' || x.severity === homeFilter)
-      .slice()
-      .sort((a, b) => (sevRank[(a.severity||'').toLowerCase()] ?? 9) - (sevRank[(b.severity||'').toLowerCase()] ?? 9));
+    // Keep the workbook (Home Page tab) order; only apply the severity filter.
+    const homeList = home.filter(x => homeFilter === 'all' || x.severity === homeFilter);
     const sevCount = (s) => home.filter(x => x.severity === s).length;
+    // Map a home headline to a built assessment scenario (only CRE is live for now).
+    const homeToEvent = (it) => {
+      const t = ((it.title || '') + ' ' + (it.primaryRisk || '')).toLowerCase();
+      if (t.includes('commercial-real-estate') || t.includes('commercial real estate') || /\bcre\b/.test(t)) {
+        return NA_FEED.find(e => e.canonical && e.dataId === 'cre');
+      }
+      return null;
+    };
+    const onHomeClick = (it) => {
+      setSelectedHome(it); setSearched(false); setSearch('');  // show the full article in the middle first
+    };
 
     return (
       <div className="page" style={{maxWidth:'none'}}>
@@ -6940,8 +7067,10 @@ function NewsAssessment({ onBack }) {
             ))}
           </div>
           <div className="ni-home-feed">
-            {homeSorted.map((it, i) => (
-              <div key={i} className={`ni-home-card nlv-${(it.severity||'').toLowerCase()}`} onClick={() => onType(it.title)} title="Load this headline into the search">
+            {homeList.map((it, i) => {
+              const runnable = !!homeToEvent(it);
+              return (
+              <div key={i} className={`ni-home-card nlv-${(it.severity||'').toLowerCase()}${selectedHome===it?' selected':''}`} onClick={() => onHomeClick(it)} title={runnable ? 'Run the assessment for this event' : 'View this event'}>
                 <div className="ni-home-card-top">
                   <span className={`ni-sev-badge nlv-${(it.severity||'').toLowerCase()}`}>{it.severity}</span>
                   <span className="ni-home-type"><i className={`fa-solid ${homeIcon(it.type)}`}></i>{it.type}</span>
@@ -6949,8 +7078,10 @@ function NewsAssessment({ onBack }) {
                 <div className="ni-home-card-title">{it.title}</div>
                 <div className="ni-home-card-risk"><i className="fa-solid fa-diagram-project"></i>{it.primaryRisk}</div>
                 <div className="ni-home-card-impact">{it.impact}</div>
+                <div className="ni-home-card-cta">{runnable ? <>Read &amp; run <i className="fa-solid fa-arrow-right-long"></i></> : <>View details <i className="fa-solid fa-arrow-right-long"></i></>}</div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </aside>
 
@@ -7030,11 +7161,43 @@ function NewsAssessment({ onBack }) {
           )
         )}
 
+        {/* Selected article from the left feed — read it, then run the assessment */}
+        {!searching && !searched && selectedHome && (() => {
+          const evt = homeToEvent(selectedHome);
+          return (
+            <div className={`na-article${evt ? ' runnable' : ''}`} onClick={evt ? () => runAssessment(evt.id) : undefined} title={evt ? 'Run the assessment for this event' : undefined}>
+              <div className="na-article-top">
+                <span className={`ni-sev-badge nlv-${(selectedHome.severity||'').toLowerCase()}`}>{selectedHome.severity}</span>
+                <span className="na-type-pill">{selectedHome.type}</span>
+              </div>
+              <div className="na-article-title">{selectedHome.title}</div>
+              <div className="na-article-row"><span className="na-article-k">Primary Risk</span><span className="na-article-v">{selectedHome.primaryRisk}</span></div>
+              <div className="na-article-row"><span className="na-article-k">Impact</span><span className="na-article-v">{selectedHome.impact}</span></div>
+              {selectedHome.article && (
+                <div className="na-article-body">
+                  <div className="na-article-k" style={{marginBottom:8}}>Article</div>
+                  <div className="na-article-text">{selectedHome.article}</div>
+                </div>
+              )}
+              {evt ? (
+                <div className="na-article-actions">
+                  <button className="btn-primary" style={{fontSize:13.5,padding:'11px 20px'}} onClick={(e) => { e.stopPropagation(); runAssessment(evt.id); }}>
+                    <i className="fa-solid fa-play"></i> Run assessment
+                  </button>
+                  <span className="na-article-hint">Reads the article, maps the risk transmission and quantifies impact across 4 agents.</span>
+                </div>
+              ) : (
+                <div className="na-article-note"><i className="fa-solid fa-circle-info"></i> A full agentic assessment for this event is not yet available. The <strong>CRE</strong> scenario is live — select <em>“Mid-sized lender flags commercial-real-estate loan-book stress”</em> from the feed to run the pipeline.</div>
+              )}
+            </div>
+          );
+        })()}
+
         {/* Prompt before first search */}
-        {!searching && !searched && (
+        {!searching && !searched && !selectedHome && (
           <div className="na-feed-empty">
             <i className="fa-solid fa-globe" style={{fontSize:20,color:'var(--primary)',marginBottom:10,display:'block'}}></i>
-            Type a news event above and select <strong>Search News</strong> to retrieve the latest stories.
+            Type a news event above and select <strong>Search News</strong> to retrieve the latest stories, or pick an event from the live feed on the left.
           </div>
         )}
         </div>{/* /ni-right */}
@@ -7048,6 +7211,11 @@ function NewsAssessment({ onBack }) {
   const d  = NA_DATA[ev.dataId];
   const c  = d.categorisation;
   const a3 = (typeof NA_A3 !== 'undefined' && NA_A3[ev.dataId]) || {};
+  // Agent-1 categorisation fields — prefer the Excel-driven values, fall back to mock
+  const catTrigger   = a3.trigger || c.trigger;
+  const catPrimary   = a3.primaryEventType || c.primaryEventType;
+  const catSecondary = a3.secondaryEventType || c.secondaryEventType;
+  const catVelocity  = a3.velocity || c.velocity;
   const foRows = a3.firstOrder || [];
   const soRows = a3.secondOrder || [];
   const foAll = [...foRows, ...customFO];
@@ -7067,8 +7235,8 @@ function NewsAssessment({ onBack }) {
   const impactTable = (sec, groups) => (
     <div className="impact-table-wrap">
       <table className="impact-table" style={{tableLayout:'fixed'}}>
-        <colgroup><col style={{width:'36px'}} /><col style={{width:'21%'}} /><col style={{width:'26%'}} /><col style={{width:'40%'}} /><col style={{width:'9%'}} /></colgroup>
-        <thead><tr><th></th><th>Risk Stripe</th><th>Metric</th><th>Impact</th><th>Severity</th></tr></thead>
+        <colgroup><col style={{width:'4%'}} /><col style={{width:'20%'}} /><col style={{width:'24%'}} /><col style={{width:'43%'}} /><col style={{width:'9%'}} /></colgroup>
+        <thead><tr><th></th><th>Risk Stripe/Area</th><th>Linked Metric</th><th>Impact</th><th>Severity</th></tr></thead>
         <tbody>
           {groups.map((g, gi) => {
             const sKey = `${sec}|${gi}`;
@@ -7085,7 +7253,24 @@ function NewsAssessment({ onBack }) {
                     return <label key={mi} className="na-metric-chk"><input type="checkbox" checked={sOn && isOn(k)} disabled={!sOn} onChange={() => toggleMetric(k)} /> <span>{it.metric}</span></label>;
                   })}
                 </td>
-                <td>{impacts.length ? impacts.map((im, k2) => <div key={k2} style={{marginBottom:k2<impacts.length-1?7:0}}>{im}</div>) : <span style={{color:'var(--text-3)'}}>—</span>}</td>
+                <td>
+                  {impacts.length ? (() => {
+                    const open = !!impactOpen[sKey];
+                    const many = impacts.length > 1 || (impacts.join(' ').length > 120);
+                    return (
+                      <div className="na-imp-cell">
+                        <div className={`na-imp-text${open ? ' open' : ''}`}>
+                          {impacts.map((im, k2) => <div key={k2} style={{marginBottom:k2<impacts.length-1?7:0}}>{im}</div>)}
+                        </div>
+                        {many && (
+                          <button type="button" className="na-imp-toggle" onClick={() => setImpactOpen(p => ({ ...p, [sKey]: !p[sKey] }))}>
+                            {open ? <>Show less <i className="fa-solid fa-chevron-up"></i></> : <>Show more <i className="fa-solid fa-chevron-down"></i></>}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })() : <span style={{color:'var(--text-3)'}}>—</span>}
+                </td>
                 <td><span className={`sev-badge sev-${(g.sev||'').toLowerCase()}`}>{g.sev}</span></td>
               </tr>
             );
@@ -7246,37 +7431,40 @@ function NewsAssessment({ onBack }) {
         </div>
         {/* New cards: Trigger, Primary/Secondary Event Type, Geography, Velocity */}
         <div className="na-cat-cards" style={{marginBottom:12}}>
-          {c.trigger && (
+          {catTrigger && (
             <div className={`na-cat-card${c.registerMatch ? ' reg-matched' : ''}`}>
               <div className="na-cat-k">Trigger</div>
-              <div className="na-cat-v" style={{fontSize:13}}>{c.trigger}</div>
+              <div className="na-cat-v" style={{fontSize:13}}>{catTrigger}</div>
               {c.registerMatch && (
                 <div className="na-reg-tag"><i className="fa-solid fa-circle-check"></i><span>{c.registerMatch.id} — {c.registerMatch.title}</span></div>
               )}
             </div>
           )}
-          {c.primaryEventType && <div className="na-cat-card"><div className="na-cat-k">Primary Event Type</div><div className="na-cat-v" style={{fontSize:13}}>{c.primaryEventType}</div></div>}
-          {c.secondaryEventType && <div className="na-cat-card"><div className="na-cat-k">Secondary Event Type</div><div className="na-cat-v" style={{fontSize:13}}>{c.secondaryEventType}</div></div>}
+          {catPrimary && <div className="na-cat-card"><div className="na-cat-k">Primary Event Type</div><div className="na-cat-v" style={{fontSize:13}}>{catPrimary}</div></div>}
+          {catSecondary && <div className="na-cat-card"><div className="na-cat-k">Secondary Event Type</div><div className="na-cat-v" style={{fontSize:13}}>{catSecondary}</div></div>}
           {c.extracted.filter(x => x.k === 'Geography').map(x => (
             <div key={x.k} className="na-cat-card"><div className="na-cat-k">Geography</div><div className="na-cat-v" style={{fontSize:13}}>{x.v}</div></div>
           ))}
-          {c.velocity && <div className="na-cat-card"><div className="na-cat-k">Velocity</div><div className="na-cat-v" style={{fontSize:13}}>{c.velocity}</div></div>}
+          {catVelocity && <div className="na-cat-card"><div className="na-cat-k">Velocity</div><div className="na-cat-v" style={{fontSize:13}}>{catVelocity}</div></div>}
         </div>
         {/* Affected risk stripes */}
-        {c.affectedStripes && c.affectedStripes.length > 0 && (
-          <div style={{marginBottom:4}}>
-            <div className="na-cat-k" style={{marginBottom:6}}>Affected Risk Stripes</div>
-            {c.affectedStripes.map(s => <span key={s} className="na-chip">{s}</span>)}
-          </div>
-        )}
+        {(() => {
+          const stripes = (a3.affectedStripes && a3.affectedStripes.length) ? a3.affectedStripes : c.affectedStripes;
+          return stripes && stripes.length > 0 && (
+            <div style={{marginBottom:4}}>
+              <div className="na-cat-k" style={{marginBottom:6}}>Affected Risk Stripes</div>
+              {stripes.map(s => <span key={s} className="na-chip">{s}</span>)}
+            </div>
+          );
+        })()}
       </div>
         </>
       )}
 
       {(printAll || activeAgent === 1) && (
         <>
-      {/* B — Risk Transmission Flow (Agent 2) + human-in-the-loop */}
-      <div className="scenario-section-header">Risk Transmission Flow</div>
+      {/* B — Risk Event Flow (Agent 2) + human-in-the-loop */}
+      <div className="scenario-section-header">Risk Event Flow</div>
       <div className="card" style={{marginBottom:16}}>
         <div style={{fontSize:12,color:'var(--text-3)',marginBottom:14,display:'flex',alignItems:'center',gap:6}}>
           <i className="fa-solid fa-circle-info" style={{color:'var(--primary)'}}></i>
@@ -7381,8 +7569,9 @@ function NewsAssessment({ onBack }) {
       <div className="scenario-section-header">Escalation Matrix</div>
       <div className="card" style={{marginBottom:16}}>
         <div className="impact-table-wrap">
-          <table className="impact-table">
-            <thead><tr><th>Risk Stripe</th><th>Severity</th><th>Escalate To</th><th>Timeframe</th><th>Criticality</th></tr></thead>
+          <table className="impact-table" style={{tableLayout:'fixed'}}>
+            <colgroup><col style={{width:'24%'}} /><col style={{width:'11%'}} /><col style={{width:'30%'}} /><col style={{width:'18%'}} /><col style={{width:'17%'}} /></colgroup>
+            <thead><tr><th>Risk Stripe/Area</th><th>Severity</th><th>Escalate To</th><th>Timeframe</th><th>Criticality</th></tr></thead>
             <tbody>
               {(a3.escalation || []).map((e, i) => {
                 const crit = (e.criticality || '').toLowerCase();
@@ -7421,7 +7610,11 @@ function NewsAssessment({ onBack }) {
       {/* K — Management Action Playbook (Agent 4) — from Excel */}
       {(() => {
         const pb = (a3.playbook && (a3.playbook.immediate.length || a3.playbook.shortterm.length || a3.playbook.ongoing.length)) ? a3.playbook : null;
-        const pbList = pb ? (pb[actionTab] || []) : null;
+        const isExp = (a) => /^exposure$/i.test((a.action || '').trim());
+        const bucketActions = (id) => (pb ? (pb[id] || []) : []).filter(a => !isExp(a));
+        const rawList = pb ? (pb[actionTab] || []) : null;
+        const exposure = rawList ? rawList.find(isExp) : null;
+        const actionRows = rawList ? rawList.filter(a => !isExp(a)) : null;
         return (
           <>
             <div className="scenario-section-header">Management Action Playbook</div>
@@ -7430,12 +7623,15 @@ function NewsAssessment({ onBack }) {
                 {[{id:'immediate',label:'Immediate'},{id:'shortterm',label:'Short-term'},{id:'ongoing',label:'Ongoing'}].map(t => (
                   <button key={t.id} className={`action-tab ${actionTab===t.id?'active':''}`} onClick={() => { setActionTab(t.id); setOpenAct(null); }}>
                     {t.label}
-                    <span style={{marginLeft:6,background:'rgba(0,0,0,0.07)',borderRadius:10,padding:'1px 7px',fontSize:10,fontWeight:700}}>{pb ? (pb[t.id]||[]).length : (d.actions[t.id]||[]).length}</span>
+                    <span style={{marginLeft:6,background:'rgba(0,0,0,0.07)',borderRadius:10,padding:'1px 7px',fontSize:10,fontWeight:700}}>{pb ? bucketActions(t.id).length : (d.actions[t.id]||[]).length}</span>
                   </button>
                 ))}
               </div>
+              {exposure && exposure.strapline && (
+                <div className="na-pb-exposure"><span className="na-pb-exposure-k">Exposure</span><span className="na-pb-exposure-v">{exposure.strapline}</span></div>
+              )}
               <div>
-                {pbList ? pbList.map((a, i) => (
+                {actionRows ? actionRows.map((a, i) => (
                   <div key={i} className="na-pb-row">
                     <span className="na-act-num">{i+1}</span>
                     <div>
