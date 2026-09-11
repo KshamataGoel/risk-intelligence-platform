@@ -1774,6 +1774,40 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .rst-weight-item label { color:var(--text-2); font-weight:600; min-width:120px; }
 
 /* ── News Intelligence ── */
+/* Landing two-column: live risk feed (left) + search (right) */
+.ni-landing { display:flex; gap:22px; align-items:flex-start; }
+.ni-home { flex:0 0 400px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden; position:sticky; top:0; max-height:calc(100vh - 150px); }
+.ni-right { flex:1; min-width:0; }
+.ni-home-head { padding:16px 18px 12px; background:linear-gradient(160deg,#1C1F1C,#2A2E2A); color:#fff; }
+.ni-home-live { display:inline-flex; align-items:center; gap:7px; font-size:10px; font-weight:800; letter-spacing:1px; color:var(--primary); }
+.ni-live-dot { width:8px; height:8px; border-radius:50%; background:#EF4444; box-shadow:0 0 0 0 rgba(239,68,68,0.6); animation:niPulse 1.8s infinite; }
+@keyframes niPulse { 0%{box-shadow:0 0 0 0 rgba(239,68,68,0.55);} 70%{box-shadow:0 0 0 8px rgba(239,68,68,0);} 100%{box-shadow:0 0 0 0 rgba(239,68,68,0);} }
+.ni-home-h { font-size:18px; font-weight:800; margin-top:6px; letter-spacing:-0.3px; }
+.ni-home-hsub { font-size:11.5px; color:rgba(255,255,255,0.65); margin-top:3px; line-height:1.45; }
+.ni-home-filters { display:flex; gap:6px; padding:12px 14px; border-bottom:1px solid var(--border); flex-wrap:wrap; background:var(--surface); }
+.ni-home-filter { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; padding:5px 11px; border-radius:16px; border:1px solid var(--border); background:var(--surface); color:var(--text-2); cursor:pointer; transition:all 0.15s; }
+.ni-home-filter:hover { border-color:var(--primary); }
+.ni-home-filter.active { background:#0F172A; color:#fff; border-color:#0F172A; }
+.ni-home-filter-n { font-size:10px; font-weight:800; background:rgba(0,0,0,0.08); border-radius:10px; padding:1px 6px; }
+.ni-home-filter.active .ni-home-filter-n { background:rgba(255,255,255,0.2); }
+.ni-home-feed { overflow-y:auto; padding:10px 12px; display:flex; flex-direction:column; gap:9px; }
+.ni-home-card { border:1px solid var(--border); border-left:4px solid var(--border); border-radius:9px; padding:11px 13px; cursor:pointer; transition:all 0.15s; background:var(--surface); }
+.ni-home-card:hover { border-color:var(--primary); box-shadow:0 3px 10px rgba(0,0,0,0.08); transform:translateY(-1px); }
+.ni-home-card.nlv-severe { border-left-color:#B91C1C; }
+.ni-home-card.nlv-high   { border-left-color:#EA580C; }
+.ni-home-card.nlv-medium { border-left-color:#CA8A04; }
+.ni-home-card-top { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px; }
+.ni-sev-badge { font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; padding:2px 8px; border-radius:20px; }
+.ni-sev-badge.nlv-severe { background:#FEE2E2; color:#B91C1C; }
+.ni-sev-badge.nlv-high   { background:#FFEDD5; color:#C2410C; }
+.ni-sev-badge.nlv-medium { background:#FEF9C3; color:#854D0E; }
+.ni-home-type { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; color:var(--text-3); }
+.ni-home-type i { color:var(--primary); font-size:11px; }
+.ni-home-card-title { font-size:13px; font-weight:700; color:var(--text); line-height:1.4; }
+.ni-home-card-risk { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:var(--primary); margin-top:7px; }
+.ni-home-card-risk i { font-size:10px; }
+.ni-home-card-impact { font-size:11.5px; color:var(--text-2); line-height:1.5; margin-top:5px; }
+@media (max-width:980px){ .ni-landing { flex-direction:column; } .ni-home { flex-basis:auto; width:100%; position:static; max-height:520px; } }
 .ni-search-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px; margin-bottom:24px; box-shadow:var(--shadow); }
 .ni-search-box { display:flex; gap:10px; align-items:center; }
 .ni-search-input { flex:1; padding:13px 16px 13px 44px; font-size:14px; border:1.5px solid var(--border); border-radius:var(--radius); background:var(--surface); color:var(--text); outline:none; }
@@ -4559,6 +4593,194 @@ const NA_DATA = {
   },
 };
 
+/* NA_HOME_START */
+// Home Page live risk & impact feed — generated from the Mock Up Data workbook
+const NA_HOME = [
+ {
+  "title": "Mid-sized lender flags commercial-real-estate loan-book stress and raises provisions",
+  "type": "Credit",
+  "severity": "High",
+  "primaryRisk": "Credit risk",
+  "impact": "Signals sector-wide CRE provisioning risk — clients with office/CRE concentration should reassess loss coverage"
+ },
+ {
+  "title": "Ransomware disrupts a payments processor, halting clearing for hours",
+  "type": "Cyber/operational",
+  "severity": "Severe",
+  "primaryRisk": "Technology & cyber risk",
+  "impact": "Direct settlement delays and counterparty exposure for every bank routed through the affected processor"
+ },
+ {
+  "title": "Cloud-region outage takes banking apps and channels offline",
+  "type": "Cyber/operational",
+  "severity": "High",
+  "primaryRisk": "Technology & cyber risk",
+  "impact": "Client-facing channel outage drives immediate reputational and operational-loss exposure"
+ },
+ {
+  "title": "Sanctions package expands, requiring exposure re-screening",
+  "type": "Geopolitical",
+  "severity": "High",
+  "primaryRisk": "Geopolitical risk",
+  "impact": "Requires urgent re-screening of counterparty and cross-border exposure against new designations"
+ },
+ {
+  "title": "Bank of England holds Bank Rate at 3.75% in a 6-3 vote as third member backs a hike",
+  "type": "Monetary/rates",
+  "severity": "High",
+  "primaryRisk": "Interest-rate risk in the banking book",
+  "impact": "Higher-for-longer signal firms up funding costs and NIM outlook for GBP-exposed banking books"
+ },
+ {
+  "title": "ECB leaves the deposit rate unchanged at 2.25% with energy-driven inflation still elevated",
+  "type": "Monetary/rates",
+  "severity": "Medium",
+  "primaryRisk": "Interest-rate risk in the banking book",
+  "impact": "Persistent energy-driven inflation keeps EUR funding costs elevated longer than markets priced"
+ },
+ {
+  "title": "US Federal Reserve holds, with three members dissenting in favour of a hike",
+  "type": "Monetary/rates",
+  "severity": "Medium",
+  "primaryRisk": "Interest-rate risk in the banking book",
+  "impact": "Split committee raises odds of a surprise hike, adding volatility to USD rate-sensitive positions"
+ },
+ {
+  "title": "Leveraged-loan repricing pressures private-credit and CLO holdings",
+  "type": "Credit",
+  "severity": "High",
+  "primaryRisk": "Credit risk",
+  "impact": "Widening spreads pressure mark-to-market on private-credit and CLO holdings across the book"
+ },
+ {
+  "title": "Large corporate cut multiple notches to junk after refinancing shock",
+  "type": "Credit",
+  "severity": "Severe",
+  "primaryRisk": "Credit risk",
+  "impact": "Forces immediate reclassification and provisioning on exposures to the downgraded name and its sector peers"
+ },
+ {
+  "title": "Equity volatility spikes on a large-cap tech earnings miss",
+  "type": "Market",
+  "severity": "High",
+  "primaryRisk": "Traded market risk",
+  "impact": "Elevated VaR on equity and derivatives books tied to large-cap tech exposure"
+ },
+ {
+  "title": "Gilt yields jump on fiscal-supply concerns",
+  "type": "Market",
+  "severity": "Medium",
+  "primaryRisk": "Traded market risk",
+  "impact": "Raises mark-to-market losses on GBP rates books and duration-heavy portfolios"
+ },
+ {
+  "title": "Energy prices spike as a key shipping route is disrupted",
+  "type": "Market",
+  "severity": "High",
+  "primaryRisk": "Traded market risk",
+  "impact": "Feeds through to inflation and margin pressure for energy-intensive corporate borrowers"
+ },
+ {
+  "title": "Deposit outflows accelerate at a challenger bank",
+  "type": "Liquidity",
+  "severity": "High",
+  "primaryRisk": "Liquidity & funding risk",
+  "impact": "Raises contagion and confidence-risk questions for peer institutions with similar deposit profiles"
+ },
+ {
+  "title": "Money-market funds see redemption pressure amid rate uncertainty",
+  "type": "Liquidity",
+  "severity": "Medium",
+  "primaryRisk": "Liquidity & funding risk",
+  "impact": "Tightens short-term funding markets, raising rollover risk for wholesale-funded banks"
+ },
+ {
+  "title": "Core-banking migration failure causes a settlement backlog",
+  "type": "Cyber/operational",
+  "severity": "High",
+  "primaryRisk": "Operational risk",
+  "impact": "Creates a reconciliation and credit-exposure backlog until settlement catches up"
+ },
+ {
+  "title": "Critical KYC vendor breaches SLA, delaying onboarding and screening",
+  "type": "Third-party",
+  "severity": "Medium",
+  "primaryRisk": "Third-party & supply-chain risk",
+  "impact": "Onboarding and screening delays create a growing compliance backlog and client-experience risk"
+ },
+ {
+  "title": "Fourth-party concentration alert in market-data supply chain",
+  "type": "Third-party",
+  "severity": "High",
+  "primaryRisk": "Third-party & supply-chain risk",
+  "impact": "Flags a shared single point of failure across multiple critical vendors — concentration risk hiding one layer upstream"
+ },
+ {
+  "title": "Bank hit with a major AML enforcement action and a growth restriction",
+  "type": "Financial crime",
+  "severity": "Severe",
+  "primaryRisk": "Financial crime risk",
+  "impact": "Direct financial penalty plus a binding constraint on new business growth until remediation is verified"
+ },
+ {
+  "title": "Sanctions-screening gap surfaces after new designations",
+  "type": "Financial crime",
+  "severity": "High",
+  "primaryRisk": "Financial crime risk",
+  "impact": "Raises immediate breach risk on any transaction processed against the incomplete list"
+ },
+ {
+  "title": "Regulator raises an MRA on model-risk governance",
+  "type": "Regulatory",
+  "severity": "High",
+  "primaryRisk": "Regulatory & compliance risk",
+  "impact": "Formal supervisory finding — requires a remediation plan and raises exam scrutiny across all model-dependent functions"
+ },
+ {
+  "title": "Mis-selling findings drive redress on a retail lending product",
+  "type": "Conduct",
+  "severity": "High",
+  "primaryRisk": "Conduct risk",
+  "impact": "Direct redress liability plus reputational exposure across the affected product line"
+ },
+ {
+  "title": "Product-governance breach flagged in a fair-value review",
+  "type": "Conduct",
+  "severity": "Medium",
+  "primaryRisk": "Conduct risk",
+  "impact": "Raises conduct-risk provisioning and could trigger a wider product review"
+ },
+ {
+  "title": "Strait shipping disruption raises energy and supply-chain risk",
+  "type": "Geopolitical",
+  "severity": "High",
+  "primaryRisk": "Geopolitical risk",
+  "impact": "Energy and supply-chain cost pass-through raises credit risk for trade-finance and corporate exposures"
+ },
+ {
+  "title": "Wildfire and flood losses drive insurer and utility repricing",
+  "type": "Climate",
+  "severity": "High",
+  "primaryRisk": "Climate & environmental risk",
+  "impact": "Insurance and utility cost repricing raises credit risk for exposed corporate and mortgage portfolios"
+ },
+ {
+  "title": "Data-quality break in the risk-aggregation feed (BCBS 239)",
+  "type": "Model/data",
+  "severity": "Medium",
+  "primaryRisk": "Data risk (BCBS 239)",
+  "impact": "Undermines confidence in every risk number derived from the affected feed until remediated"
+ },
+ {
+  "title": "NBFI margin-call cascade after a volatility spike",
+  "type": "Credit",
+  "severity": "High",
+  "primaryRisk": "Counterparty credit risk",
+  "impact": "Raises counterparty credit exposure to non-bank financial institutions caught in the margin spiral"
+ }
+];
+/* NA_HOME_END */
+
 /* NA_A3_START */
 // Agent-3 data generated from the News Intelligence Mock Up Data workbook
 const NA_A3 = {
@@ -6569,6 +6791,7 @@ function NewsAssessment({ onBack }) {
   const [customFO,   setCustomFO]   = React.useState([]);    // user-added first-order stripes
   const [customSO,   setCustomSO]   = React.useState([]);    // user-added second-order stripes
   const [addForm,    setAddForm]    = React.useState(null);  // {section, stripe, metric, impact, sev}
+  const [homeFilter, setHomeFilter] = React.useState('all'); // Home feed severity filter
 
   const exportPdf = () => {
     setPrintAll(true);
@@ -6669,6 +6892,31 @@ function NewsAssessment({ onBack }) {
       return <>{text.slice(0, idx)}<span className="na-feed-hl">{text.slice(idx, idx + needle.length)}</span>{text.slice(idx + needle.length)}</>;
     };
 
+    // Home Page live feed — sorted by severity, filterable
+    const home = (typeof NA_HOME !== 'undefined' && NA_HOME) || [];
+    const sevRank = { severe:0, high:1, medium:2, low:3 };
+    const homeIcon = (t) => {
+      const s = (t||'').toLowerCase();
+      if (s.includes('credit')) return 'fa-hand-holding-dollar';
+      if (s.includes('cyber') || s.includes('operational')) return 'fa-shield-halved';
+      if (s.includes('geopolit')) return 'fa-earth-americas';
+      if (s.includes('monetary') || s.includes('rate')) return 'fa-percent';
+      if (s.includes('market')) return 'fa-chart-line';
+      if (s.includes('liquid')) return 'fa-droplet';
+      if (s.includes('third')) return 'fa-diagram-project';
+      if (s.includes('crime')) return 'fa-fingerprint';
+      if (s.includes('regulat')) return 'fa-scale-balanced';
+      if (s.includes('conduct')) return 'fa-gavel';
+      if (s.includes('climate')) return 'fa-cloud-bolt';
+      if (s.includes('model') || s.includes('data')) return 'fa-database';
+      return 'fa-newspaper';
+    };
+    const homeSorted = home
+      .filter(x => homeFilter === 'all' || x.severity === homeFilter)
+      .slice()
+      .sort((a, b) => (sevRank[(a.severity||'').toLowerCase()] ?? 9) - (sevRank[(b.severity||'').toLowerCase()] ?? 9));
+    const sevCount = (s) => home.filter(x => x.severity === s).length;
+
     return (
       <div className="page" style={{maxWidth:'none'}}>
         <div className="page-header" style={{marginBottom:16}}>
@@ -6676,6 +6924,38 @@ function NewsAssessment({ onBack }) {
           <div className="page-sub" style={{maxWidth:'none'}}>An agentic pipeline that reads the news, maps it to the risk transmission register and quantifies the impact.</div>
         </div>
 
+        <div className="ni-landing">
+        {/* Left — live risk & impact radar from the Home Page workbook tab */}
+        <aside className="ni-home">
+          <div className="ni-home-head">
+            <div className="ni-home-live"><span className="ni-live-dot"></span> LIVE RISK FEED</div>
+            <div className="ni-home-h">Risk &amp; Impact Radar</div>
+            <div className="ni-home-hsub">Latest market events, each mapped to its primary risk and business impact.</div>
+          </div>
+          <div className="ni-home-filters">
+            {[{k:'all',l:'All'},{k:'Severe',l:'Severe'},{k:'High',l:'High'},{k:'Medium',l:'Medium'}].map(f => (
+              <button key={f.k} className={`ni-home-filter${homeFilter===f.k?' active':''} nlv-${f.k.toLowerCase()}`} onClick={() => setHomeFilter(f.k)}>
+                {f.l}<span className="ni-home-filter-n">{f.k==='all' ? home.length : sevCount(f.k)}</span>
+              </button>
+            ))}
+          </div>
+          <div className="ni-home-feed">
+            {homeSorted.map((it, i) => (
+              <div key={i} className={`ni-home-card nlv-${(it.severity||'').toLowerCase()}`} onClick={() => onType(it.title)} title="Load this headline into the search">
+                <div className="ni-home-card-top">
+                  <span className={`ni-sev-badge nlv-${(it.severity||'').toLowerCase()}`}>{it.severity}</span>
+                  <span className="ni-home-type"><i className={`fa-solid ${homeIcon(it.type)}`}></i>{it.type}</span>
+                </div>
+                <div className="ni-home-card-title">{it.title}</div>
+                <div className="ni-home-card-risk"><i className="fa-solid fa-diagram-project"></i>{it.primaryRisk}</div>
+                <div className="ni-home-card-impact">{it.impact}</div>
+              </div>
+            ))}
+          </div>
+        </aside>
+
+        {/* Right — search & web retrieval */}
+        <div className="ni-right">
         {/* Search box */}
         <div className="ni-search-wrap">
           <div className="ni-search-box">
@@ -6757,6 +7037,8 @@ function NewsAssessment({ onBack }) {
             Type a news event above and select <strong>Search News</strong> to retrieve the latest stories.
           </div>
         )}
+        </div>{/* /ni-right */}
+        </div>{/* /ni-landing */}
       </div>
     );
   }
