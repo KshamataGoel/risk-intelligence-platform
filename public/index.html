@@ -1613,6 +1613,9 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .rtm-trigger-badge { fill:#991b1b; rx:8; }
 @keyframes rtm-dash { to { stroke-dashoffset: -20; } }
 .rtm-edge.animated { stroke-dasharray:5 4; animation: rtm-dash 0.9s linear infinite; opacity:0.7; }
+/* CME-style transmission map panel (Agent 3, News Intelligence) */
+.na-rtm-cme { background:#14100a; border:1px solid #3a2c18; border-radius:var(--radius); padding:18px 12px; margin-bottom:16px; box-shadow:var(--shadow); overflow-x:auto; }
+.na-rtm-cme svg { min-width:760px; }
 
 .scenario-alert-banner {
   background: linear-gradient(135deg,#7f1d1d,#991b1b);
@@ -4839,12 +4842,14 @@ const NA_HOME = [
 
 
 
+
+
 /* NA_A3_START */
 // Agent-3 data generated from the News Intelligence Mock Up Data workbook
 const NA_A3 = {
  "cre": {
   "trigger": "Disclosure of asset-quality deterioration in CRE book",
-  "primaryEventType": "Credit",
+  "primaryEventType": "Credit Risk",
   "secondaryEventType": "Capital & Liquidity Risk",
   "velocity": "Slow-onset (structural), slow-resolving (quarters/years)",
   "affectedStripes": [
@@ -4870,7 +4875,7 @@ const NA_A3 = {
     ]
    },
    {
-    "stripe": "Credit Risk (Concentration)",
+    "stripe": "Credit Risk (Concentration)_",
     "sev": "High",
     "items": [
      {
@@ -5326,8 +5331,8 @@ const NA_A3 = {
  },
  "ransom": {
   "trigger": "Ransomware attack on external vendor infrastructure",
-  "primaryEventType": "Operational, Cyber",
-  "secondaryEventType": "Third-party, Supply-chain",
+  "primaryEventType": "Operational/ Cyber Risk",
+  "secondaryEventType": "Third-party/ Supply-chain Risk",
   "velocity": "Fast-onset (hours), slow-resolving (days)",
   "affectedStripes": [
    "Operational Risk",
@@ -5343,11 +5348,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Recovery Time Objective",
-      "impact": "Core transaction processing unavailable; failover and continuity plans activated for a multi-hour outage"
+      "impact": "Recovery time could extend beyond the committed RTO window, triggering SLA breach clauses with the processor"
      },
      {
       "metric": "System availability %",
-      "impact": "Core transaction processing unavailable; failover and continuity plans activated for a multi-hour outage"
+      "impact": "Core system availability could drop to 0% for the duration of the outage, halting all transaction processing"
      }
     ]
    },
@@ -5357,11 +5362,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Third-party dependency score",
-      "impact": "Ransomware at a single external processor exposes reliance on one vendor for downstream clearing"
+      "impact": "Dependency score on the single processor is likely at or near maximum, confirming no redundant failover path exists"
      },
      {
       "metric": "Mean time to contain",
-      "impact": "Ransomware at a single external processor exposes reliance on one vendor for downstream clearing"
+      "impact": "Mean time to contain could extend past 4–6 hours if the processor's own incident response is delayed"
      }
     ]
    },
@@ -5371,11 +5376,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Settlement exposure ($)",
-      "impact": "Delayed settlement creates temporary counterparty exposure on unsettled card transactions"
+      "impact": "Settlement exposure could reach into the hundreds of millions as authorised-but-unsettled transactions accumulate hourly"
      },
      {
       "metric": "Unsettled transaction volume",
-      "impact": "Delayed settlement creates temporary counterparty exposure on unsettled card transactions"
+      "impact": "Unsettled volume could climb into the tens of thousands of transactions as the outage extends beyond a few hours"
      }
     ]
    },
@@ -5385,11 +5390,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Intraday liquidity buffer",
-      "impact": "Outage disrupts intraday cash positioning from delayed card-settlement inflows"
+      "impact": "Intraday liquidity buffer could draw down materially as expected card-settlement inflows are delayed"
      },
      {
       "metric": "Liquidity survival horizon",
-      "impact": "Outage disrupts intraday cash positioning from delayed card-settlement inflows"
+      "impact": "Survival horizon shortens if delayed inflows coincide with other funding outflows the same day"
      }
     ]
    },
@@ -5398,8 +5403,12 @@ const NA_A3 = {
     "sev": "Medium",
     "items": [
      {
-      "metric": "Client complaint / churn volume/ NPS delta",
-      "impact": "Merchants and public-sector clients unable to process transactions; reputational exposure builds"
+      "metric": "Client complaint / churn volume",
+      "impact": "Complaint volume could spike sharply as merchants and public-sector clients are unable to process transactions"
+     },
+     {
+      "metric": "NPS delta",
+      "impact": "NPS could see a meaningful negative delta in the days following the outage as client trust is shaken"
      }
     ]
    }
@@ -5411,11 +5420,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Net current exposure",
-      "impact": "Backlog of unsettled transactions increases counterparty credit exposure across merchants"
+      "impact": "Net current exposure could climb materially as the backlog of unsettled transactions accumulates across merchants"
      },
      {
       "metric": "Potential future exposure",
-      "impact": "Backlog of unsettled transactions increases counterparty credit exposure across merchants"
+      "impact": "Potential future exposure widens further if the backlog persists into subsequent settlement cycles"
      }
     ]
    },
@@ -5425,11 +5434,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "RTO breach count",
-      "impact": "Extended recovery breaches RTO commitments, triggering contractual SLA penalties"
+      "impact": "Each hour beyond the committed RTO adds to a growing breach count against resilience commitments"
      },
      {
       "metric": "SLA penalty exposure ($)",
-      "impact": "Extended recovery breaches RTO commitments, triggering contractual SLA penalties"
+      "impact": "SLA penalty exposure could accrue into the low millions as contractual breach clauses are triggered"
      }
     ]
    },
@@ -5439,11 +5448,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Vendor concentration limit usage %",
-      "impact": "Client base reliant on one processor prompts review of vendor concentration limits"
+      "impact": "Usage against the internal concentration limit likely breaches threshold, given full reliance on one processor"
      },
      {
       "metric": "Single-point-of-failure count",
-      "impact": "Client base reliant on one processor prompts review of vendor concentration limits"
+      "impact": "SPOF count confirms at least one critical dependency with zero redundancy across the payments stack"
      }
     ]
    },
@@ -5453,11 +5462,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Regulatory notification timeliness",
-      "impact": "Operational incident affecting payment services triggers regulatory notification obligations"
+      "impact": "Notification timeliness risks breaching the mandated window if root-cause analysis is delayed"
      },
      {
       "metric": "Potential fine/penalty exposure",
-      "impact": "Operational incident affecting payment services triggers regulatory notification obligations"
+      "impact": "Fine/penalty exposure could reach into the millions if notification or remediation obligations are missed"
      }
     ]
    },
@@ -5467,11 +5476,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Media coverage volume",
-      "impact": "Sustained negative coverage of the processor and downstream banks weighs on brand trust"
+      "impact": "Media coverage volume could stay elevated for days as the incident is linked across multiple affected banks"
      },
      {
       "metric": "NPS delta",
-      "impact": "Sustained negative coverage of the processor and downstream banks weighs on brand trust"
+      "impact": "NPS could see a sustained negative delta beyond the immediate outage window as brand trust erodes"
      }
     ]
    }
@@ -5749,44 +5758,56 @@ const NA_A3 = {
   "playbook": {
    "immediate": [
     {
-     "action": "Activate incident response & business continuity plan",
-     "strapline": "Contain the outage, keep critical services alive"
+     "action": "Exposure",
+     "strapline": "Daily card transaction volume $2.1B · Unsettled transaction backlog ~$340M · Est. direct operational loss $8–12M · RTO commitment 4 hours (breached)"
     },
     {
-     "action": "Establish alternate processing / failover routes",
-     "strapline": "Reroute volume away from the compromised processor"
+     "action": "Activate failover to backup processor",
+     "strapline": "reroute card authorization volume to the secondary processing partner within the contracted failover window. Owner: Chief Operating Officer."
     },
     {
-     "action": "Notify regulators & key stakeholders",
-     "strapline": "Get ahead of disclosure obligations early"
+     "action": "Freeze and reconcile the unsettled transaction queue",
+     "strapline": "quantify and flag all authorized-but-unsettled transactions for counterparty exposure tracking. Owner: Head of Payments Operations. Deadline: 24 hours."
+    },
+    {
+     "action": "Notify regulators and activate incident response",
+     "strapline": "trigger operational incident disclosure per the interagency 36-hour computer-security incident notification rule. Owner: Chief Compliance Officer. Deadline: 36 hours."
     }
    ],
    "shortterm": [
     {
+     "action": "Exposure",
+     "strapline": "SLA penalty exposure under the processor contract ~$15–25M · Customer complaint volume +40% · Vendor concentration usage 65% of critical-vendor threshold"
+    },
+    {
+     "action": "Enforce SLA penalty clauses against the processor",
+     "strapline": "quantify breach hours against the contracted RTO/RPO and invoice penalties per the agreement. Owner: General Counsel / Vendor Management. Deadline: 4 weeks."
+    },
+    {
      "action": "Conduct full settlement reconciliation",
-     "strapline": "Clear the backlog before it becomes credit risk"
+     "strapline": "clear the transaction backlog and confirm no residual credit exposure remains open. Owner: Head of Credit Risk. Deadline: 3 weeks."
     },
     {
-     "action": "Review vendor contract & SLA compliance",
-     "strapline": "Hold the processor accountable, quantify penalties owed"
-    },
-    {
-     "action": "Launch client communication & remediation programme",
-     "strapline": "Protect relationships before reputational damage compounds"
+     "action": "Launch client remediation and communication programme",
+     "strapline": "proactively compensate and communicate with affected merchants and public-sector clients to limit churn. Owner: Head of Client Relations. Deadline: 6 weeks."
     }
    ],
    "ongoing": [
     {
-     "action": "Diversify payment-processing vendor panel",
-     "strapline": "Reduce single-point-of-failure dependency"
+     "action": "Exposure",
+     "strapline": "Target vendor concentration 65% → 40% of critical-vendor threshold · Secondary processor capacity build-out 0% → 100% of volume · Vendor risk review cadence: annual → quarterly"
     },
     {
-     "action": "Update third-party risk & concentration limits",
-     "strapline": "Bake this into the risk appetite framework"
+     "action": "Diversify the payment-processing vendor panel",
+     "strapline": "onboard and certify a second processor, independent at the infrastructure layer, for at least 40% of transaction volume. Owner: Chief Operating Officer."
     },
     {
-     "action": "Conduct post-incident review & controls uplift",
-     "strapline": "Turn this into a stronger control environment"
+     "action": "Increase third-party risk review cadence",
+     "strapline": "move critical-vendor reviews from annual to quarterly, with concentration limits formally enforced. Owner: Head of Third-Party Risk."
+    },
+    {
+     "action": "Conduct post-incident controls uplift",
+     "strapline": "commission an independent review of vendor resilience testing and update the business continuity plan. Owner: Chief Risk Officer."
     }
    ]
   },
@@ -5800,32 +5821,27 @@ const NA_A3 = {
  },
  "infra": {
   "trigger": "Infrastructure Outage",
-  "primaryEventType": "Third-party / Concentration — Cloud",
-  "secondaryEventType": "reputational, regulatory",
+  "primaryEventType": "Third-party / Concentration Risk — Cloud",
+  "secondaryEventType": "Reputational & Regulatory Risk",
   "velocity": "Fast-onset (hours), slow-resolving (days)",
   "affectedStripes": [
-   "Operational, Third Party, Concentration, Market access"
+   "Operational",
+   "Third Party",
+   "Concentration",
+   "Market access"
   ],
   "firstOrder": [
    {
-    "stripe": "operation risk",
+    "stripe": "Operational Risk",
     "sev": "Critical",
     "items": [
      {
-      "metric": "Downtime Duration (in minutes)",
-      "impact": "direct and immediate halt in the ability to conduct business for 5.5 hours, making websites and applications unusable. Consequently, this leads to an inability to serve customers and a sharp decline in employee productivity, causing direct financial and reputational damage."
+      "metric": "Downtime duration (minutes)",
+      "impact": "Downtime could extend to ~330 minutes (5.5 hours), a direct and immediate halt to conducting business"
      },
      {
-      "metric": "Mean Time to Recovery (MTTR)",
-      "impact": "direct and immediate halt in the ability to conduct business for 5.5 hours, making websites and applications unusable. Consequently, this leads to an inability to serve customers and a sharp decline in employee productivity, causing direct financial and reputational damage."
-     },
-     {
-      "metric": "Number of Failed Transactions",
-      "impact": "direct and immediate halt in the ability to conduct business for 5.5 hours, making websites and applications unusable. Consequently, this leads to an inability to serve customers and a sharp decline in employee productivity, causing direct financial and reputational damage."
-     },
-     {
-      "metric": "Spike in customer support incidents",
-      "impact": "direct and immediate halt in the ability to conduct business for 5.5 hours, making websites and applications unusable. Consequently, this leads to an inability to serve customers and a sharp decline in employee productivity, causing direct financial and reputational damage."
+      "metric": "Number of failed transactions",
+      "impact": "Failed transaction volume spikes sharply as websites and applications become unusable across the outage window"
      }
     ]
    },
@@ -5834,34 +5850,26 @@ const NA_A3 = {
     "sev": "High",
     "items": [
      {
-      "metric": "SLA Breach Cost",
-      "impact": "failures that are completely outside of its direct control, making it vulnerable to the operational and security shortcomings of its vendors. This dependency means that even with perfect internal systems, your entire service can be brought down by a partner's single point of failure."
+      "metric": "SLA breach cost",
+      "impact": "SLA breach cost could accrue into the millions as contracted uptime commitments are missed"
      },
      {
-      "metric": "Direct Revenue Loss",
-      "impact": "failures that are completely outside of its direct control, making it vulnerable to the operational and security shortcomings of its vendors. This dependency means that even with perfect internal systems, your entire service can be brought down by a partner's single point of failure."
-     },
-     {
-      "metric": "Vendor Time to Resolution",
-      "impact": "failures that are completely outside of its direct control, making it vulnerable to the operational and security shortcomings of its vendors. This dependency means that even with perfect internal systems, your entire service can be brought down by a partner's single point of failure."
-     },
-     {
-      "metric": "Security Exposure window",
-      "impact": "failures that are completely outside of its direct control, making it vulnerable to the operational and security shortcomings of its vendors. This dependency means that even with perfect internal systems, your entire service can be brought down by a partner's single point of failure."
+      "metric": "Vendor time to resolution",
+      "impact": "Time to resolution sits entirely outside direct control, dependent on the vendor's own incident response"
      }
     ]
    },
    {
-    "stripe": "Concentration risk",
+    "stripe": "Concentration Risk",
     "sev": "High",
     "items": [
      {
-      "metric": "Single Point of Failure count",
-      "impact": "Concentration risk means a problem at one vendor results in a catastrophic, enterprise-wide failure rather than a limited, single-service disruption. This over-reliance amplifies the impact of any third-party incident, turning a manageable problem into an existential threat to business continuity"
+      "metric": "Single point of failure count",
+      "impact": "SPOF count confirms a single vendor dependency capable of causing enterprise-wide failure, not a contained disruption"
      },
      {
       "metric": "Cost of mitigation",
-      "impact": "Concentration risk means a problem at one vendor results in a catastrophic, enterprise-wide failure rather than a limited, single-service disruption. This over-reliance amplifies the impact of any third-party incident, turning a manageable problem into an existential threat to business continuity"
+      "impact": "Mitigation cost could scale sharply if multi-vendor redundancy must be built out reactively rather than pre-emptively"
      }
     ]
    },
@@ -5870,78 +5878,70 @@ const NA_A3 = {
     "sev": "Critical",
     "items": [
      {
-      "metric": "Trading / data",
-      "impact": "Ratings and exchange access impaired for the outage window"
+      "metric": "Trading access",
+      "impact": "Trading access could be impaired for the full outage window, delaying execution and settlement instructions"
+     },
+     {
+      "metric": "Data feed access",
+      "impact": "Market data feed access is disrupted, degrading pricing and risk calculations during the outage window"
      }
     ]
    }
   ],
   "secondOrder": [
    {
-    "stripe": "reputational risk",
+    "stripe": "Reputational Risk",
     "sev": "Critical",
     "items": [
      {
-      "metric": "Customer Churn Rate",
-      "impact": "Customer Churn Rate, Negative media mentions and social media sentiment"
+      "metric": "Customer churn rate",
+      "impact": "Churn could accelerate as digital-channel outages erode client confidence in service reliability"
      },
      {
-      "metric": "Negative media mentions and social media sentiment",
-      "impact": "Customer Churn Rate, Negative media mentions and social media sentiment"
+      "metric": "Negative media mentions / social sentiment",
+      "impact": "Negative mentions and social sentiment scores spike sharply as the outage draws public and press attention"
      }
     ]
    },
    {
-    "stripe": "regulatory and compliance risk",
+    "stripe": "Regulatory & Compliance Risk",
     "sev": "High",
     "items": [
      {
-      "metric": "Cost of Fines and Penalties",
-      "impact": "Cost of Fines and Penalties, Mandated Remediation costs, number of regulatory inquiries"
+      "metric": "Cost of fines and penalties",
+      "impact": "Fines and penalties could accrue if the outage is judged to reflect inadequate operational resilience arrangements"
      },
      {
-      "metric": "Mandated Remediation costs",
-      "impact": "Cost of Fines and Penalties, Mandated Remediation costs, number of regulatory inquiries"
-     },
-     {
-      "metric": "number of regulatory inquiries",
-      "impact": "Cost of Fines and Penalties, Mandated Remediation costs, number of regulatory inquiries"
+      "metric": "Number of regulatory inquiries",
+      "impact": "Regulatory inquiries increase as supervisors seek assurance on third-party concentration controls"
      }
     ]
    },
    {
-    "stripe": "strategic/ market risk",
+    "stripe": "Strategic / Market Risk",
     "sev": "High",
     "items": [
      {
-      "metric": "Decline in New Customer Acquisition",
-      "impact": "Decline in New Customer Acquisition, Market Share, Competitor Merketing Spend"
+      "metric": "Decline in new customer acquisition",
+      "impact": "New customer acquisition could soften as prospective clients weigh the reliability track record before switching"
      },
      {
-      "metric": "Market Share",
-      "impact": "Decline in New Customer Acquisition, Market Share, Competitor Merketing Spend"
-     },
-     {
-      "metric": "Competitor Merketing Spend",
-      "impact": "Decline in New Customer Acquisition, Market Share, Competitor Merketing Spend"
+      "metric": "Market share",
+      "impact": "Market share is at risk of eroding if competitors capitalise on the outage in win-back and acquisition campaigns"
      }
     ]
    },
    {
-    "stripe": "financial risk",
+    "stripe": "Financial Risk",
     "sev": "High",
     "items": [
      {
-      "metric": "Capital Expenditure",
-      "impact": "Capital Expenditure, Resource Re-allocation rate, delay in Product Roadmap"
+      "metric": "Capital expenditure",
+      "impact": "Capital expenditure could rise as remediation forces unplanned investment in redundancy and infrastructure"
      },
      {
-      "metric": "Resource Re-allocation rate",
-      "impact": "Capital Expenditure, Resource Re-allocation rate, delay in Product Roadmap"
-     },
-     {
-      "metric": "delay in Product Roadmap",
-      "impact": "Capital Expenditure, Resource Re-allocation rate, delay in Product Roadmap"
+      "metric": "Delay in product roadmap",
+      "impact": "Product roadmap delivery slips as engineering resources are redirected to remediation and resilience work"
      }
     ]
    }
@@ -6203,64 +6203,56 @@ const NA_A3 = {
   "playbook": {
    "immediate": [
     {
-     "action": "Activate \"Code Red\" Command Center",
-     "strapline": "Assemble the core crisis response team: CIO, CISO, COO, Head of Comms, General Counsel, CRO. Establish a dedicated communication channel (war room) and a clear cadence for updates (e.g., every 30 minutes). Delegate authority and establish clear workstreams (Technical, Security, Comms, Business Ops)."
+     "action": "Exposure",
+     "strapline": "Outage duration 5.5 hours · Est. direct cost $12–20M · Digital channel availability: 0% during outage window · Services affected: banking app, payment portal, trading/data feeds"
     },
     {
-     "action": "Execute Digital Channel BCP",
-     "strapline": "Fail over to alternate data centers, routing, or CDNs where available. Activate \"degraded service\" or \"read-only\" modes for non-critical functions to preserve core services. Immediately redirect traffic from failed fourth-party dependencies if technically feasible."
+     "action": "Failover to redundant infrastructure",
+     "strapline": "activate secondary CDN/region routing to restore digital channel availability. Owner: Chief Technology Officer. Deadline: Immediate."
     },
     {
-     "action": "Deploy Operational Contingencies",
-     "strapline": "Activate branch, call center, and manual processing contingencies to handle critical customer transactions. Provide front-line teams with approved scripts and FAQs about the outage and workarounds."
+     "action": "Map single-point-of-failure exposure across critical services",
+     "strapline": "identify every service dependent on the affected provider and confirm no residual SPOF remains active. Owner: Head of Technology Risk. Deadline: 48 hours."
     },
     {
-     "action": "Initial Stakeholder Communications",
-     "strapline": "Publish initial, transparent status updates across all channels (website, app, social media). Set clear expectations about service availability and the next update time. Avoid speculation. Surge contact-center capacity with pre-briefed agents and enable chatbot/IVR messaging."
-    },
-    {
-     "action": "Security Triage & Threat Monitoring",
-     "strapline": "Verify the event is availability-only and not a security breach involving data exfiltration. Deploy heightened monitoring for opportunistic attacks (e.g., phishing campaigns) that exploit the confusion. Preserve all relevant logs from all affected systems for forensic analysis."
+     "action": "Brief Board Risk Committee",
+     "strapline": "present outage duration, cost estimate, and fourth-party concentration exposure. Owner: CRO. Deadline: 48 hours."
     }
    ],
    "shortterm": [
     {
-     "action": "Demand Vendor Root Cause Analysis (RCA)",
-     "strapline": "Demand a detailed, transparent RCA from the third-party vendor that explicitly identifies the fourth-party point of failure. Assess the vendor's remediation plan for credibility and timelines."
+     "action": "Exposure",
+     "strapline": "SLA breach cost recoverable from vendor ~$5–8M · Customer churn rate +6% · Regulatory inquiries received: 3"
     },
     {
-     "action": "Quantify Business & Financial Impact",
-     "strapline": "Conduct a full impact assessment: lost revenue, SLA penalties owed, overtime costs, customer compensation. Begin logging all costs associated with the incident for potential insurance claims or legal action."
+     "action": "Enforce SLA breach penalties against the infrastructure provider",
+     "strapline": "quantify downtime against contracted uptime SLA and invoice per agreement. Owner: General Counsel / Vendor Management. Deadline: 4 weeks."
     },
     {
-     "action": "Proactive Regulatory Engagement",
-     "strapline": "Proactively notify key regulators of the incident, its systemic nature, and the steps being taken. Frame the narrative around being a victim of a wider ecosystem failure while demonstrating a robust response."
+     "action": "Launch customer remediation and communication programme",
+     "strapline": "proactively compensate and communicate with affected clients to limit churn. Owner: Head of Client Relations. Deadline: 6 weeks."
     },
     {
-     "action": "Develop Customer Remediation Plan",
-     "strapline": "Plan for customer recovery: clearing transaction backlogs, proactive outreach to heavily impacted clients. Evaluate goodwill gestures (e.g., fee waivers, service credits) to rebuild trust."
-    },
-    {
-     "action": "Review Contractual & Legal Position",
-     "strapline": "Analyze the contract with the third-party vendor for breach of contract, SLA violations, and liability clauses. Issue a formal reservation of rights notice to the vendor to preserve legal options."
+     "action": "Respond to regulatory inquiries with root-cause analysis and remediation plan",
+     "strapline": "deliver findings and corrective action timeline to each inquiring regulator. Owner: Chief Compliance Officer. Deadline: within regulator-specified window."
     }
    ],
    "ongoing": [
     {
-     "action": "Overhaul Vendor Risk Management Framework",
-     "strapline": "Update the TPRM framework to explicitly include fourth-party concentration risk assessment. Mandate that all critical vendors provide transparency into their own key dependencies (their \"fourth parties\"). Introduce \"concentration scores\" for critical vendors based on shared dependencies across the ecosystem."
+     "action": "Exposure",
+     "strapline": "Vendor concentration target 100% single-provider → ≤50% per critical service · Secondary provider capacity build-out 0% → 100% · Vendor risk review cadence: annual → quarterly"
     },
     {
-     "action": "Strategic Architectural Review",
-     "strapline": "Re-evaluate technology architecture for single points of failure. Prioritize investment in multi-cloud, multi-vendor, or active-active strategies for critical services to eliminate single-vendor dependency."
+     "action": "Diversify infrastructure providers (multi-CDN / multi-region)",
+     "strapline": "onboard a second, independent infrastructure provider for all critical digital channels. Owner: Chief Technology Officer."
     },
     {
-     "action": "Update Board & Governance Reporting",
-     "strapline": "Establish a permanent agenda item at the Board Risk Committee to review third and fourth-party concentration risk. Develop key risk indicators (KRIs) to track and report on these dependencies."
+     "action": "Set formal concentration limits on fourth-party providers",
+     "strapline": "extend the vendor risk framework beyond direct vendors to their upstream dependencies. Owner: Head of Third-Party Risk."
     },
     {
-     "action": "Contract Renegotiation and Templating",
-     "strapline": "Amend standard Master Service Agreement (MSA) templates to include clauses requiring: Right-to-audit clauses that extend to sub-contractors. Mandatory disclosure of critical fourth-party dependencies. Specific resilience and recovery time objectives (RTOs)."
+     "action": "Conduct post-incident resilience uplift",
+     "strapline": "commission an independent review of infrastructure redundancy and update disaster-recovery plans. Owner: Chief Risk Officer."
     }
    ]
   },
@@ -6299,8 +6291,8 @@ const NA_A3 = {
  },
  "sanctions": {
   "trigger": "Regulatory tightening",
-  "primaryEventType": "OPS / FC — Financial Crime & Compliance",
-  "secondaryEventType": "strategic, operational,reputational",
+  "primaryEventType": "Financial Crime Risk",
+  "secondaryEventType": "Compliance Risk",
   "velocity": "Fast-onset (effective immediately on designation), slow-resolving (weeks-to-months for compliance re-screening and wind-down of exposure)",
   "affectedStripes": [
    "Regulatory & Compliance Risk",
@@ -6689,68 +6681,56 @@ const NA_A3 = {
   "playbook": {
    "immediate": [
     {
-     "action": "Activate Sanctions Incident Response Protocol",
-     "strapline": "Assemble the core crisis team: Head of Financial Crime, General Counsel, CRO, COO, and Head of Comms. Establish a secure \"war room\" channel and set a high-frequency update cadence (e.g., hourly) to manage the response."
+     "action": "Exposure",
+     "strapline": "Newly designated entities requiring screening ~450 · Credit exposure to newly sanctioned entities ~$180M · Screening coverage gap: unconfirmed · Wind-down authorization window: 30 days"
     },
     {
-     "action": "Isolate & Contain",
-     "strapline": "Immediately block all related payments and freeze associated client assets. Implement emergency overrides to prevent further processing of transactions linked to the identified screening gap. Isolate the affected systems or processes."
+     "action": "Freeze and block exposure to newly designated entities",
+     "strapline": "halt any in-flight payments or transactions to newly listed entities and execute asset freezes per regulatory requirement. Owner: Chief Compliance Officer. Deadline: Immediate (legal obligation)."
     },
     {
-     "action": "Initial Regulatory Notification & Triage",
-     "strapline": "Prepare and deliver a preliminary notification to the relevant regulatory bodies (e.g., OFAC, HMT) within the legally mandated timeframe. Clearly state the known facts, the immediate containment actions taken, and the commitment to a full investigation."
+     "action": "Trigger global counterparty re-screening",
+     "strapline": "re-run the full client and transaction base against updated sanctions lists using the expanded designation criteria. Owner: Head of Financial Crime Compliance. Deadline: 5 business days."
     },
     {
-     "action": "Preserve All Records",
-     "strapline": "Secure and preserve all relevant data and system logs, including transaction records, screening logs, system change histories, and all communications related to the incident. Issue a legal hold notice to prevent inadvertent data deletion."
-    },
-    {
-     "action": "Prepare Internal & External Communications",
-     "strapline": "Provide front-line teams with approved scripts and FAQs to handle internal and potential client inquiries. Draft holding statements for media and external stakeholders, to be approved by Legal and the Executive Committee, focusing on action and accountability."
+     "action": "Brief Board Risk Committee",
+     "strapline": "present confirmed exposure to sanctioned entities, screening coverage status, and wind-down timeline. Owner: CRO. Deadline: 48 hours."
     }
    ],
    "shortterm": [
     {
-     "action": "Conduct Full Root Cause Analysis (RCA)",
-     "strapline": "Forensically investigate the end-to-end process to identify the precise point of failure (e.g., screening engine logic, list data failure, API error, human error). Document findings meticulously for regulatory review."
+     "action": "Exposure",
+     "strapline": "Credit exposure requiring wind-down ~$180M · Trade finance / LNG portfolio exposure ~$310M · Active legal proceedings in affected jurisdictions: 4 · Vendor concentration score (screening/crypto vendors): High"
     },
     {
-     "action": "Quantify Total Risk Exposure",
-     "strapline": "Conduct a full financial impact assessment: value of breached transactions, total assets frozen, potential regulatory fines, and operational costs. Model the second-order impacts on liquidity and reputation."
+     "action": "Exit or restructure exposure to sanctioned counterparties",
+     "strapline": "execute wind-down of credit and trade finance positions within the regulator-authorized window; document all restructuring decisions. Owner: Head of Credit Risk. Deadline: 30 days."
     },
     {
-     "action": "Manage Regulatory Engagement",
-     "strapline": "Proactively engage with regulators, providing regular, transparent updates on the RCA, remediation progress, and impact assessment. Frame the narrative by demonstrating accountability and robust control of the situation."
+     "action": "Re-certify digital asset clients under expanded ownership rules",
+     "strapline": "complete re-certification of affected crypto clients against the new ownership-prohibition criteria. Owner: Head of Digital Assets Compliance. Deadline: 6 weeks."
     },
     {
-     "action": "Develop Client Remediation & De-risking Plan",
-     "strapline": "Formulate a strategy for managing impacted client relationships, including the plan for off-boarding high-risk clients identified during the review. Develop clear communication scripts and handling procedures for client-facing teams."
-    },
-    {
-     "action": "Assess Legal & Contractual Position",
-     "strapline": "Engage legal counsel to analyze the firm's liability, potential for fines, and any contractual breaches with third-party data or software providers. Issue reservation of rights notices to any vendors implicated in the failure."
+     "action": "Engage outside counsel on cross-jurisdictional litigation exposure",
+     "strapline": "assess anti-suit and anti-enforcement options for proceedings in sanctioning-country courts. Owner: General Counsel. Deadline: 8 weeks."
     }
    ],
    "ongoing": [
     {
-     "action": "Overhaul Sanctions Compliance Framework",
-     "strapline": "Revise and strengthen the entire sanctions framework, including policies, operating procedures, and governance structures. Incorporate lessons learned from the incident to address identified weaknesses in the control environment."
+     "action": "Exposure",
+     "strapline": "Target screening coverage 100% · Vendor concentration target: High → Medium · Compliance tooling investment: scoped Q1 · Disclosure: dedicated sanctions-compliance section, next risk report"
     },
     {
-     "action": "Enhance Screening Technology & Controls",
-     "strapline": "Re-evaluate and invest in upgrading sanctions screening platforms. Prioritize improvements such as fuzzy logic tuning, enhanced data sources, and real-time screening capabilities to reduce false negatives and improve detection accuracy."
+     "action": "Upgrade sanctions screening infrastructure",
+     "strapline": "invest in automated screening tools to close the coverage gap identified during re-screening. Owner: Chief Compliance Officer."
     },
     {
-     "action": "Execute Comprehensive Lookback Review",
-     "strapline": "As directed by legal and compliance, conduct a formal lookback review of historical transactions to determine if the same control failure led to other previously undetected breaches. Scope and methodology must be defensible to regulators."
+     "action": "Diversify compliance-data vendor panel",
+     "strapline": "reduce concentration risk in screening data providers by certifying a second vendor. Owner: Head of Third-Party Risk."
     },
     {
-     "action": "Strengthen Governance & Board Reporting",
-     "strapline": "Establish permanent agenda items at senior risk committees and the Board to review sanctions compliance effectiveness. Develop and track new Key Risk Indicators (KRIs) focused on screening performance, list management, and model effectiveness."
-    },
-    {
-     "action": "Implement Enhanced Training & Culture Program",
-     "strapline": "Roll out mandatory, scenario-based training for all relevant staff, from front-line operations to senior management. Launch a communications campaign to reinforce the critical importance of sanctions compliance and embed a culture of vigilance."
+     "action": "Formalise proactive regulatory engagement protocol",
+     "strapline": "establish a standing cadence of pre-emptive briefings with primary regulators on sanctions compliance posture. Owner: Head of Regulatory Affairs."
     }
    ]
   },
@@ -6801,6 +6781,120 @@ const NA_A3 = {
 
 
 
+
+
+
+// Risk Transmission Map — CME-Exchange-style tiered SVG built from the Excel map
+// data: left row labels, dark amber boxes, red L1–L3 bracket, full-width
+// Trigger/Limit/Action bars and animated red dotted parent→child connectors,
+// revealed tier-by-tier (uses the RtmEdge/RtmLabel helpers defined below).
+function NaTransMapCME({ map }) {
+  // Group nodes into tier rows, preserving the workbook order.
+  const rows = React.useMemo(() => {
+    const order = [];
+    (map || []).forEach(m => {
+      const key = (m.tier || '').trim();
+      let r = order.find(x => x.tier.toLowerCase() === key.toLowerCase());
+      if (!r) { r = { tier: key, nodes: [] }; order.push(r); }
+      r.nodes.push(m);
+    });
+    return order;
+  }, [map]);
+
+  const LX = 150, RX = 1030, USABLE = RX - LX, gap = 12, nodeH = 48, barH = 34, vgap = 40;
+  const isBar = (r) => /^(trigger|limit breach|action)/i.test(r.tier) || r.nodes.length === 1;
+
+  // Lay out rows top-to-bottom with node coordinates.
+  const laid = [];
+  let y = 24;
+  rows.forEach(r => {
+    const bar = isBar(r), h = bar ? barH : nodeH;
+    let nodes;
+    if (bar) {
+      nodes = [{ ...r.nodes[0], x: LX, y, w: USABLE, h, cx: LX + USABLE / 2, top: y, bottom: y + h, bar: true }];
+    } else {
+      const N = r.nodes.length, boxW = (USABLE - (N - 1) * gap) / N;
+      nodes = r.nodes.map((n, i) => { const x = LX + i * (boxW + gap); return { ...n, x, y, w: boxW, h, cx: x + boxW / 2, top: y, bottom: y + h, bar: false }; });
+    }
+    laid.push({ tier: r.tier, y, h, bar, nodes });
+    y += h + vgap;
+  });
+  const totalH = y - vgap + 24;
+
+  // Build parent→child edges (parent must be an earlier tier; supports ';' multi-parents).
+  const byCard = {}, byTier = {};
+  laid.forEach((row, ri) => row.nodes.forEach(n => {
+    byCard[(n.card || '').trim().toLowerCase()] = { ...n, ri };
+    const tk = (row.tier || '').trim().toLowerCase();
+    if (!(tk in byTier)) byTier[tk] = { ...n, ri };
+  }));
+  const edges = [];
+  laid.forEach((row, ri) => row.nodes.forEach(n => {
+    if (!n.parent || n.parent === '—') return;
+    String(n.parent).split(';').map(p => p.trim()).filter(Boolean).forEach(p => {
+      const pn = byCard[p.toLowerCase()] || byTier[p.toLowerCase()];
+      if (!pn || pn.ri >= ri) return;
+      edges.push({ x1: pn.cx, y1: pn.bottom, x2: n.cx, y2: n.top, childRi: ri });
+    });
+  }));
+
+  const [phase, setPhase] = React.useState(0);
+  React.useEffect(() => {
+    setPhase(0);
+    const timers = laid.map((_, i) => setTimeout(() => setPhase(i + 1), 350 + i * 600));
+    return () => timers.forEach(clearTimeout);
+  }, [map]);
+
+  const l1i = laid.findIndex(r => /l1/i.test(r.tier));
+  const l3i = laid.findIndex(r => /l3/i.test(r.tier));
+  const BOX = { fill: '#241a0e', stroke: '#c8855a', text: '#f0c880' };
+  const TRIG = { fill: '#2d1e0c', stroke: '#8B5e30', text: '#ffcf88' };
+
+  const wrap = (text, maxChars) => {
+    const words = String(text || '').split(/\s+/); const lines = []; let cur = '';
+    words.forEach(w => { if (!cur) cur = w; else if ((cur + ' ' + w).length <= maxChars) cur += ' ' + w; else { lines.push(cur); cur = w; } });
+    if (cur) lines.push(cur);
+    return lines.slice(0, 3);
+  };
+  const rowVisible = (ri) => ({ opacity: phase >= ri + 1 ? 1 : 0, transition: 'opacity 0.5s' });
+
+  return (
+    <div className="na-rtm-cme">
+      <svg viewBox={`0 0 1060 ${totalH}`} preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: 'auto', fontFamily: 'inherit' }}>
+        {edges.map((e, i) => (
+          <g key={i} style={{ opacity: phase >= e.childRi + 1 ? 1 : 0, transition: 'opacity 0.45s' }}>
+            <RtmEdge x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} />
+          </g>
+        ))}
+        {l1i >= 0 && l3i >= 0 && (
+          <g style={rowVisible(l1i)}>
+            <rect x={139} y={laid[l1i].y - 2} width={3} height={(laid[l3i].y + laid[l3i].h) - (laid[l1i].y - 2)} rx={1.5} fill="#c0392b" opacity={0.8} />
+          </g>
+        )}
+        {laid.map((row, ri) => (
+          <g key={ri} style={rowVisible(ri)}>
+            <RtmLabel x={126} y={row.y + row.h / 2} label={row.tier} />
+            {row.nodes.map((n, i) => {
+              const sc = row.bar && /trigger/i.test(row.tier) ? TRIG : BOX;
+              const fz = row.bar ? 10.5 : 10;
+              const maxChars = Math.max(6, Math.floor((n.w - 12) / (fz * 0.55)));
+              const lines = wrap(n.card, row.bar ? 130 : maxChars);
+              const startY = n.y + n.h / 2 - (lines.length - 1) * (fz * 0.62);
+              return (
+                <g key={i}>
+                  <rect x={n.x} y={n.y} width={n.w} height={n.h} rx={5} fill={sc.fill} stroke={sc.stroke} strokeWidth={1.5} />
+                  {lines.map((ln, li) => (
+                    <text key={li} x={n.cx} y={startY + li * (fz * 1.25)} textAnchor="middle" dominantBaseline="middle" fontSize={fz} fontWeight="600" fill={sc.text} fontFamily="inherit">{ln}</text>
+                  ))}
+                </g>
+              );
+            })}
+          </g>
+        ))}
+      </svg>
+    </div>
+  );
+}
 
 // Risk Transmission Map — dark tiered tree with animated node creation and
 // dotted orange parent→child connectors (matches the Excel snapshot).
@@ -7032,13 +7126,15 @@ function NewsAssessment({ onBack }) {
     // Keep the workbook (Home Page tab) order; only apply the severity filter.
     const homeList = home.filter(x => homeFilter === 'all' || x.severity === homeFilter);
     const sevCount = (s) => home.filter(x => x.severity === s).length;
-    // Map a home headline to a built assessment scenario (only CRE is live for now).
+    // Map a home headline to a built assessment scenario.
     const homeToEvent = (it) => {
       const t = ((it.title || '') + ' ' + (it.primaryRisk || '')).toLowerCase();
-      if (t.includes('commercial-real-estate') || t.includes('commercial real estate') || /\bcre\b/.test(t)) {
-        return NA_FEED.find(e => e.canonical && e.dataId === 'cre');
-      }
-      return null;
+      let did = null;
+      if (t.includes('commercial-real-estate') || t.includes('commercial real estate')) did = 'cre';
+      else if (t.includes('ransomware')) did = 'ransom';
+      else if (t.includes('cloud-region outage')) did = 'infra';
+      else if (t.includes('sanctions package')) did = 'sanctions';
+      return did ? NA_FEED.find(e => e.canonical && e.dataId === did) : null;
     };
     const onHomeClick = (it) => {
       setSelectedHome(it); setSearched(false); setSearch('');  // show the full article in the middle first
@@ -7187,7 +7283,7 @@ function NewsAssessment({ onBack }) {
                   <span className="na-article-hint">Reads the article, maps the risk transmission and quantifies impact across 4 agents.</span>
                 </div>
               ) : (
-                <div className="na-article-note"><i className="fa-solid fa-circle-info"></i> A full agentic assessment for this event is not yet available. The <strong>CRE</strong> scenario is live — select <em>“Mid-sized lender flags commercial-real-estate loan-book stress”</em> from the feed to run the pipeline.</div>
+                <div className="na-article-note"><i className="fa-solid fa-circle-info"></i> A full agentic assessment for this event is not yet available. The live scenarios are <strong>CRE stress</strong>, <strong>ransomware</strong>, <strong>cloud-region outage</strong> and <strong>sanctions expansion</strong> — select one of those from the feed to run the pipeline.</div>
               )}
             </div>
           );
@@ -7557,13 +7653,11 @@ function NewsAssessment({ onBack }) {
         ))}
       </div>
 
-      {/* F — Risk Transmission Map (from Excel, dark tiered tree, animated) */}
+      {/* F — Risk Transmission Map (from Excel, CME-Exchange-style tiered SVG) */}
       <div className="scenario-section-header">Risk Transmission Map — {ev.title}</div>
-      <div className="card" style={{marginBottom:16}}>
-        {a3.map && a3.map.length > 0
-          ? <NaTransMap map={a3.map} />
-          : <div style={{fontSize:13,color:'var(--text-3)'}}>No transmission map data for this event.</div>}
-      </div>
+      {a3.map && a3.map.length > 0
+        ? <NaTransMapCME map={a3.map} />
+        : <div className="card" style={{marginBottom:16}}><div style={{fontSize:13,color:'var(--text-3)'}}>No transmission map data for this event.</div></div>}
 
       {/* H — Escalation Matrix (Agent 3) — from Excel */}
       <div className="scenario-section-header">Escalation Matrix</div>
