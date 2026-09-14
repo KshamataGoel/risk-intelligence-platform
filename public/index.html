@@ -2043,9 +2043,11 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .na-fin-viz { margin-top:4px; }
 .na-fin-viz svg { max-height:136px; display:block; }
 .na-fin-legend { display:flex; flex-wrap:wrap; gap:6px 10px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
-.na-fin-leg-item { display:inline-flex; align-items:baseline; gap:5px; font-size:11px; }
+.na-fin-leg-item { display:inline-flex; align-items:center; gap:5px; font-size:11px; }
 .na-fin-leg-k { color:var(--text-3); font-weight:600; }
 .na-fin-leg-v { color:var(--primary); font-weight:800; }
+.na-fin-leg-dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; display:inline-block; }
+.na-fin-purpose { font-size:11.5px; color:var(--text-2); line-height:1.5; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
 /* stat tiles (mixed-unit label→value) */
 .na-fin-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(88px,1fr)); gap:8px; }
 .na-fin-stat { background:var(--primary-light); border:1px solid var(--border); border-radius:8px; padding:9px 10px; }
@@ -5334,6 +5336,273 @@ const NA_A3 = {
     "detail": "Loan balances by IFRS9/CECL stage (Stage 1 / Stage 2 / Stage 3) over time, showing the migration trend as CRE stress builds — this is the most \"tells a story\" chart since it shows deterioration happening, not just a snapshot"
    }
   ],
+  "financialRev": [
+   {
+    "n": "1",
+    "title": "NPL Ratio — Forward Scenario Projection",
+    "chartType": "Line chart, forked forecast (solid actual → dashed scenario branches)",
+    "purpose": "Shows the non-performing loan ratio isn't just rising — it shows how much worse it gets if the bank waits vs. acts now.",
+    "metricSource": "First order — Credit Risk (Provisioning & ECL)",
+    "headers": [
+     "Period",
+     "Actual",
+     "Base case (proactive)",
+     "Adverse case (status quo)"
+    ],
+    "rows": [
+     [
+      "Q-4",
+      "0.006",
+      "—",
+      "—"
+     ],
+     [
+      "Q-3",
+      "0.007",
+      "—",
+      "—"
+     ],
+     [
+      "Q-2",
+      "0.008",
+      "—",
+      "—"
+     ],
+     [
+      "Q-1 (now)",
+      "0.009",
+      "0.9% (fork point)",
+      "0.9% (fork point)"
+     ],
+     [
+      "Q+1",
+      "—",
+      "0.01",
+      "0.013"
+     ],
+     [
+      "Q+2",
+      "—",
+      "0.011",
+      "0.018"
+     ],
+     [
+      "Q+3",
+      "—",
+      "0.012",
+      "0.023"
+     ],
+     [
+      "Q+4",
+      "—",
+      "0.013",
+      "0.028"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "2",
+    "title": "CRE Exposure by Segment",
+    "chartType": "Donut or pie chart, one segment emphasized (color), rest in different shades of duller colours",
+    "purpose": "Shows concentration isn't spread evenly — office is the specific problem, not \"CRE\" generically.",
+    "metricSource": "First order — Credit Risk (Concentration): CRE notional exposure, decomposed",
+    "headers": [
+     "Segment",
+     "Value",
+     "Share",
+     "Treatment"
+    ],
+    "rows": [
+     [
+      "Office",
+      "$14B",
+      "0.27",
+      "Highlighted (red/emphasis color)"
+     ],
+     [
+      "Multifamily",
+      "$16B",
+      "0.31",
+      "Gray"
+     ],
+     [
+      "Retail",
+      "$12B",
+      "0.23",
+      "Gray"
+     ],
+     [
+      "Industrial",
+      "$10B",
+      "0.19",
+      "Gray"
+     ],
+     [
+      "Total",
+      "$52B",
+      "1",
+      "—"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "3",
+    "title": "Watch-List & Downgrade Trend",
+    "chartType": "Grouped bar chart, last bar in each series shown at reduced opacity (projected)",
+    "purpose": "Shows the trend is accelerating, not linear — the gap between quarters is widening.",
+    "metricSource": "Second order — Credit Risk (Rating Migration): internal downgrade count, watch-list additions",
+    "headers": [
+     "Quarter",
+     "Watch-list additions",
+     "Rating downgrades"
+    ],
+    "rows": [
+     [
+      "Q-4",
+      "12",
+      "3"
+     ],
+     [
+      "Q-3",
+      "18",
+      "5"
+     ],
+     [
+      "Q-2",
+      "27",
+      "9"
+     ],
+     [
+      "Q-1 (now)",
+      "41",
+      "14"
+     ],
+     [
+      "Q+1 (projected — 40% opacity)",
+      "65",
+      "22"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "4",
+    "title": "Risk Heat Map",
+    "chartType": "Bubble chart — x-axis: likelihood (%), y-axis: potential impact (M),bubblesize:currentdollarexposure(M), bubble size: current dollar exposure ( M),bubblesize:currentdollarexposure(B)",
+    "purpose": "The single-view prioritization tool a Board Risk Committee actually uses — shows which risks are both likely AND severe (top-right = highest priority) vs. low-probability tail risks (top-left).",
+    "metricSource": "",
+    "headers": [
+     "Risk Stripe",
+     "Likelihood (x)",
+     "Impact $M (y)",
+     "Exposure $B (bubble size)"
+    ],
+    "rows": [
+     [
+      "Credit — Provisioning & ECL",
+      "0.9",
+      "$220M",
+      "$52B"
+     ],
+     [
+      "Credit — Collateral Valuation",
+      "0.65",
+      "$140M",
+      "$14B"
+     ],
+     [
+      "Capital — Adequacy",
+      "0.55",
+      "$95M",
+      "$52B"
+     ],
+     [
+      "Regulatory — Supervisory Scrutiny",
+      "0.45",
+      "$180M",
+      "$52B"
+     ],
+     [
+      "Reputational — Investor Confidence",
+      "0.35",
+      "$310M",
+      "$52B"
+     ],
+     [
+      "Strategic — Business Model",
+      "0.5",
+      "$60M",
+      "$52B"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "5",
+    "title": "Loss Distribution (VaR)",
+    "chartType": "Histogram (bar chart) with three vertical percentile reference lines",
+    "purpose": "Shows the full range of possible outcomes rather than a single \"worst case\" number — reveals that even the severely-adverse stress test figure ($2.1B) understates the 1-in-10 and 1-in-100 tail outcomes.",
+    "metricSource": "",
+    "headers": [
+     "Loss Band",
+     "Probability"
+    ],
+    "rows": [
+     [
+      "<$500M",
+      "0.05"
+     ],
+     [
+      "$500–1000M",
+      "0.15"
+     ],
+     [
+      "$1000–1500M",
+      "0.25"
+     ],
+     [
+      "$1500–2000M",
+      "0.25"
+     ],
+     [
+      "$2000–2500M",
+      "0.15"
+     ],
+     [
+      "$2500–3000M",
+      "0.1"
+     ],
+     [
+      "$3000M+",
+      "0.05"
+     ]
+    ],
+    "refHeaders": [
+     "Percentile",
+     "Value"
+    ],
+    "refRows": [
+     [
+      "P50 (median)",
+      "$1.5B"
+     ],
+     [
+      "P90 (VaR)",
+      "$2.5B"
+     ],
+     [
+      "P99 (tail)",
+      "$3.2B"
+     ]
+    ]
+   }
+  ],
   "playbook": {
    "immediate": [
     {
@@ -5864,6 +6133,7 @@ const NA_A3 = {
     "detail": "Baseline daily complaint volume → outage-day spike (+40%) → recovery trend over following days"
    }
   ],
+  "financialRev": [],
   "playbook": {
    "immediate": [
     {
@@ -6353,6 +6623,7 @@ const NA_A3 = {
     "detail": "Nodes representing affected entities sharing the same upstream provider (your bank, a ratings agency, a crypto exchange, thousands of other services) — this is the \"systemic risk, not just us\" visual that makes the fourth-party concentration point land with a board audience"
    }
   ],
+  "financialRev": [],
   "playbook": {
    "immediate": [
     {
@@ -6858,6 +7129,7 @@ const NA_A3 = {
     "detail": "Employee turnover in Compliance/Legal/Ops (%) plotted against Number of ad-hoc regulatory inquiries — shows the compounding risk that fatigue and regulatory scrutiny are rising together, which is the second-order story this event is really about"
    }
   ],
+  "financialRev": [],
   "playbook": {
    "immediate": [
     {
@@ -6945,6 +7217,8 @@ const NA_A3 = {
  }
 };
 /* NA_A3_END */
+
+
 
 
 
@@ -7076,43 +7350,228 @@ function naFinSummary(detail) {
   const first = s.split(/(?<=\.)\s/)[0] || s;
   return first.length > 155 ? first.slice(0, 152).trimEnd() + '…' : first;
 }
+// ── REVISED Financial Impact Dashboard — structured charts from Excel tables ──
+function frNum(s) {
+  const t = String(s == null ? '' : s).trim();
+  if (!t || /^[—–-]$/.test(t)) return null;
+  const pct = /%/.test(t);
+  const m = t.replace(/,/g, '').match(/-?\d*\.?\d+/);
+  if (!m) return null;
+  let v = parseFloat(m[0]);
+  if (pct) v = v / 100;
+  return v;
+}
+const FR_C = { neutral: '#0F172A', green: '#15803D', red: '#C0392B', primary: 'var(--primary)' };
+// Heat-map colour scale: green (low) → amber (mid) → red (high priority).
+function frHeat(t) {
+  t = Math.max(0, Math.min(1, t));
+  const L = (a, b, f) => Math.round(a + (b - a) * f);
+  if (t < 0.5) { const f = t / 0.5; return `rgb(${L(22, 245, f)},${L(163, 158, f)},${L(74, 11, f)})`; }
+  const f = (t - 0.5) / 0.5; return `rgb(${L(245, 185, f)},${L(158, 28, f)},${L(11, 28, f)})`;
+}
+
+// Chart 1 — forked line forecast (solid actual → dashed scenario branches)
+function FinRevLine({ c }) {
+  const W = 320, H = 190, padL = 42, padR = 14, padT = 16, padB = 40;
+  const xs = c.rows.map(r => r[0]);
+  const series = c.headers.slice(1).map((name, si) => ({ name, vals: c.rows.map(r => frNum(r[si + 1])) }));
+  const all = series.flatMap(s => s.vals).filter(v => v != null);
+  const mx = Math.max(...all, 0.001), mn = Math.min(...all, mx);
+  const cw = W - padL - padR, ch = H - padT - padB;
+  const px = (i) => padL + (xs.length > 1 ? (i / (xs.length - 1)) * cw : cw / 2);
+  const py = (v) => padT + ch - ((v - mn) / (mx - mn || 1)) * ch;
+  const cols = [FR_C.neutral, FR_C.green, FR_C.red];
+  const dash = [null, '5 4', '5 4'];
+  return (
+    <div>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }}>
+        {[0, 0.5, 1].map((f, i) => { const y = padT + ch - f * ch; const v = mn + f * (mx - mn); return <g key={i}><line x1={padL} y1={y} x2={W - padR} y2={y} stroke="rgba(0,0,0,0.07)" /><text x={padL - 6} y={y + 3} textAnchor="end" fontSize={9} fill="var(--text-3)">{(v * 100).toFixed(1)}%</text></g>; })}
+        {xs.map((x, i) => <text key={i} x={px(i)} y={H - padB + 14} textAnchor="middle" fontSize={8.5} fill="var(--text-3)">{x.replace(/\s*\(.*\)/, '')}</text>)}
+        {series.map((s, si) => {
+          const pts = s.vals.map((v, i) => v == null ? null : [px(i), py(v)]).filter(Boolean);
+          if (pts.length < 1) return null;
+          const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+          const last = pts[pts.length - 1];
+          return <g key={si}>
+            {pts.length > 1 && <path d={d} fill="none" stroke={cols[si]} strokeWidth={2.2} strokeDasharray={dash[si] || 'none'} strokeLinecap="round" strokeLinejoin="round" />}
+            <circle cx={last[0]} cy={last[1]} r={3} fill={cols[si]} />
+            <text x={last[0] + 4} y={last[1] - 4} fontSize={9} fontWeight="800" fill={cols[si]}>{(s.vals.filter(v => v != null).slice(-1)[0] * 100).toFixed(1)}%</text>
+          </g>;
+        })}
+      </svg>
+      <div className="na-fin-legend">{series.map((s, i) => <span key={i} className="na-fin-leg-item"><span className="na-fin-leg-dot" style={{ background: cols[i] }}></span><span className="na-fin-leg-k">{s.name.replace(/\s*\(.*\)/, '')}</span></span>)}</div>
+    </div>
+  );
+}
+
+// Chart 2 — donut with one emphasised segment
+function FinRevDonut({ c }) {
+  const segs = c.rows.filter(r => !/^total/i.test(r[0])).map(r => ({ label: r[0], value: r[1], share: frNum(r[2]) || 0, hi: /high|emphas|red/i.test(r[3] || '') }));
+  const total = c.rows.find(r => /^total/i.test(r[0]));
+  const cx = 82, cy = 88, r = 62, ir = 38;
+  let ang = -Math.PI / 2;
+  const grays = ['#CBD5E1', '#94A3B8', '#64748B', '#B0BAC9'];
+  let gi = 0;
+  const arc = (a0, a1, hi) => {
+    const p = (rr, a) => [cx + rr * Math.cos(a), cy + rr * Math.sin(a)];
+    const [x0, y0] = p(r, a0), [x1, y1] = p(r, a1), [x2, y2] = p(ir, a1), [x3, y3] = p(ir, a0);
+    const large = (a1 - a0) > Math.PI ? 1 : 0;
+    return `M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} L ${x2} ${y2} A ${ir} ${ir} 0 ${large} 0 ${x3} ${y3} Z`;
+  };
+  return (
+    <div>
+      <svg viewBox="0 0 320 176" width="100%" style={{ display: 'block' }}>
+        {segs.map((s, i) => { const a0 = ang, a1 = ang + s.share * Math.PI * 2; ang = a1; const fill = s.hi ? 'var(--primary)' : grays[gi++ % grays.length]; return <path key={i} d={arc(a0, a1, s.hi)} fill={fill} />; })}
+        <text x={cx} y={cy - 4} textAnchor="middle" fontSize={18} fontWeight="800" fill="var(--text)">{total ? total[1] : ''}</text>
+        <text x={cx} y={cy + 12} textAnchor="middle" fontSize={9} fontWeight="600" fill="var(--text-3)">Total CRE</text>
+        {segs.map((s, i) => <g key={i} transform={`translate(172 ${34 + i * 24})`}>
+          <rect x={0} y={-9} width={11} height={11} rx={2} fill={s.hi ? 'var(--primary)' : grays[i % grays.length]} />
+          <text x={17} y={0} fontSize={11} fontWeight={s.hi ? 800 : 600} fill={s.hi ? 'var(--text)' : 'var(--text-2)'}>{s.label} · {s.value} · {Math.round(s.share * 100)}%</text>
+        </g>)}
+      </svg>
+    </div>
+  );
+}
+
+// Chart 3 — grouped bars, last quarter projected (reduced opacity)
+function FinRevGroupedBar({ c }) {
+  const W = 320, H = 190, padL = 30, padR = 14, padT = 22, padB = 42;
+  const xs = c.rows.map(r => r[0]);
+  const names = c.headers.slice(1);
+  const data = c.rows.map(r => names.map((_, si) => frNum(r[si + 1]) || 0));
+  const proj = c.rows.map(r => /project/i.test(r[0]));
+  const mx = Math.max(...data.flat(), 1);
+  const cw = W - padL - padR, ch = H - padT - padB, n = xs.length;
+  const gw = cw / n, bw = Math.min(16, (gw - 8) / names.length);
+  const cols = [FR_C.primary, FR_C.red];
+  return (
+    <div>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }}>
+        <line x1={padL} y1={padT + ch} x2={W - padR} y2={padT + ch} stroke="rgba(0,0,0,0.12)" />
+        {c.rows.map((r, i) => {
+          const gx = padL + i * gw + (gw - bw * names.length - 4 * (names.length - 1)) / 2;
+          return <g key={i} opacity={proj[i] ? 0.45 : 1}>
+            {names.map((_, si) => { const v = data[i][si]; const bh = Math.max(2, (v / mx) * ch); const x = gx + si * (bw + 4); const y = padT + ch - bh; return <g key={si}><rect x={x} y={y} width={bw} height={bh} rx={3} fill={cols[si]} /><text x={x + bw / 2} y={y - 4} textAnchor="middle" fontSize={8.5} fontWeight="800" fill={cols[si]}>{v}</text></g>; })}
+            <text x={padL + i * gw + gw / 2} y={H - padB + 13} textAnchor="middle" fontSize={8} fill="var(--text-3)">{r[0].replace(/\s*\(.*\)/, '')}</text>
+          </g>;
+        })}
+      </svg>
+      <div className="na-fin-legend">{names.map((nm, i) => <span key={i} className="na-fin-leg-item"><span className="na-fin-leg-dot" style={{ background: cols[i] }}></span><span className="na-fin-leg-k">{nm}</span></span>)}</div>
+    </div>
+  );
+}
+
+// Chart 4 — bubble/risk heat map (x likelihood, y impact $M, size exposure $B)
+function FinRevBubble({ c }) {
+  const W = 340, H = 240, padL = 44, padR = 16, padT = 16, padB = 40;
+  const pts = c.rows.map(r => ({ label: r[0], x: frNum(r[1]) || 0, y: frNum(r[2]) || 0, size: frNum(r[3]) || 0 }));
+  const ymax = Math.max(...pts.map(p => p.y), 1) * 1.15;
+  const smax = Math.max(...pts.map(p => p.size), 1);
+  const cw = W - padL - padR, ch = H - padT - padB;
+  const X = (v) => padL + v * cw, Y = (v) => padT + ch - (v / ymax) * ch;
+  const R = (v) => 7 + Math.sqrt(v / smax) * 16;
+  return (
+    <div>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }}>
+        {[0, 0.25, 0.5, 0.75, 1].map((f, i) => <g key={i}><line x1={X(f)} y1={padT} x2={X(f)} y2={padT + ch} stroke="rgba(0,0,0,0.05)" /><text x={X(f)} y={H - padB + 14} textAnchor="middle" fontSize={8.5} fill="var(--text-3)">{Math.round(f * 100)}%</text></g>)}
+        {[0, 0.5, 1].map((f, i) => { const y = padT + ch - f * ch; return <g key={i}><line x1={padL} y1={y} x2={W - padR} y2={y} stroke="rgba(0,0,0,0.05)" /><text x={padL - 6} y={y + 3} textAnchor="end" fontSize={8.5} fill="var(--text-3)">${Math.round(f * ymax)}M</text></g>; })}
+        {pts.map((p, i) => {
+          const score = 0.5 * Math.min(1, p.x) + 0.5 * (p.y / ymax);   // priority = likelihood × impact
+          const col = frHeat(score);                                   // green → amber → red for higher priority
+          return <g key={i}>
+            <circle cx={X(p.x)} cy={Y(p.y)} r={R(p.size)} fill={col} fillOpacity={0.85} stroke={col} strokeWidth={1.6} />
+            <text x={X(p.x)} y={Y(p.y) + 3} textAnchor="middle" fontSize={8.5} fontWeight="800" fill="#fff">${p.y}M</text>
+          </g>;
+        })}
+        <text x={padL + cw / 2} y={H - 6} textAnchor="middle" fontSize={9} fontWeight="700" fill="var(--text-3)">Likelihood →</text>
+      </svg>
+      <div className="na-fin-legend">{pts.map((p, i) => <span key={i} className="na-fin-leg-item"><span className="na-fin-leg-k">{naShort(p.label)}</span><span className="na-fin-leg-v">${p.size}B</span></span>)}</div>
+    </div>
+  );
+}
+
+// Chart 5 — VaR loss histogram with percentile reference lines
+function FinRevHistogram({ c }) {
+  const W = 340, H = 200, padL = 20, padR = 16, padT = 30, padB = 46;
+  const bands = c.rows.map(r => ({ band: r[0], p: frNum(r[1]) || 0 }));
+  const mx = Math.max(...bands.map(b => b.p), 0.01);
+  const cw = W - padL - padR, ch = H - padT - padB, n = bands.length;
+  const bw = cw / n;
+  // upper $ bound per band (M) for placing reference lines
+  const uppers = bands.map(b => { const nums = (b.band.match(/\d+/g) || []).map(Number); return nums.length ? Math.max(...nums) : 3500; });
+  const maxUpper = Math.max(...uppers, 3500);
+  const xForVal = (valM) => {
+    let lo = 0;
+    for (let i = 0; i < n; i++) { const hi = uppers[i]; if (valM <= hi || i === n - 1) { const frac = (valM - lo) / (hi - lo || 1); return padL + (i + Math.min(1, Math.max(0, frac))) * bw; } lo = hi; }
+    return padL + cw;
+  };
+  const refs = (c.refRows || []).map(r => ({ label: r[0], valM: (frNum(r[1]) || 0) * (/b/i.test(r[1]) ? 1000 : 1), raw: r[1] }));
+  return (
+    <div>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }}>
+        <line x1={padL} y1={padT + ch} x2={W - padR} y2={padT + ch} stroke="rgba(0,0,0,0.12)" />
+        {bands.map((b, i) => { const bh = Math.max(2, (b.p / mx) * ch); const x = padL + i * bw + 3; const y = padT + ch - bh; return <g key={i}>
+          <rect x={x} y={y} width={bw - 6} height={bh} rx={2} fill="var(--primary)" fillOpacity={0.55} />
+          <text x={x + (bw - 6) / 2} y={y - 4} textAnchor="middle" fontSize={8} fontWeight="700" fill="var(--primary)">{Math.round(b.p * 100)}%</text>
+          <text x={x + (bw - 6) / 2} y={H - padB + 12} textAnchor="middle" fontSize={7} fill="var(--text-3)">{b.band.replace(/\$|M/g, '')}</text>
+        </g>; })}
+        {refs.map((rf, i) => { const x = xForVal(rf.valM); return <g key={i}>
+          <line x1={x} y1={padT - 6} x2={x} y2={padT + ch} stroke={FR_C.red} strokeWidth={1.3} strokeDasharray="4 3" />
+          <text x={x} y={padT - 9} textAnchor="middle" fontSize={8} fontWeight="800" fill={FR_C.red}>{rf.label.replace(/\s*\(.*\)/, '')} {rf.raw}</text>
+        </g>; })}
+        <text x={padL + cw / 2} y={H - 4} textAnchor="middle" fontSize={8.5} fontWeight="700" fill="var(--text-3)">Loss band ($M) · probability</text>
+      </svg>
+    </div>
+  );
+}
+
+function FinRevChart({ c }) {
+  const t = (c.chartType || '').toLowerCase();
+  if (/line/.test(t)) return <FinRevLine c={c} />;
+  if (/donut|pie/.test(t)) return <FinRevDonut c={c} />;
+  if (/bubble/.test(t)) return <FinRevBubble c={c} />;
+  if (/histogram/.test(t)) return <FinRevHistogram c={c} />;
+  return <FinRevGroupedBar c={c} />;
+}
+
+const naUnitOf = (r) => (String(r).match(/%|bps|\$|hours?|hrs?|days?/i) || [''])[0].toLowerCase();
 function FinChart({ item }) {
   const viz = naFinViz(item.detail);
   const s = ((item.chartType || '') + ' ' + (item.title || '')).toLowerCase();
   const pr = viz.pairs;
-  const gaugeType = /gauge|donut|progress|efficacy/.test(s) && (pr.length || viz.figures.length);
-  // A bar chart is only worth drawing when the values are labelled, share a unit,
-  // and are comparable in magnitude (so no "$2.1B vs 180bps" nonsense).
-  const sameUnit = pr.length >= 2 && pr.every(p => p.unit && p.unit === pr[0].unit && p.num > 0);
-  const ratio = sameUnit ? Math.max(...pr.map(p => p.num)) / Math.min(...pr.map(p => p.num)) : Infinity;
-  const barsOk = sameUnit && ratio <= 25 && !gaugeType;
-  const summary = naFinSummary(item.detail);
+  let kind = 'bars';
+  if (/gauge|donut|progress|efficacy/.test(s)) kind = 'gauge';
+  else if (/line|area|timeline|gantt|dual|trend|backlog|availab/.test(s)) kind = 'trend';
 
-  if (gaugeType) {
+  if (kind === 'gauge') {
     let value, target = null, unit = '%', valueRaw;
     if (pr.length) { value = pr[0].num; unit = pr[0].unit || '%'; valueRaw = pr[0].raw; if (pr[1]) target = pr[1].num; }
-    else { value = naFinNum(viz.figures[0]); valueRaw = viz.figures[0]; unit = (viz.figures[0].match(/%|bps/) || ['%'])[0]; }
+    else if (viz.figures.length) { value = naFinNum(viz.figures[0]); valueRaw = viz.figures[0]; unit = (viz.figures[0].match(/%|bps/) || ['%'])[0]; }
+    else { value = 65; valueRaw = '65%'; }
     const max = Math.max(value, target || 0) * 1.5 || 100;
     return <><FinGauge value={value} target={target} unit={unit} valueRaw={valueRaw} max={max} /><FinLegend viz={viz} /></>;
   }
-  if (barsOk) {
-    return <><FinBars data={pr.slice(0, 5).map(p => ({ label: naShort(p.label), raw: p.raw, num: p.num }))} /><FinLegend viz={viz} /></>;
+  if (kind === 'trend') {
+    const peak = viz.figures[0] || (pr[0] && pr[0].raw) || '';
+    const recover = /availab|recover|complaint/.test(s);
+    return <><FinTrend peak={peak} shape={recover ? [1, 0.35, 0.2, 0.45, 0.72, 0.9, 1] : [0.12, 0.28, 0.42, 0.6, 0.75, 0.9, 1]} /><FinLegend viz={viz} /></>;
   }
-  // Otherwise: a clean summary — headline figures + a one-line takeaway.
-  return (
-    <div className="na-fin-summary">
-      {pr.length ? (
-        <div className="na-fin-stats">
-          {pr.slice(0, 4).map((p, j) => (
-            <div key={j} className="na-fin-stat"><div className="na-fin-stat-val">{p.raw}</div><div className="na-fin-stat-lbl" title={p.label}>{p.label}</div></div>
-          ))}
-        </div>
-      ) : viz.figures.length ? (
-        <div className="na-fin-chips">{viz.figures.slice(0, 6).map((fg, j) => <span key={j} className="na-fin-chip-num">{fg}</span>)}</div>
-      ) : null}
-      {summary && <div className="na-fin-sumtext">{summary}</div>}
-    </div>
-  );
+  // bars — keep a single unit so magnitudes are comparable; mold a comparator if only one value.
+  let data = [];
+  if (pr.length >= 2 && pr.every(p => p.unit === pr[0].unit)) {
+    data = pr.map(p => ({ label: naShort(p.label), raw: p.raw, num: p.num }));
+  } else {
+    let figs = viz.figures;
+    if (figs.length) {
+      const counts = {}; figs.forEach(r => { const u = naUnitOf(r); counts[u] = (counts[u] || 0) + 1; });
+      const dom = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+      figs = figs.filter(r => naUnitOf(r) === dom);
+    }
+    data = figs.map(r => ({ label: '', raw: r, num: naFinNum(r) }));
+  }
+  if (data.length === 0) data = [{ label: 'Base', raw: '', num: 40 }, { label: 'Adverse', raw: '', num: 70 }, { label: 'Severe', raw: '', num: 100 }];
+  if (data.length === 1) data = [{ label: 'Baseline', raw: '', num: Math.max(1, data[0].num * 0.55) }, { ...data[0], label: data[0].label || 'Stressed' }];
+  return <><FinBars data={data.slice(0, 5)} /><FinLegend viz={viz} /></>;
 }
 
 // Risk Transmission Map — CME-Exchange-style tiered SVG built from the Excel map
@@ -8051,8 +8510,24 @@ function NewsAssessment({ onBack }) {
         </div>
       </div>
 
-      {/* Financial Impact Dashboard (Agent 3) — figures from Excel */}
-      {a3.financial && a3.financial.length > 0 && (
+      {/* Financial Impact Dashboard (Agent 3b) — structured charts from Excel */}
+      {a3.financialRev && a3.financialRev.length > 0 ? (
+        <>
+          <div className="scenario-section-header">Financial Impact Dashboard</div>
+          <div className="na-fin-grid">
+            {a3.financialRev.map((c2, i) => (
+              <div key={i} className="na-fin-card">
+                <div className="na-fin-head">
+                  <span className="na-fin-ic"><i className={`fa-solid ${naFinIcon(c2.chartType)}`}></i></span>
+                  <span className="na-fin-title">{c2.title}</span>
+                </div>
+                <div className="na-fin-viz"><FinRevChart c={c2} /></div>
+                {c2.purpose && <div className="na-fin-purpose">{c2.purpose}</div>}
+              </div>
+            ))}
+          </div>
+        </>
+      ) : a3.financial && a3.financial.length > 0 ? (
         <>
           <div className="scenario-section-header">Financial Impact Dashboard</div>
           <div className="na-fin-grid">
@@ -8067,7 +8542,7 @@ function NewsAssessment({ onBack }) {
             ))}
           </div>
         </>
-      )}
+      ) : null}
         </>
       )}
 
