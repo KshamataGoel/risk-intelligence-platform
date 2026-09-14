@@ -7665,7 +7665,7 @@ function FinRevHistogram({ c }) {
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }}>
         {gy.map((g, i) => { const y = padT + ch - (g / pMax) * ch; return <g key={i}><line x1={padL} y1={y} x2={W - padR} y2={y} stroke="rgba(0,0,0,0.06)" /><text x={padL - 4} y={y + 3} textAnchor="end" fontSize={8} fill="var(--text-3)">{Math.round(g * 100)}%</text></g>; })}
         {bands.map((b, i) => { const bh = Math.max(1, (b.p / pMax) * ch); const x = padL + i * bw + 2.5; const y = padT + ch - bh; return <g key={i}>
-          <rect x={x} y={y} width={bw - 5} height={bh} rx={1.5} fill="#2563EB" />
+          <rect x={x} y={y} width={bw - 5} height={bh} rx={1.5} fill="var(--primary)" />
           <text x={x + (bw - 5) / 2} y={H - padB + 11} textAnchor="middle" fontSize={7} fill="var(--text-3)">{shortBand(i)}</text>
         </g>; })}
         {refs.map((rf, i) => { const x = xForVal(rf.valM); return <g key={i}>
