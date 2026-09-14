@@ -2048,6 +2048,21 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .na-fin-leg-v { color:var(--primary); font-weight:800; }
 .na-fin-leg-dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; display:inline-block; }
 .na-fin-purpose { font-size:11.5px; color:var(--text-2); line-height:1.5; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
+.na-fin-pctls { display:flex; gap:10px; margin-bottom:12px; }
+.na-fin-pctl { flex:1; }
+.na-fin-pctl-v { font-size:18px; font-weight:800; color:var(--text); line-height:1.05; letter-spacing:-0.3px; }
+.na-fin-pctl-k { font-size:9px; font-weight:600; color:var(--text-3); margin-top:3px; }
+.na-fin-clickable { cursor:pointer; transition:box-shadow 0.15s, border-color 0.15s; }
+.na-fin-clickable:hover { box-shadow:0 6px 18px rgba(0,0,0,0.12); border-color:var(--primary); }
+.na-fin-expand { margin-left:auto; color:var(--text-3); font-size:11px; opacity:0; transition:opacity 0.15s; }
+.na-fin-clickable:hover .na-fin-expand { opacity:1; }
+.na-fin-modal { position:fixed; inset:0; background:rgba(15,23,42,0.55); z-index:1000; display:flex; align-items:center; justify-content:center; padding:30px; }
+.na-fin-modal-box { background:var(--surface); border-radius:var(--radius); box-shadow:0 20px 60px rgba(0,0,0,0.35); width:min(780px,94vw); max-height:92vh; overflow-y:auto; padding:24px 28px; }
+.na-fin-modal-head { display:flex; align-items:center; gap:11px; margin-bottom:18px; }
+.na-fin-modal-title { font-size:18px; font-weight:800; color:var(--text); }
+.na-fin-modal-close { margin-left:auto; background:none; border:none; font-size:19px; color:var(--text-3); cursor:pointer; line-height:1; }
+.na-fin-modal-close:hover { color:var(--text); }
+.na-fin-modal-cap { font-size:12.5px; color:var(--text-2); line-height:1.6; margin-top:12px; font-style:italic; }
 /* stat tiles (mixed-unit label→value) */
 .na-fin-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(88px,1fr)); gap:8px; }
 .na-fin-stat { background:var(--primary-light); border:1px solid var(--border); border-radius:8px; padding:9px 10px; }
@@ -2108,6 +2123,11 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .na-chat-bubble { padding:10px 14px; border-radius:12px; font-size:13px; line-height:1.6; }
 .na-chat-msg.bot .na-chat-bubble { background:#F1F5F9; color:var(--text); border-top-left-radius:3px; }
 .na-chat-msg.user .na-chat-bubble { background:var(--primary-light); color:var(--text); border-top-right-radius:3px; }
+.na-chat-typing { display:inline-flex; gap:4px; align-items:center; padding:2px 0; }
+.na-chat-typing span { width:6px; height:6px; border-radius:50%; background:var(--text-3); display:inline-block; animation:naType 1.2s infinite ease-in-out; }
+.na-chat-typing span:nth-child(2) { animation-delay:0.2s; }
+.na-chat-typing span:nth-child(3) { animation-delay:0.4s; }
+@keyframes naType { 0%,60%,100%{ transform:translateY(0); opacity:0.4; } 30%{ transform:translateY(-4px); opacity:1; } }
 .na-chat-suggest { display:flex; flex-wrap:wrap; gap:8px; padding:0 18px 14px; }
 .na-chat-sg { font-size:12px; font-weight:600; padding:6px 12px; border:1px solid var(--border); border-radius:20px; background:var(--surface); color:var(--text-2); cursor:pointer; transition:all 0.15s; }
 .na-chat-sg:hover { border-color:var(--primary); background:var(--primary-light); color:var(--text); }
@@ -4892,6 +4912,12 @@ const NA_HOME = [
 // Agent-3 data generated from the News Intelligence Mock Up Data workbook
 const NA_A3 = {
  "cre": {
+  "synopsis": "A large international bank flagged its commercial real estate exposure as a key risk, warning that ongoing refinancing struggles and unstable valuations could push loan-loss provisions higher than expected.",
+  "summaryBullets": [
+   "CRE loan book flagged as a key risk amid refinancing struggles and price instability",
+   "Concern concentrated in West Coast office-sector exposure",
+   "A credit-originated event that cascades into market, capital and regulatory risk"
+  ],
   "trigger": "Disclosure of asset-quality deterioration in CRE book",
   "primaryEventType": "Credit Risk",
   "secondaryEventType": "Capital & Liquidity Risk",
@@ -5340,6 +5366,7 @@ const NA_A3 = {
    {
     "n": "1",
     "title": "NPL Ratio — Forward Scenario Projection",
+    "caption": "Under the base case, the NPL ratio reaches 1.3% by Q+4; under a status-quo scenario, it reaches 2.8% — a divergence driven entirely by the timing of management action.",
     "chartType": "Line chart, forked forecast (solid actual → dashed scenario branches)",
     "purpose": "Shows the non-performing loan ratio isn't just rising — it shows how much worse it gets if the bank waits vs. acts now.",
     "metricSource": "First order — Credit Risk (Provisioning & ECL)",
@@ -5405,6 +5432,7 @@ const NA_A3 = {
    {
     "n": "2",
     "title": "CRE Exposure by Segment",
+    "caption": "Office exposure represents 27% of the CRE book by value but accounts for a disproportionate share of current risk severity relative to the other three segments.",
     "chartType": "Donut or pie chart, one segment emphasized (color), rest in different shades of duller colours",
     "purpose": "Shows concentration isn't spread evenly — office is the specific problem, not \"CRE\" generically.",
     "metricSource": "First order — Credit Risk (Concentration): CRE notional exposure, decomposed",
@@ -5452,6 +5480,7 @@ const NA_A3 = {
    {
     "n": "3",
     "title": "Watch-List & Downgrade Trend",
+    "caption": "Watch-list additions and rating downgrades have increased in each of the last four quarters at an accelerating rate; the projected Q+1 figures exceed the cumulative total of the prior three quarters.",
     "chartType": "Grouped bar chart, last bar in each series shown at reduced opacity (projected)",
     "purpose": "Shows the trend is accelerating, not linear — the gap between quarters is widening.",
     "metricSource": "Second order — Credit Risk (Rating Migration): internal downgrade count, watch-list additions",
@@ -5493,6 +5522,7 @@ const NA_A3 = {
    {
     "n": "4",
     "title": "Risk Heat Map",
+    "caption": "Provisioning and ECL risk carries the highest near-term likelihood and is already reflected in current financials. Reputational risk carries materially lower likelihood but the highest potential impact of any stripe assessed, and is not yet reflected in current provisioning.",
     "chartType": "Bubble chart — x-axis: likelihood (%), y-axis: potential impact (M),bubblesize:currentdollarexposure(M), bubble size: current dollar exposure ( M),bubblesize:currentdollarexposure(B)",
     "purpose": "The single-view prioritization tool a Board Risk Committee actually uses — shows which risks are both likely AND severe (top-right = highest priority) vs. low-probability tail risks (top-left).",
     "metricSource": "",
@@ -5546,6 +5576,7 @@ const NA_A3 = {
    {
     "n": "5",
     "title": "Loss Distribution (VaR)",
+    "caption": "The severely-adverse stress scenario of $2.1B corresponds approximately to the 75th percentile of the modeled loss distribution; there remains a 10% probability that losses exceed $2.5B and a 1% probability they exceed $3.2B.",
     "chartType": "Histogram (bar chart) with three vertical percentile reference lines",
     "purpose": "Shows the full range of possible outcomes rather than a single \"worst case\" number — reveals that even the severely-adverse stress test figure ($2.1B) understates the 1-in-10 and 1-in-100 tail outcomes.",
     "metricSource": "",
@@ -5681,6 +5712,12 @@ const NA_A3 = {
   ]
  },
  "ransom": {
+  "synopsis": "A ransomware attack on a US payment gateway provider forced core systems offline, triggering a nationwide card-processing outage. Merchants and public-sector customers — including several municipalities — were unable to process card payments, with some reverting to cash-only operations while systems were restored.",
+  "summaryBullets": [
+   "Ransomware attack on a payment gateway provider caused a nationwide card-processing outage",
+   "Impact hit both private merchants and public-sector customers, forcing some municipalities to cash-only operations",
+   "A cyber-originated event that cascades into credit, liquidity and reputational risk"
+  ],
   "trigger": "Ransomware attack on external vendor infrastructure",
   "primaryEventType": "Operational/ Cyber Risk",
   "secondaryEventType": "Third-party/ Supply-chain Risk",
@@ -6133,7 +6170,109 @@ const NA_A3 = {
     "detail": "Baseline daily complaint volume → outage-day spike (+40%) → recovery trend over following days"
    }
   ],
-  "financialRev": [],
+  "financialRev": [
+   {
+    "n": "1",
+    "title": "$2M",
+    "caption": "",
+    "chartType": "",
+    "purpose": "",
+    "metricSource": "",
+    "headers": [],
+    "rows": [],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "2",
+    "title": "$5M",
+    "caption": "",
+    "chartType": "",
+    "purpose": "",
+    "metricSource": "",
+    "headers": [],
+    "rows": [],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "3",
+    "title": "$9M",
+    "caption": "",
+    "chartType": "",
+    "purpose": "",
+    "metricSource": "",
+    "headers": [
+     "$15M"
+    ],
+    "rows": [
+     [
+      "Likelihood",
+      "Impact ($M)",
+      "Exposure ($B)"
+     ],
+     [
+      "0.95",
+      "$95M",
+      "$2.1B"
+     ],
+     [
+      "0.8",
+      "$60M",
+      "$2.1B"
+     ],
+     [
+      "0.7",
+      "$340M",
+      "$0.34B"
+     ],
+     [
+      "0.55",
+      "$120M",
+      "$2.1B"
+     ],
+     [
+      "0.65",
+      "$180M",
+      "$2.1B"
+     ],
+     [
+      "0.4",
+      "$250M",
+      "$2.1B"
+     ],
+     [
+      "Probability"
+     ],
+     [
+      "0.05"
+     ],
+     [
+      "0.2"
+     ],
+     [
+      "0.3"
+     ],
+     [
+      "0.25"
+     ],
+     [
+      "0.12"
+     ],
+     [
+      "0.05"
+     ],
+     [
+      "0.03"
+     ],
+     [
+      "$28M · P90"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   }
+  ],
   "playbook": {
    "immediate": [
     {
@@ -6216,6 +6355,12 @@ const NA_A3 = {
   ]
  },
  "infra": {
+  "synopsis": "A configuration error at a major internet infrastructure provider triggered a ~5.5-hour global outage, taking down banking and payment portals, a credit ratings agency, a crypto exchange, and thousands of other services that all depend on the same shared provider — a textbook fourth-",
+  "summaryBullets": [
+   "A configuration error at a key internet infrastructure provider led to a global outage lasting approximately 5.5 hours.",
+   "This outage impacted a wide range of critical services, including banking and payment portals, a credit ratings agency, a crypto exchange, and thousands of other dependent services.",
+   "The incident highlights a textbook example of third-party infrastructure dependency, where a failure at an upstream provider (the internet infrastructure provider) has a cascading effect on numerous downstream services."
+  ],
   "trigger": "Infrastructure Outage",
   "primaryEventType": "Third-party / Concentration Risk — Cloud",
   "secondaryEventType": "Reputational & Regulatory Risk",
@@ -6714,6 +6859,12 @@ const NA_A3 = {
   ]
  },
  "sanctions": {
+  "synopsis": "A major sanctions package took effect, tightening measures across energy, financial services and crypto assets, while parallel legislation advanced the same week — together requiring firms to re-screen counterparty and cross-border exposure.",
+  "summaryBullets": [
+   "Expanded sanctions package tightens measures across energy, financial services and cryptoassets",
+   "Parallel legislative action requires firms to re-screen counterparty and cross-border exposure",
+   "A geopolitical event that cascades into compliance, credit and operational risk"
+  ],
   "trigger": "Regulatory tightening",
   "primaryEventType": "Financial Crime Risk",
   "secondaryEventType": "Compliance Risk",
@@ -7240,6 +7391,10 @@ const NA_A3 = {
 
 
 
+
+
+
+
 // Financial Impact Dashboard helpers — pick an icon for the chart type and
 // highlight the money/percent/bps figures inside the descriptive text.
 function naFinIcon(t) {
@@ -7492,34 +7647,31 @@ function FinRevBubble({ c }) {
 
 // Chart 5 — VaR loss histogram with percentile reference lines
 function FinRevHistogram({ c }) {
-  const W = 340, H = 200, padL = 20, padR = 16, padT = 30, padB = 46;
+  const W = 330, H = 172, padL = 26, padR = 8, padT = 18, padB = 26;
   const bands = c.rows.map(r => ({ band: r[0], p: frNum(r[1]) || 0 }));
-  const mx = Math.max(...bands.map(b => b.p), 0.01);
-  const cw = W - padL - padR, ch = H - padT - padB, n = bands.length;
-  const bw = cw / n;
-  // upper $ bound per band (M) for placing reference lines
+  const refs = (c.refRows || []).map(r => ({ tag: (String(r[0]).match(/^P\d+/i) || [r[0]])[0], full: r[0], raw: r[1], valM: (frNum(r[1]) || 0) * (/b/i.test(r[1]) ? 1000 : 1) }));
+  const pMax = Math.max(0.25, ...bands.map(b => b.p));
+  const cw = W - padL - padR, ch = H - padT - padB, n = bands.length, bw = cw / n;
   const uppers = bands.map(b => { const nums = (b.band.match(/\d+/g) || []).map(Number); return nums.length ? Math.max(...nums) : 3500; });
-  const maxUpper = Math.max(...uppers, 3500);
-  const xForVal = (valM) => {
-    let lo = 0;
-    for (let i = 0; i < n; i++) { const hi = uppers[i]; if (valM <= hi || i === n - 1) { const frac = (valM - lo) / (hi - lo || 1); return padL + (i + Math.min(1, Math.max(0, frac))) * bw; } lo = hi; }
-    return padL + cw;
-  };
-  const refs = (c.refRows || []).map(r => ({ label: r[0], valM: (frNum(r[1]) || 0) * (/b/i.test(r[1]) ? 1000 : 1), raw: r[1] }));
+  const bounds = uppers.slice(0, -1);                       // grid boundaries between bars
+  const xForVal = (v) => { let k = -1; for (let i = 0; i < bounds.length; i++) if (bounds[i] <= v) k = i; return padL + (k + 1) * bw; };
+  const shortBand = (i) => i === n - 1 ? '$3B+' : '$' + (uppers[i] / 1000) + 'B';
+  const gy = [0, 0.05, 0.1, 0.15, 0.2, 0.25].filter(g => g <= pMax + 0.001);
   return (
     <div>
+      <div className="na-fin-pctls">
+        {refs.map((rf, i) => <div key={i} className="na-fin-pctl"><div className="na-fin-pctl-v">{rf.raw}</div><div className="na-fin-pctl-k">{rf.full}</div></div>)}
+      </div>
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }}>
-        <line x1={padL} y1={padT + ch} x2={W - padR} y2={padT + ch} stroke="rgba(0,0,0,0.12)" />
-        {bands.map((b, i) => { const bh = Math.max(2, (b.p / mx) * ch); const x = padL + i * bw + 3; const y = padT + ch - bh; return <g key={i}>
-          <rect x={x} y={y} width={bw - 6} height={bh} rx={2} fill="var(--primary)" fillOpacity={0.55} />
-          <text x={x + (bw - 6) / 2} y={y - 4} textAnchor="middle" fontSize={8} fontWeight="700" fill="var(--primary)">{Math.round(b.p * 100)}%</text>
-          <text x={x + (bw - 6) / 2} y={H - padB + 12} textAnchor="middle" fontSize={7} fill="var(--text-3)">{b.band.replace(/\$|M/g, '')}</text>
+        {gy.map((g, i) => { const y = padT + ch - (g / pMax) * ch; return <g key={i}><line x1={padL} y1={y} x2={W - padR} y2={y} stroke="rgba(0,0,0,0.06)" /><text x={padL - 4} y={y + 3} textAnchor="end" fontSize={8} fill="var(--text-3)">{Math.round(g * 100)}%</text></g>; })}
+        {bands.map((b, i) => { const bh = Math.max(1, (b.p / pMax) * ch); const x = padL + i * bw + 2.5; const y = padT + ch - bh; return <g key={i}>
+          <rect x={x} y={y} width={bw - 5} height={bh} rx={1.5} fill="#2563EB" />
+          <text x={x + (bw - 5) / 2} y={H - padB + 11} textAnchor="middle" fontSize={7} fill="var(--text-3)">{shortBand(i)}</text>
         </g>; })}
         {refs.map((rf, i) => { const x = xForVal(rf.valM); return <g key={i}>
-          <line x1={x} y1={padT - 6} x2={x} y2={padT + ch} stroke={FR_C.red} strokeWidth={1.3} strokeDasharray="4 3" />
-          <text x={x} y={padT - 9} textAnchor="middle" fontSize={8} fontWeight="800" fill={FR_C.red}>{rf.label.replace(/\s*\(.*\)/, '')} {rf.raw}</text>
+          <line x1={x} y1={padT - 3} x2={x} y2={padT + ch} stroke="#DC2626" strokeWidth={1.2} strokeDasharray="3 3" />
+          <text x={x + 2} y={padT + 4} fontSize={8} fontWeight="800" fill="#DC2626">{rf.tag}</text>
         </g>; })}
-        <text x={padL + cw / 2} y={H - 4} textAnchor="middle" fontSize={8.5} fontWeight="700" fill="var(--text-3)">Loss band ($M) · probability</text>
       </svg>
     </div>
   );
@@ -7527,10 +7679,11 @@ function FinRevHistogram({ c }) {
 
 function FinRevChart({ c }) {
   const t = (c.chartType || '').toLowerCase();
-  if (/line/.test(t)) return <FinRevLine c={c} />;
+  if (/histogram/.test(t)) return <FinRevHistogram c={c} />;   // check before /line/ ("reference lines")
   if (/donut|pie/.test(t)) return <FinRevDonut c={c} />;
   if (/bubble/.test(t)) return <FinRevBubble c={c} />;
-  if (/histogram/.test(t)) return <FinRevHistogram c={c} />;
+  if (/grouped bar/.test(t)) return <FinRevGroupedBar c={c} />;
+  if (/line/.test(t)) return <FinRevLine c={c} />;
   return <FinRevGroupedBar c={c} />;
 }
 
@@ -7793,6 +7946,7 @@ function NewsAssessment({ onBack }) {
   const [homeFilter, setHomeFilter] = React.useState('all'); // Home feed severity filter
   const [impactOpen, setImpactOpen] = React.useState({});    // expanded impact per stripe (key -> true)
   const [selectedHome, setSelectedHome] = React.useState(null); // home feed article shown in the middle
+  const [finZoom, setFinZoom] = React.useState(null);        // financial chart opened in the enlarge modal
 
   const exportPdf = () => {
     setPrintAll(true);
@@ -7830,7 +7984,7 @@ function NewsAssessment({ onBack }) {
     setPhase('assess');
     setActionTab('immediate'); setOpenAct(null); setOpenFlow(null); setOpenQuant(null);
     setHitl(null); setHitlComment(''); setChat([]); setChatInput(''); setChatOpen(false);
-    setMetricOff({}); setStripeOff({}); setCustomFO([]); setCustomSO([]); setAddForm(null); setImpactOpen({});
+    setMetricOff({}); setStripeOff({}); setCustomFO([]); setCustomSO([]); setAddForm(null); setImpactOpen({}); setFinZoom(null);
     setAgentStatus(['locked','locked','locked','locked','locked']);
     startAgent(0);
   };
@@ -7848,8 +8002,16 @@ function NewsAssessment({ onBack }) {
         return overlap > (best._o || 0) ? { ...c, _o:overlap } : best;
       }, { _o:0 });
     const answer = hit && hit.a ? hit.a : d.reportSummary;
-    setChat(prev => [...prev, { role:'user', text:q }, { role:'bot', text:answer }]);
+    // Show the question + a typing indicator, then reveal the answer after ~7s.
+    setChat(prev => [...prev, { role:'user', text:q }, { role:'bot', text:'', typing:true }]);
     setChatInput('');
+    setTimeout(() => {
+      setChat(prev => {
+        const cp = [...prev];
+        for (let i = cp.length - 1; i >= 0; i--) { if (cp[i].role === 'bot' && cp[i].typing) { cp[i] = { role:'bot', text:answer }; break; } }
+        return cp;
+      });
+    }, 7000);
   };
 
   const SectionHeader = ({ letter, title }) => (
@@ -8105,6 +8267,8 @@ function NewsAssessment({ onBack }) {
   const catPrimary   = a3.primaryEventType || c.primaryEventType;
   const catSecondary = a3.secondaryEventType || c.secondaryEventType;
   const catVelocity  = a3.velocity || c.velocity;
+  const catSynopsis  = a3.synopsis || c.synopsis || ev.synopsis;
+  const catBullets   = (a3.summaryBullets && a3.summaryBullets.length) ? a3.summaryBullets : c.summaryBullets;
   const foRows = a3.firstOrder || [];
   const soRows = a3.secondOrder || [];
   const foAll = [...foRows, ...customFO];
@@ -8325,18 +8489,18 @@ function NewsAssessment({ onBack }) {
       <div className="scenario-section-header">Event Intake & Categorisation</div>
       <div className="card" style={{marginBottom:16}}>
         {/* Synopsis */}
-        <div style={{marginBottom:c.summaryBullets && c.summaryBullets.length > 0 ? 4 : 14}}>
+        <div style={{marginBottom:catBullets && catBullets.length > 0 ? 4 : 14}}>
           <div className="na-cat-k" style={{marginBottom:6}}>Summary</div>
           <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.65}}>
             <i className="fa-solid fa-newspaper" style={{color:'var(--primary)',marginRight:6}}></i>
-            {c.synopsis || ev.synopsis}
+            {catSynopsis}
           </div>
         </div>
         {/* Summary (bullets) */}
-        {c.summaryBullets && c.summaryBullets.length > 0 && (
+        {catBullets && catBullets.length > 0 && (
           <div style={{marginBottom:14}}>
             <ul style={{margin:0,paddingLeft:20,fontSize:13,color:'var(--text-2)',lineHeight:1.75}}>
-              {c.summaryBullets.map((b, i) => <li key={i}>{b}</li>)}
+              {catBullets.map((b, i) => <li key={i}>{b}</li>)}
             </ul>
           </div>
         )}
@@ -8516,10 +8680,11 @@ function NewsAssessment({ onBack }) {
           <div className="scenario-section-header">Financial Impact Dashboard</div>
           <div className="na-fin-grid">
             {a3.financialRev.map((c2, i) => (
-              <div key={i} className="na-fin-card">
+              <div key={i} className="na-fin-card na-fin-clickable" onClick={() => setFinZoom(c2)} title="Click to enlarge">
                 <div className="na-fin-head">
                   <span className="na-fin-ic"><i className={`fa-solid ${naFinIcon(c2.chartType)}`}></i></span>
                   <span className="na-fin-title">{c2.title}</span>
+                  <span className="na-fin-expand"><i className="fa-solid fa-up-right-and-down-left-from-center"></i></span>
                 </div>
                 <div className="na-fin-viz"><FinRevChart c={c2} /></div>
                 {c2.purpose && <div className="na-fin-purpose">{c2.purpose}</div>}
@@ -8651,6 +8816,22 @@ function NewsAssessment({ onBack }) {
         </div>
       )}
 
+      {/* Enlarge a financial-impact chart */}
+      {finZoom && (
+        <div className="na-fin-modal" onClick={() => setFinZoom(null)}>
+          <div className="na-fin-modal-box" onClick={e => e.stopPropagation()}>
+            <div className="na-fin-modal-head">
+              <span className="na-fin-ic"><i className={`fa-solid ${naFinIcon(finZoom.chartType)}`}></i></span>
+              <span className="na-fin-modal-title">{finZoom.title}</span>
+              <button className="na-fin-modal-close" onClick={() => setFinZoom(null)}><i className="fa-solid fa-xmark"></i></button>
+            </div>
+            <div className="na-fin-modal-chart"><FinRevChart c={finZoom} /></div>
+            {finZoom.purpose && <div className="na-fin-purpose">{finZoom.purpose}</div>}
+            {finZoom.caption && <div className="na-fin-modal-cap"><i className="fa-solid fa-quote-left" style={{marginRight:6,opacity:0.4}}></i>{finZoom.caption}</div>}
+          </div>
+        </div>
+      )}
+
       {/* Floating Intelligence Chatbot — available once the final agent is complete */}
       {agentStatus[NA_AGENTS.length - 1] === 'done' && (
       <>
@@ -8671,7 +8852,7 @@ function NewsAssessment({ onBack }) {
             {chat.map((m, i) => (
               <div key={i} className={`na-chat-msg ${m.role}`}>
                 <span className={`na-chat-av ${m.role}`}><i className={`fa-solid ${m.role==='bot'?'fa-robot':'fa-user'}`}></i></span>
-                <span className="na-chat-bubble">{m.text}</span>
+                <span className="na-chat-bubble">{m.typing ? <span className="na-chat-typing"><span></span><span></span><span></span></span> : m.text}</span>
               </div>
             ))}
           </div>
