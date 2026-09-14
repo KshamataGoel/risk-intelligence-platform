@@ -6173,99 +6173,194 @@ const NA_A3 = {
   "financialRev": [
    {
     "n": "1",
-    "title": "$2M",
-    "caption": "",
-    "chartType": "",
+    "title": "Settlement Backlog — Forward Scenario Projection",
+    "caption": "Restoring failover within the hour caps exposure at $340M; each additional hour of outage adds approximately $90M to the unsettled backlog.",
+    "chartType": "Line, forked forecast",
     "purpose": "",
-    "metricSource": "",
-    "headers": [],
-    "rows": [],
+    "metricSource": "Unsettled transaction volume/settlement exposure — First order, Credit Risk (Settlement)",
+    "headers": [
+     "Hour",
+     "Actual",
+     "Fast failover",
+     "Extended outage"
+    ],
+    "rows": [
+     [
+      "0–4",
+      "$0M → $60M → $140M → $230M → $340M",
+      "—",
+      "—"
+     ],
+     [
+      "5–7",
+      "—",
+      "$280M → $50M → $0M",
+      "$430M → $520M → $610M"
+     ]
+    ],
     "refHeaders": [],
     "refRows": []
    },
    {
     "n": "2",
-    "title": "$5M",
-    "caption": "",
-    "chartType": "",
+    "title": "Backlog Exposure by Client Segment",
+    "caption": "Merchant clients account for 62% of current backlog exposure; remediation prioritisation should follow this concentration.",
+    "chartType": "Donut, emphasis",
     "purpose": "",
-    "metricSource": "",
-    "headers": [],
-    "rows": [],
+    "metricSource": "Unsettled transaction volume, decomposed",
+    "headers": [
+     "Segment",
+     "Value",
+     "Share"
+    ],
+    "rows": [
+     [
+      "Merchants",
+      "$210M",
+      "62% (highlighted)"
+     ],
+     [
+      "Public-sector",
+      "$70M",
+      "0.21"
+     ],
+     [
+      "Card issuers/other",
+      "$60M",
+      "0.17"
+     ]
+    ],
     "refHeaders": [],
     "refRows": []
    },
    {
     "n": "3",
-    "title": "$9M",
-    "caption": "",
-    "chartType": "",
+    "title": "SLA Penalty Accrual",
+    "caption": "SLA penalty accrual is non-linear: each additional hour past the recovery time objective compounds the prior hour's rate rather than adding a constant amount.",
+    "chartType": "Bar, last bar at reduced opacity as projection",
     "purpose": "",
-    "metricSource": "",
+    "metricSource": "SLA penalty exposure ($) — Second order, Operational Risk",
     "headers": [
-     "$15M"
+     "Hours past RTO",
+     "Cumulative penalty"
     ],
     "rows": [
      [
-      "Likelihood",
-      "Impact ($M)",
-      "Exposure ($B)"
+      "1",
+      "$2M"
      ],
      [
+      "2",
+      "$5M"
+     ],
+     [
+      "3",
+      "$9M"
+     ],
+     [
+      "+4 (projected)",
+      "$15M"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "4",
+    "title": "Risk Heat Map",
+    "caption": "Operational resilience risk is near-certain and already crystallising; reputational brand risk carries the second-highest potential impact but has materially lower current likelihood, warranting monitoring rather than immediate action.",
+    "chartType": "Bubble: likelihood × impact × exposure",
+    "purpose": "",
+    "metricSource": "",
+    "headers": [
+     "Stripe",
+     "Likelihood",
+     "Impact ($M)",
+     "Exposure ($B)"
+    ],
+    "rows": [
+     [
+      "Operational — Resilience",
       "0.95",
       "$95M",
       "$2.1B"
      ],
      [
+      "Operational — Cyber/Third-party dependency",
       "0.8",
       "$60M",
       "$2.1B"
      ],
      [
+      "Credit — Settlement/CCR",
       "0.7",
       "$340M",
       "$0.34B"
      ],
      [
+      "Third-Party — Concentration",
       "0.55",
       "$120M",
       "$2.1B"
      ],
      [
+      "Regulatory — Notification",
       "0.65",
       "$180M",
       "$2.1B"
      ],
      [
+      "Reputational — Brand",
       "0.4",
       "$250M",
       "$2.1B"
-     ],
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "5",
+    "title": "Loss Distribution (VaR)",
+    "caption": "Combined operational loss, SLA penalty, and churn cost carry a median estimate of $28M, with a 10% probability of exceeding $45M and a 1% probability of exceeding $58M.",
+    "chartType": "Histogram + percentile lines",
+    "purpose": "",
+    "metricSource": "",
+    "headers": [
+     "Loss Band",
+     "Probability"
+    ],
+    "rows": [
      [
-      "Probability"
-     ],
-     [
+      "<$10M",
       "0.05"
      ],
      [
+      "$10–20M",
       "0.2"
      ],
      [
+      "$20–30M",
       "0.3"
      ],
      [
+      "$30–40M",
       "0.25"
      ],
      [
+      "$40–50M",
       "0.12"
      ],
      [
+      "$50–60M",
       "0.05"
      ],
      [
+      "$60M+",
       "0.03"
      ],
      [
+      "P50",
       "$28M · P90"
      ]
     ],
@@ -6768,7 +6863,202 @@ const NA_A3 = {
     "detail": "Nodes representing affected entities sharing the same upstream provider (your bank, a ratings agency, a crypto exchange, thousands of other services) — this is the \"systemic risk, not just us\" visual that makes the fourth-party concentration point land with a board audience"
    }
   ],
-  "financialRev": [],
+  "financialRev": [
+   {
+    "n": "1",
+    "title": "Direct Cost Accrual — Forward Scenario Projection",
+    "caption": "Restoration at the point of initial recovery caps direct cost near $20M; a cascading secondary failure more than doubles the exposure to approximately $42M.",
+    "chartType": "Line, forked forecast",
+    "purpose": "",
+    "metricSource": "Direct cost — First order, Operational Risk",
+    "headers": [
+     "Hour",
+     "Actual",
+     "Phased restoration",
+     "Cascading failure"
+    ],
+    "rows": [
+     [
+      "0–5.5",
+      "$0M → $2M → $5M → $9M → $14M → $18M",
+      "—",
+      "—"
+     ],
+     [
+      "6–8",
+      "—",
+      "$19M → $19.5M → $20M",
+      "$24M → $32M → $42M"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "2",
+    "title": "Direct Cost by Affected Service",
+    "caption": "Digital banking accounts for 44% of the direct cost estimate, reflecting the channel's transaction volume relative to trading and payment services during the outage window.",
+    "chartType": "Donut, emphasis",
+    "purpose": "",
+    "metricSource": "",
+    "headers": [
+     "Service",
+     "Value",
+     "Share"
+    ],
+    "rows": [
+     [
+      "Digital banking",
+      "$8M",
+      "44% (highlighted)"
+     ],
+     [
+      "Payment processing",
+      "$6M",
+      "0.33"
+     ],
+     [
+      "Trading/data feeds",
+      "$4M",
+      "0.22"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "3",
+    "title": "Customer Churn & New-Acquisition Decline",
+    "caption": "Both churn and acquisition metrics show accelerating deterioration; the projected next-quarter figures represent a rate of increase exceeding the prior three quarters combined.",
+    "chartType": "Grouped bar, projected quarter flagged",
+    "purpose": "",
+    "metricSource": "",
+    "headers": [
+     "Quarter",
+     "Churn rate",
+     "Acquisition decline"
+    ],
+    "rows": [
+     [
+      "Q-3",
+      "0.012",
+      "0.03"
+     ],
+     [
+      "Q-2",
+      "0.018",
+      "0.07"
+     ],
+     [
+      "Q-1 (now)",
+      "0.025",
+      "0.12"
+     ],
+     [
+      "Q+1 (projected)",
+      "0.035",
+      "0.2"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "4",
+    "title": "Risk Heat Map",
+    "caption": "Service availability risk is near-certain and largely realised; reputational risk from customer sentiment carries the highest potential impact of any stripe assessed despite materially lower current likelihood.",
+    "chartType": "Bubble: likelihood × impact",
+    "purpose": "",
+    "metricSource": "",
+    "headers": [
+     "Stripe",
+     "Likelihood",
+     "Impact ($M)"
+    ],
+    "rows": [
+     [
+      "Operational — Service Availability",
+      "0.98",
+      "$18M"
+     ],
+     [
+      "Third-Party — SLA Breach",
+      "0.9",
+      "$7M"
+     ],
+     [
+      "Third-Party — Concentration (SPOF)",
+      "0.7",
+      "$25M"
+     ],
+     [
+      "Reputational — Customer Sentiment",
+      "0.55",
+      "$40M"
+     ],
+     [
+      "Regulatory — Fines & Inquiries",
+      "0.45",
+      "$30M"
+     ],
+     [
+      "Strategic/Financial — Acquisition & Capex",
+      "0.5",
+      "$22M"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "5",
+    "title": "Loss Distribution (VaR)",
+    "caption": "Total financial impact carries a median estimate of $21M, with a 10% probability of exceeding $38M and a 1% probability of exceeding $52M.",
+    "chartType": "Histogram + percentile lines",
+    "purpose": "",
+    "metricSource": "",
+    "headers": [
+     "Loss Band",
+     "Probability"
+    ],
+    "rows": [
+     [
+      "<$10M",
+      "0.08"
+     ],
+     [
+      "$10–20M",
+      "0.25"
+     ],
+     [
+      "$20–30M",
+      "0.3"
+     ],
+     [
+      "$30–40M",
+      "0.2"
+     ],
+     [
+      "$40–50M",
+      "0.1"
+     ],
+     [
+      "$50–60M",
+      "0.05"
+     ],
+     [
+      "$60M+",
+      "0.02"
+     ],
+     [
+      "P50",
+      "$21M · P90"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   }
+  ],
   "playbook": {
    "immediate": [
     {
@@ -7280,7 +7570,202 @@ const NA_A3 = {
     "detail": "Employee turnover in Compliance/Legal/Ops (%) plotted against Number of ad-hoc regulatory inquiries — shows the compounding risk that fatigue and regulatory scrutiny are rising together, which is the second-order story this event is really about"
    }
   ],
-  "financialRev": [],
+  "financialRev": [
+   {
+    "n": "1",
+    "title": "Exposure Wind-Down Progress — Forward Scenario Projection",
+    "caption": "Current pace of exposure wind-down is consistent with meeting the 30-day authorised window; any material slowdown leaves approximately one-third of exposure unresolved past the compliance deadline.",
+    "chartType": "Line, forked forecast, against the 30-day authorization window",
+    "purpose": "",
+    "metricSource": "Exposure exited/written down (%) — First order, Credit Risk",
+    "headers": [
+     "Day",
+     "Actual",
+     "On track",
+     "Delayed"
+    ],
+    "rows": [
+     [
+      "0–10",
+      "0% → 18% → 42%",
+      "—",
+      "—"
+     ],
+     [
+      "15–30",
+      "—",
+      "60% → 80% → 100%",
+      "50% → 58% → 68%"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "2",
+    "title": "Exposure by Business Line",
+    "caption": "Trade and project finance accounts for 59% of total sanctions-related exposure, exceeding counterparty credit and digital assets combined.",
+    "chartType": "Donut, emphasis",
+    "purpose": "",
+    "metricSource": "Total sanctions-related exposure, decomposed across first-order metrics",
+    "headers": [
+     "Business Line",
+     "Value",
+     "Share"
+    ],
+    "rows": [
+     [
+      "Trade & project finance",
+      "$310M",
+      "59% (highlighted)"
+     ],
+     [
+      "Counterparty credit",
+      "$180M",
+      "0.34"
+     ],
+     [
+      "Digital assets",
+      "$40M",
+      "0.07"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "3",
+    "title": "Compliance Strain Trend",
+    "caption": "Compliance function turnover and regulatory inquiry volume are rising in tandem, consistent with a compounding operational strain pattern rather than two unrelated trends.",
+    "chartType": "Grouped bar, projected quarter flagged",
+    "purpose": "",
+    "metricSource": "Employee turnover; Number of ad-hoc regulatory inquiries — Second order",
+    "headers": [
+     "Quarter",
+     "Turnover",
+     "Inquiries"
+    ],
+    "rows": [
+     [
+      "Q-3",
+      "0.08",
+      "1"
+     ],
+     [
+      "Q-2",
+      "0.11",
+      "3"
+     ],
+     [
+      "Q-1 (now)",
+      "0.15",
+      "6"
+     ],
+     [
+      "Q+1 (projected)",
+      "0.2",
+      "10"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "4",
+    "title": "Risk Heat Map",
+    "caption": "Counterparty credit exposure carries both the highest likelihood and the highest potential impact of any stripe assessed; reputational and liquidity risk, while less certain, ranks second in potential severity.",
+    "chartType": "Bubble: likelihood × impact",
+    "purpose": "",
+    "metricSource": "",
+    "headers": [
+     "Stripe",
+     "Likelihood",
+     "Impact ($M)"
+    ],
+    "rows": [
+     [
+      "Credit — Counterparty Exposure",
+      "0.9",
+      "$180M"
+     ],
+     [
+      "Regulatory & Compliance — Screening",
+      "0.85",
+      "$60M"
+     ],
+     [
+      "Strategic & People",
+      "0.65",
+      "$30M"
+     ],
+     [
+      "Legal & Sovereign",
+      "0.6",
+      "$45M"
+     ],
+     [
+      "Third-Party — Digital Assets",
+      "0.55",
+      "$40M"
+     ],
+     [
+      "Reputational & Liquidity",
+      "0.4",
+      "$95M"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   },
+   {
+    "n": "5",
+    "title": "Loss Distribution (VaR)",
+    "caption": "Total financial impact carries a median estimate of $140M, with a 10% probability of exceeding $220M and a 1% probability of exceeding $290M.",
+    "chartType": "Histogram + percentile lines",
+    "purpose": "",
+    "metricSource": "",
+    "headers": [
+     "Loss Band",
+     "Probability"
+    ],
+    "rows": [
+     [
+      "<$50M",
+      "0.08"
+     ],
+     [
+      "$50–100M",
+      "0.22"
+     ],
+     [
+      "$100–150M",
+      "0.28"
+     ],
+     [
+      "$150–200M",
+      "0.22"
+     ],
+     [
+      "$200–250M",
+      "0.12"
+     ],
+     [
+      "$250–300M",
+      "0.06"
+     ],
+     [
+      "$300M+",
+      "0.02"
+     ],
+     [
+      "P50",
+      "$140M · P90"
+     ]
+    ],
+    "refHeaders": [],
+    "refRows": []
+   }
+  ],
   "playbook": {
    "immediate": [
     {
@@ -7368,6 +7853,10 @@ const NA_A3 = {
  }
 };
 /* NA_A3_END */
+
+
+
+
 
 
 
@@ -7527,61 +8016,82 @@ function frHeat(t) {
 
 // Chart 1 — forked line forecast (solid actual → dashed scenario branches)
 function FinRevLine({ c }) {
-  const W = 320, H = 190, padL = 42, padR = 14, padT = 16, padB = 40;
-  const xs = c.rows.map(r => r[0]);
-  const series = c.headers.slice(1).map((name, si) => ({ name, vals: c.rows.map(r => frNum(r[si + 1])) }));
-  const all = series.flatMap(s => s.vals).filter(v => v != null);
-  const mx = Math.max(...all, 0.001), mn = Math.min(...all, mx);
+  const W = 320, H = 190, padL = 42, padR = 26, padT = 18, padB = 30;
   const cw = W - padL - padR, ch = H - padT - padB;
-  const px = (i) => padL + (xs.length > 1 ? (i / (xs.length - 1)) * cw : cw / 2);
-  const py = (v) => padT + ch - ((v - mn) / (mx - mn || 1)) * ch;
-  const cols = [FR_C.neutral, FR_C.green, FR_C.red];
-  const dash = [null, '5 4', '5 4'];
+  const names = c.headers.slice(1);
+  const hasArrows = c.rows.some(r => r.some(cell => /→|->/.test(String(cell))));
+  let built, xMax;
+  if (hasArrows) {
+    // Each series' values are packed as "a → b → c" cells across the rows; the first
+    // series is the actual path, the rest fork from its last point.
+    const sv = names.map((name, si) => {
+      let vals = [];
+      c.rows.forEach(r => { const cell = String(r[si + 1] || ''); if (/→|->/.test(cell)) vals = vals.concat(cell.split(/→|->/).map(frNum).filter(v => v != null)); else { const v = frNum(cell); if (v != null) vals.push(v); } });
+      return { name, vals };
+    });
+    const nA = sv[0].vals.length, lastA = sv[0].vals[nA - 1];
+    built = sv.map((s, si) => si === 0
+      ? { name: s.name, pts: s.vals.map((v, i) => [i, v]) }
+      : { name: s.name, pts: (nA ? [[nA - 1, lastA]] : []).concat(s.vals.map((v, i) => [nA + i, v])) });
+    xMax = Math.max(1, ...built.map(b => b.pts.length ? b.pts[b.pts.length - 1][0] : 0));
+  } else {
+    built = names.map((name, si) => ({ name, pts: c.rows.map((r, i) => { const v = frNum(r[si + 1]); return v == null ? null : [i, v]; }).filter(Boolean) }));
+    xMax = Math.max(1, c.rows.length - 1);
+  }
+  const allV = built.flatMap(b => b.pts.map(p => p[1]));
+  const mx = Math.max(...allV, 0.0001), mn = Math.min(...allV, mx, 0);
+  const ratio = mx <= 1.5;
+  const fmt = (v) => ratio ? (v * 100).toFixed(1) + '%' : (Math.abs(v) >= 1000 ? '$' + (v / 1000).toFixed(1) + 'B' : '$' + (Math.round(v * 10) / 10) + 'M');
+  const X = (xi) => padL + (xi / xMax) * cw, Y = (v) => padT + ch - ((v - mn) / (mx - mn || 1)) * ch;
+  const cols = [FR_C.neutral, FR_C.green, FR_C.red, FR_C.primary], dash = [null, '5 4', '5 4', '2 3'];
   return (
     <div>
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }}>
-        {[0, 0.5, 1].map((f, i) => { const y = padT + ch - f * ch; const v = mn + f * (mx - mn); return <g key={i}><line x1={padL} y1={y} x2={W - padR} y2={y} stroke="rgba(0,0,0,0.07)" /><text x={padL - 6} y={y + 3} textAnchor="end" fontSize={9} fill="var(--text-3)">{(v * 100).toFixed(1)}%</text></g>; })}
-        {xs.map((x, i) => <text key={i} x={px(i)} y={H - padB + 14} textAnchor="middle" fontSize={8.5} fill="var(--text-3)">{x.replace(/\s*\(.*\)/, '')}</text>)}
-        {series.map((s, si) => {
-          const pts = s.vals.map((v, i) => v == null ? null : [px(i), py(v)]).filter(Boolean);
-          if (pts.length < 1) return null;
-          const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
-          const last = pts[pts.length - 1];
+        {[0, 0.5, 1].map((f, i) => { const y = padT + ch - f * ch; const v = mn + f * (mx - mn); return <g key={i}><line x1={padL} y1={y} x2={W - padR} y2={y} stroke="rgba(0,0,0,0.07)" /><text x={padL - 5} y={y + 3} textAnchor="end" fontSize={8} fill="var(--text-3)">{fmt(v)}</text></g>; })}
+        {!hasArrows && c.rows.map((r, i) => <text key={i} x={X(i)} y={H - padB + 13} textAnchor="middle" fontSize={8} fill="var(--text-3)">{String(r[0]).replace(/\s*\(.*\)/, '')}</text>)}
+        {built.map((s, si) => {
+          if (s.pts.length < 1) return null;
+          const d = s.pts.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join(' ');
+          const last = s.pts[s.pts.length - 1], lx = X(last[0]), ly = Y(last[1]), near = lx > W - padR - 28;
           return <g key={si}>
-            {pts.length > 1 && <path d={d} fill="none" stroke={cols[si]} strokeWidth={2.2} strokeDasharray={dash[si] || 'none'} strokeLinecap="round" strokeLinejoin="round" />}
-            <circle cx={last[0]} cy={last[1]} r={3} fill={cols[si]} />
-            <text x={last[0] + 4} y={last[1] - 4} fontSize={9} fontWeight="800" fill={cols[si]}>{(s.vals.filter(v => v != null).slice(-1)[0] * 100).toFixed(1)}%</text>
+            {s.pts.length > 1 && <path d={d} fill="none" stroke={cols[si % cols.length]} strokeWidth={2.2} strokeDasharray={dash[si % dash.length] || 'none'} strokeLinecap="round" strokeLinejoin="round" />}
+            <circle cx={lx} cy={ly} r={3} fill={cols[si % cols.length]} />
+            <text x={near ? lx - 5 : lx + 5} y={ly - 4} textAnchor={near ? 'end' : 'start'} fontSize={8.5} fontWeight="800" fill={cols[si % cols.length]}>{fmt(last[1])}</text>
           </g>;
         })}
       </svg>
-      <div className="na-fin-legend">{series.map((s, i) => <span key={i} className="na-fin-leg-item"><span className="na-fin-leg-dot" style={{ background: cols[i] }}></span><span className="na-fin-leg-k">{s.name.replace(/\s*\(.*\)/, '')}</span></span>)}</div>
+      <div className="na-fin-legend">{built.map((s, i) => <span key={i} className="na-fin-leg-item"><span className="na-fin-leg-dot" style={{ background: cols[i % cols.length] }}></span><span className="na-fin-leg-k">{s.name.replace(/\s*\(.*\)/, '')}</span></span>)}</div>
     </div>
   );
 }
 
 // Chart 2 — donut with one emphasised segment
 function FinRevDonut({ c }) {
-  const segs = c.rows.filter(r => !/^total/i.test(r[0])).map(r => ({ label: r[0], value: r[1], share: frNum(r[2]) || 0, hi: /high|emphas|red/i.test(r[3] || '') }));
-  const total = c.rows.find(r => /^total/i.test(r[0]));
-  const cx = 82, cy = 88, r = 62, ir = 38;
-  let ang = -Math.PI / 2;
-  const grays = ['#CBD5E1', '#94A3B8', '#64748B', '#B0BAC9'];
-  let gi = 0;
-  const arc = (a0, a1, hi) => {
+  const segs = c.rows.filter(r => !/^total/i.test(r[0]) && r[0]).map(r => ({ label: r[0], value: r[1], share: frNum(r[2]) || 0, hi: /high|emphas|red/i.test((r[3] || '') + ' ' + (r[2] || '')) }));
+  const sum = segs.reduce((a, s) => a + s.share, 0) || 1;
+  segs.forEach(s => s.share = s.share / sum);                 // normalise shares to 1
+  const totalRow = c.rows.find(r => /^total/i.test(r[0]));
+  const sumM = segs.reduce((a, s) => { const v = frNum(s.value) || 0; return a + v * (/b/i.test(String(s.value)) ? 1000 : 1); }, 0);
+  const totalVal = totalRow ? totalRow[1] : (sumM >= 1000 ? '$' + (sumM / 1000).toFixed(1) + 'B' : '$' + Math.round(sumM) + 'M');
+  const cx = 76, cy = 90, r = 60, ir = 37;
+  let ang = -Math.PI / 2, gi = 0;
+  const grays = ['#CBD5E1', '#94A3B8', '#64748B', '#B0BAC9', '#A3ADBD'];
+  const arc = (a0, a1) => {
     const p = (rr, a) => [cx + rr * Math.cos(a), cy + rr * Math.sin(a)];
     const [x0, y0] = p(r, a0), [x1, y1] = p(r, a1), [x2, y2] = p(ir, a1), [x3, y3] = p(ir, a0);
     const large = (a1 - a0) > Math.PI ? 1 : 0;
     return `M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} L ${x2} ${y2} A ${ir} ${ir} 0 ${large} 0 ${x3} ${y3} Z`;
   };
+  const short = (s) => { s = String(s || ''); return s.length > 15 ? s.slice(0, 14) + '…' : s; };
   return (
     <div>
-      <svg viewBox="0 0 320 176" width="100%" style={{ display: 'block' }}>
-        {segs.map((s, i) => { const a0 = ang, a1 = ang + s.share * Math.PI * 2; ang = a1; const fill = s.hi ? 'var(--primary)' : grays[gi++ % grays.length]; return <path key={i} d={arc(a0, a1, s.hi)} fill={fill} />; })}
-        <text x={cx} y={cy - 4} textAnchor="middle" fontSize={18} fontWeight="800" fill="var(--text)">{total ? total[1] : ''}</text>
-        <text x={cx} y={cy + 12} textAnchor="middle" fontSize={9} fontWeight="600" fill="var(--text-3)">Total CRE</text>
-        {segs.map((s, i) => <g key={i} transform={`translate(172 ${34 + i * 24})`}>
+      <svg viewBox="0 0 360 184" width="100%" style={{ display: 'block' }}>
+        {segs.map((s, i) => { const a0 = ang, a1 = ang + s.share * Math.PI * 2; ang = a1; const fill = s.hi ? 'var(--primary)' : grays[gi++ % grays.length]; return <path key={i} d={arc(a0, a1)} fill={fill} />; })}
+        {totalVal && <text x={cx} y={cy - 2} textAnchor="middle" fontSize={17} fontWeight="800" fill="var(--text)">{totalVal}</text>}
+        <text x={cx} y={cy + 13} textAnchor="middle" fontSize={9} fontWeight="600" fill="var(--text-3)">Total</text>
+        {segs.map((s, i) => <g key={i} transform={`translate(154 ${30 + i * 26})`}>
           <rect x={0} y={-9} width={11} height={11} rx={2} fill={s.hi ? 'var(--primary)' : grays[i % grays.length]} />
-          <text x={17} y={0} fontSize={11} fontWeight={s.hi ? 800 : 600} fill={s.hi ? 'var(--text)' : 'var(--text-2)'}>{s.label} · {s.value} · {Math.round(s.share * 100)}%</text>
+          <text x={16} y={0} fontSize={10.5} fontWeight={s.hi ? 800 : 600} fill={s.hi ? 'var(--text)' : 'var(--text-2)'}>{short(s.label)} · {s.value} · {Math.round(s.share * 100)}%</text>
         </g>)}
       </svg>
     </div>
@@ -7648,15 +8158,18 @@ function FinRevBubble({ c }) {
 // Chart 5 — VaR loss histogram with percentile reference lines
 function FinRevHistogram({ c }) {
   const W = 330, H = 172, padL = 26, padR = 8, padT = 18, padB = 26;
-  const bands = c.rows.map(r => ({ band: r[0], p: frNum(r[1]) || 0 }));
+  // Keep only real loss bands (a $ range with a probability in 0–1); drop stray
+  // percentile rows like "P50 | $28M · P90" that some sheets append inline.
+  const bands = c.rows.map(r => ({ band: r[0], p: frNum(r[1]) })).filter(b => b.band && /\$|\d/.test(b.band) && !/^p\d/i.test(b.band) && b.p != null && b.p > 0 && b.p <= 1);
   const refs = (c.refRows || []).map(r => ({ tag: (String(r[0]).match(/^P\d+/i) || [r[0]])[0], full: r[0], raw: r[1], valM: (frNum(r[1]) || 0) * (/b/i.test(r[1]) ? 1000 : 1) }));
-  const pMax = Math.max(0.25, ...bands.map(b => b.p));
+  const pMax = Math.ceil(Math.max(0.2, ...bands.map(b => b.p)) / 0.05) * 0.05;
   const cw = W - padL - padR, ch = H - padT - padB, n = bands.length, bw = cw / n;
-  const uppers = bands.map(b => { const nums = (b.band.match(/\d+/g) || []).map(Number); return nums.length ? Math.max(...nums) : 3500; });
+  const uppers = bands.map(b => { const nums = (b.band.match(/\d+/g) || []).map(Number); return nums.length ? Math.max(...nums) : 0; });
   const bounds = uppers.slice(0, -1);                       // grid boundaries between bars
   const xForVal = (v) => { let k = -1; for (let i = 0; i < bounds.length; i++) if (bounds[i] <= v) k = i; return padL + (k + 1) * bw; };
-  const shortBand = (i) => i === n - 1 ? '$3B+' : '$' + (uppers[i] / 1000) + 'B';
-  const gy = [0, 0.05, 0.1, 0.15, 0.2, 0.25].filter(g => g <= pMax + 0.001);
+  const fmtM = (m) => m >= 1000 ? '$' + (Math.round(m / 100) / 10) + 'B' : '$' + m + 'M';
+  const shortBand = (i) => fmtM(uppers[i]) + (i === n - 1 ? '+' : '');
+  const gy = []; for (let g = 0; g <= pMax + 0.001; g += 0.05) gy.push(Math.round(g * 100) / 100);
   return (
     <div>
       <div className="na-fin-pctls">
@@ -7765,18 +8278,24 @@ function NaTransMapCME({ map }) {
   const totalH = y - vgap + 24;
 
   // Build parent→child edges (parent must be an earlier tier; supports ';' multi-parents).
-  const byCard = {}, byTier = {};
+  // Also index by an alphanumeric-only key so garbled Excel parents like
+  // "Netcurrentexposure()" still match "Net current exposure ($)".
+  const nk = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const byCard = {}, byTier = {}, byNorm = {};
   laid.forEach((row, ri) => row.nodes.forEach(n => {
     byCard[(n.card || '').trim().toLowerCase()] = { ...n, ri };
+    byNorm[nk(n.card)] = { ...n, ri };
     const tk = (row.tier || '').trim().toLowerCase();
     if (!(tk in byTier)) byTier[tk] = { ...n, ri };
   }));
-  const edges = [];
+  const edges = [], seen = new Set();
   laid.forEach((row, ri) => row.nodes.forEach(n => {
     if (!n.parent || n.parent === '—') return;
     String(n.parent).split(';').map(p => p.trim()).filter(Boolean).forEach(p => {
-      const pn = byCard[p.toLowerCase()] || byTier[p.toLowerCase()];
+      const pn = byCard[p.toLowerCase()] || byTier[p.toLowerCase()] || byNorm[nk(p)];
       if (!pn || pn.ri >= ri) return;
+      const key = nk(pn.card) + '>' + nk(n.card) + '@' + ri;
+      if (seen.has(key)) return; seen.add(key);   // de-dupe repeated garbled parents
       edges.push({ x1: pn.cx, y1: pn.bottom, x2: n.cx, y2: n.top, childRi: ri });
     });
   }));
