@@ -2033,6 +2033,36 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 .na-fin-kpi-val { font-size:21px; font-weight:800; line-height:1.05; }
 .na-fin-kpi-lbl { font-size:11px; font-weight:600; color:var(--text-3); margin-top:4px; }
 .na-fin-kpi-delta { font-size:11px; font-weight:700; margin-top:6px; }
+/* Financial Impact Dashboard — cards from Excel figures */
+.na-fin-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin-bottom:16px; }
+.na-fin-card { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--primary); border-radius:var(--radius); padding:15px 16px; box-shadow:var(--shadow); }
+.na-fin-head { display:flex; align-items:center; gap:9px; margin-bottom:9px; flex-wrap:wrap; }
+.na-fin-ic { width:28px; height:28px; border-radius:7px; background:var(--primary-light); color:var(--primary); display:inline-flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+.na-fin-title { font-size:13.5px; font-weight:800; color:var(--text); line-height:1.25; }
+.na-fin-chip { font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-3); background:rgba(0,0,0,0.05); border:1px solid var(--border); border-radius:20px; padding:2px 8px; }
+.na-fin-viz { margin-top:4px; }
+.na-fin-viz svg { max-height:136px; display:block; }
+.na-fin-legend { display:flex; flex-wrap:wrap; gap:6px 10px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
+.na-fin-leg-item { display:inline-flex; align-items:baseline; gap:5px; font-size:11px; }
+.na-fin-leg-k { color:var(--text-3); font-weight:600; }
+.na-fin-leg-v { color:var(--primary); font-weight:800; }
+/* stat tiles (mixed-unit label→value) */
+.na-fin-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(88px,1fr)); gap:8px; }
+.na-fin-stat { background:var(--primary-light); border:1px solid var(--border); border-radius:8px; padding:9px 10px; }
+.na-fin-stat-val { font-size:18px; font-weight:800; color:var(--primary); line-height:1.1; }
+.na-fin-stat-lbl { font-size:10px; font-weight:600; color:var(--text-3); margin-top:3px; line-height:1.3; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+/* mini horizontal bar chart (same-unit comparison) */
+.na-fin-bars { display:flex; flex-direction:column; gap:8px; }
+.na-fin-bar-row { display:grid; grid-template-columns:96px 1fr auto; align-items:center; gap:9px; }
+.na-fin-bar-lbl { font-size:11px; font-weight:600; color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.na-fin-bar-track { height:12px; background:rgba(0,0,0,0.06); border-radius:6px; overflow:hidden; }
+.na-fin-bar-fill { display:block; height:100%; background:var(--primary); border-radius:6px; }
+.na-fin-bar-val { font-size:12px; font-weight:800; color:var(--primary); white-space:nowrap; }
+/* figure chips (no clean pairs) */
+.na-fin-chips { display:flex; flex-wrap:wrap; gap:7px; }
+.na-fin-chip-num { font-size:15px; font-weight:800; color:var(--primary); background:var(--primary-light); border:1px solid var(--border); border-radius:8px; padding:5px 11px; white-space:nowrap; }
+.na-fin-summary { display:flex; flex-direction:column; gap:10px; }
+.na-fin-sumtext { font-size:12px; color:var(--text-2); line-height:1.55; }
 .na-bar-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
 .na-bar-lbl { font-size:12px; font-weight:600; color:var(--text-2); width:180px; flex-shrink:0; }
 .na-bar-track { flex:1; height:20px; background:rgba(0,0,0,0.06); border-radius:5px; overflow:hidden; }
@@ -2136,7 +2166,10 @@ input[type=range].sim-slider::-webkit-slider-thumb {
 }
 
 /* Agent process stepper (connected nodes, centered) */
-.na-proc-nav { display:flex; align-items:flex-start; justify-content:center; margin:22px auto 26px; max-width:960px; }
+.na-proc-nav { display:flex; align-items:flex-start; justify-content:center; margin:22px auto 26px; max-width:1060px; }
+.na-proc-group { position:relative; border:1.5px dashed rgba(15,23,42,0.2); border-radius:14px; padding:8px 8px 4px; margin-top:-7px; display:flex; flex-direction:column; align-items:center; }
+.na-proc-group-lbl { position:absolute; top:-8px; left:50%; transform:translateX(-50%); background:#F1F5F9; padding:0 10px; font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary); white-space:nowrap; }
+.na-proc-group-row { display:flex; align-items:flex-start; }
 .na-proc-node { display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; width:158px; flex:0 0 auto; text-align:center; }
 .na-proc-node.locked { cursor:not-allowed; opacity:0.5; }
 .na-proc-circle { width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; background:#F1F5F9; color:var(--text-3); border:2px solid var(--border); transition:all 0.2s; }
@@ -4109,30 +4142,37 @@ const NA_AGENTS = [
   { n:1, short:'Ingestion & Categorisation', name:'News Event Ingestion & Categorisation Agent', role:'Extracts entities, sentiment & context; matches the risk register; classifies the event',
     steps:[
       { t:'Scanning news article' },
-      { t:'Extracting entities, sentiment & context' },
-      { t:'Matching event against the risk register' },
+      { t:'Extracting entities, sentiment & context', ms:5000 },
+      { t:'Matching event against the risk register', ms:5000 },
       { t:'Classifying event type & confidence' },
     ] },
   { n:2, short:'Risk Event Flow', name:'Risk Event Flow Agent', role:'Maps primary & secondary risk stripes and builds the end-to-end transmission structure',
     steps:[
       { t:'Retrieving comparable events from the register' },
-      { t:'Mapping primary & secondary risk stripes' },
-      { t:'Building the end-to-end transmission sequence' },
+      { t:'Mapping primary & secondary risk stripes', ms:5000 },
+      { t:'Building the end-to-end transmission sequence', ms:7000 },
       { t:'Attaching severity to each stage' },
     ] },
-  { n:3, short:'Impact & Prioritisation', name:'Impact Assessment & Prioritisation Agent', role:'Scores severity & velocity, sizes exposure, sets escalation thresholds',
+  { n:'3a', short:'Data Collection', name:'Data Collection Agent', role:'Collects risk data from source systems and structures the risk-stripe candidates',
     steps:[
-      { t:'Structuring first- & second-order impact' },
-      { t:'Sizing exposed entities & positions' },
-      { t:'Computing estimated financial impact' },
-      { t:'Compiling the escalation matrix' },
+      { t:'Extracting risk data via API from source systems', ms:10000 },
+      { t:'Ingesting supporting documents & filings', ms:8000 },
+      { t:'Normalizing data across formats', ms:5000 },
+      { t:'Structuring first- and second-order risk stripe candidates' },
+    ] },
+  { n:'3b', short:'Financial Impact & Escalation', name:'Financial Impact & Escalation Agent', role:'Quantifies financial impact, scores severity & velocity, and sets escalation thresholds',
+    steps:[
+      { t:'Computing financial impact across affected metrics', ms:10000 },
+      { t:'Scoring severity, velocity & certainty per risk stripe' },
+      { t:'Setting escalation thresholds by severity tier' },
+      { t:'Compiling the financial impact dashboard', ms:8000 },
     ] },
   { n:4, short:'Management Actions', name:'Management Actions Agent', role:'Narrates model limitations, compiles the action playbook, enables the what-if chatbot',
     steps:[
-      { t:'Reviewing model assumptions & limitations' },
-      { t:'Synthesising findings across all agents' },
-      { t:'Compiling management recommendations' },
-      { t:'Enabling the follow-up chatbot' },
+      { t:'Reviewing model assumptions & limitations', ms:7000 },
+      { t:'Synthesising findings across all agents', ms:8000 },
+      { t:'Compiling management recommendations', ms:10000 },
+      { t:'Enabling the follow-up chatbot', ms:10000 },
     ] },
 ];
 
@@ -4643,7 +4683,7 @@ const NA_HOME = [
   "severity": "Severe",
   "primaryRisk": "Technology & cyber risk",
   "impact": "Direct settlement delays and counterparty exposure for every bank routed through the affected processor",
-  "article": ""
+  "article": "Payment Processer X ransomware attack triggers nationwide card processing outage\nNews\nA ransomware attack forced a U.S. payment gateway and solutions provider to take key systems offline beginning Friday, causing a nationwide outage that disrupted card processing and related services for merchants and public-sector customers across the country.\nThe incident escalated rapidly after early signs of degraded performance appeared around 3:29 a.m., initially affecting virtual terminal, reporting and application programming interface systems. The service degradation spread across the platform and culminated in a full outage of core production systems within hours.\nThe Payment Processer confirmed late Friday that the disruption was caused by ransomware and said it activated its incident response plan. The company engaged federal law enforcement, including the FBI and the U.S. Secret Service, as well as external forensic and recovery teams. An update issued Feb. 6 stated that initial forensic findings showed no compromise of payment card data, noting that any accessed files were encrypted and that there was no evidence of usable data exposure at that time.\nThe outage affected multiple services, including its Gateway API, PayGuardian Cloud API, virtual terminal and reporting tools, hosted payment pages, and PathwayLink gateway and boarding portals. The scope of the disruption created immediate downstream impacts for merchants and organizations that rely on the platform for card transactions.\nAs X disclosed the incident, merchants across the United States began notifying customers that card payments were unavailable, with some shifting to cash-only transactions. One restaurant cited a cybersecurity breach at its credit card processing provider as the reason for the nationwide interruption.\nLocal governments also reported service impacts. The City of Palm Bay, Florida, said its third-party credit card processing vendor was experiencing a nationwide disruption, rendering the city’s online billing payment portal unavailable without an estimated restoration time. The city advised residents to make utility payments in person by cash, card or check, or by phone in limited circumstances.\nOther organizations, including Lightspeed Commerce, ThriftTrac and the City of Frisco, Texas, acknowledged service disruptions tied to the BridgePay outage.\nBridgePay said system recovery could take time and emphasized that restoration efforts are being conducted in a secure and responsible manner while the forensic investigation continues. The incident underscores the vulnerability of payment infrastructure to ransomware attacks, where system outages can quickly cascade into widespread disruptions of everyday commerce."
  },
  {
   "title": "Cloud-region outage takes banking apps and channels offline",
@@ -4651,7 +4691,7 @@ const NA_HOME = [
   "severity": "High",
   "primaryRisk": "Technology & cyber risk",
   "impact": "Client-facing channel outage drives immediate reputational and operational-loss exposure",
-  "article": ""
+  "article": "On 18 November 2025 at 11:20 UTC (all times in this blog are UTC), Cloud X's network began experiencing significant failures to deliver core network traffic. This showed up to Internet users trying to access our customers' sites as an error page indicating a failure within X's network.\nHTTP error page displayed during the incident\nThe issue was not caused, directly or indirectly, by a cyber attack or malicious activity of any kind. Instead, it was triggered by a change to one of our database systems' permissions which caused the database to output multiple entries into a “feature file” used by our Bot Management system. That feature file, in turn, doubled in size. The larger-than-expected feature file was then propagated to all the machines that make up our network.\nThe software running on these machines to route traffic across our network reads this feature file to keep our Bot Management system up to date with ever changing threats. The software had a limit on the size of the feature file that was below its doubled size. That caused the software to fail.\nAfter we initially wrongly suspected the symptoms we were seeing were caused by a hyper-scale DDoS attack, we correctly identified the core issue and were able to stop the propagation of the larger-than-expected feature file and replace it with an earlier version of the file. Core traffic was largely flowing as normal by 14:30. We worked over the next few hours to mitigate increased load on various parts of our network as traffic rushed back online. As of 17:06 all systems at Cloudflare were functioning as normal.\nWe are sorry for the impact to our customers and to the Internet in general. Given X's importance in the Internet ecosystem any outage of any of our systems is unacceptable. That there was a period of time where our network was not able to route traffic is deeply painful to every member of our team. We know we let you down today.\nThis post is an in-depth recount of exactly what happened and what systems and processes failed. It is also the beginning, though not the end, of what we plan to do in order to make sure an outage like this will not happen again."
  },
  {
   "title": "Sanctions package expands, requiring exposure re-screening",
@@ -4659,7 +4699,7 @@ const NA_HOME = [
   "severity": "High",
   "primaryRisk": "Geopolitical risk",
   "impact": "Requires urgent re-screening of counterparty and cross-border exposure against new designations",
-  "article": ""
+  "article": "Sanctions Targeting Russia’s Energy Sector\nNew transaction ban on refineries. The new Article 5ae(2a) of Regulation 833 bans any transaction, direct or indirect, with refineries listed in new Annex XLVII, Part D. Part D covers refineries in Russia and in third countries that process or refine Russian crude oil, process or blend petroleum products listed in Annex XXV or Russian-origin mineral products, or are used to circumvent EU restrictive measures. The recitals of the 21st package confirm that the ban targets Russia’s oil-sale revenues and reaches both access to the listed refineries’ facilities and the provision of any services to them.5\nThe Council has so far listed one refinery under this new ban: the Kulevi Oil Refinery in Georgia. Reflecting the sensitivity of listing an operator outside Russia, the prohibition applies to this listing only from 25 January 2027, and the European Commission (Commission) must report to the Council by 25 October 2026 on whether the listing should be maintained. Companies with dealings involving the Kulevi refinery have a window to wind down affected activity but should not assume the delayed application date is permanent — the Commission’s review could result in the listing being kept in place.\nOil price cap — suspension of the adjustment mechanism. The newly introduced Article 3n(11a) of Regulation 833 suspends, from 24 July 2026 to 14 July 2027, the procedure for amending the oil price cap on Russian crude oil — including the calculation of the average market price of Russian crude oil over a 22-week period, publication of the related notice and amendment of Annex XXVIII. New Article 7a(2) of Regulation 833 mirrors this, suspending the Commission’s corresponding obligation under Article 7a(1)(a) of Regulation 833 over the same period. The Council grounds the suspension in the recent exceptional disturbances in the crude oil and petroleum-product markets — in particular due to the situation caused by the closure of the Strait of Hormuz — making it necessary to keep the cap effective.6 The suspension is subject to an interim review. The Commission must still calculate a new average market price by 15 January 2027 and report it to the Council, but any decision to amend the cap based on that calculation is discretionary; if the Council does not act, the current cap remains in place. The ordinary adjustment procedure resumes automatically from 15 July 2027. In addition, the 21st package extends the existing exemption allowing for the transport (including related ancillary services) of crude oil falling under CN code 2709 00 originating in the Sakhalin-2 Project to Japan until 31 March 2028.\nSeized oil cargoes and remote EU territories. Two narrow derogations address previous practical issues in the oil regime. First, to let member states dispose safely of seized Russian oil, competent authorities may authorize the purchase, import or transfer of crude oil, or of Annex XXV petroleum products that a member state authority has seized or confiscated in national proceedings, together with the related technical, brokering or financing services (new Article 3m(11) of Regulation 833), and their temporary storage or free-zone placement in EU territory pending sale (new Article 3nb(5) of Regulation 833). Throughout, the goods must remain under the authorities’ effective control, and the operations must not, directly or indirectly, benefit any Russian person or entity. Second, competent authorities may waive the requirement to prove the origin of the crude oil used in petroleum products refined in a third country and supplied to an EU outermost region or associated overseas country or territory — but only where a proven supply-disruption risk exists and no alternative source is viable (Article 3ma of Regulation 833).\nLNG tanker vessel sale restrictions — a phased mechanism. The new Article 3qa of Regulation 833 introduces a notification-first, prohibition-later regime for sales of LNG tanker vessels. From 24 July 2026, any sale or transfer of ownership of LNG tanker vessels7 by an EU national, resident or entity to a third country must be notified immediately to the competent authorities, including the identities of seller and purchaser, the vessel’s registration number by the International Maritime Organization (IMO number) and its call sign. The substantive prohibition on sales to Russia or for use in Russia — together with due diligence duties and mandatory no-resale clauses for sales to other third countries — does not yet apply; those obligations take effect only once triggered by a future Council Regulation, following a Council review due by 25 October 2026. In practice, only the notification duty currently binds EU sellers, though where necessary they should build contractual flexibility into pending transactions given the potential prohibition.\nLNG terminal services ban. Article 3rb of Regulation 833 is replaced while its prohibition is in essence retained but slightly broadened: From 1 January 2027, it is prohibited to provide, directly or indirectly, LNG terminal services to any natural or legal person, entity or body in Russia, and to maintain contracts concerning prohibited LNG services beyond that date. The replacement broadens the second limb — services to entities more than 50% owned or controlled by a Russian citizen or Russian entity — in two respects: It deletes the requirement that the entity must be established in the EU, and it widens the control test to “controlled directly or indirectly.” Providers of LNG terminal services should therefore screen counterparties for majority Russian ownership or direct or indirect Russian control irrespective of their place of establishment, ahead of 1 January 2027.\nLNG-related exemptions and a new reporting duty. Alongside the Sakhalin-2 crude oil exemption for transport to Japan (until 31 March 2028; see above), the 21st package creates a parallel exemption — running from 24 July 2026 to the same date — for Sakhalin-2 LNG transported to Japan and the Republic of Korea (Article 3ra(5) of Regulation 833; Annex XXIX, Part B)."
  },
  {
   "title": "Bank of England holds Bank Rate at 3.75% in a 6-3 vote as third member backs a hike",
@@ -4839,6 +4879,8 @@ const NA_HOME = [
  }
 ];
 /* NA_HOME_END */
+
+
 
 
 
@@ -5265,6 +5307,33 @@ const NA_A3 = {
     "parent": "Limit breaches"
    }
   ],
+  "financial": [
+   {
+    "title": "CET1 Impact Bridge",
+    "chartType": "Waterfall Chart",
+    "detail": "Shows how CET1 moves from current level through this event's impact. Starting CET1 ratio → Provisioning impact (−4bps) → Stress-test additional impact (severely-adverse scenario) → Ending CET1 → Regulatory minimum + buffer threshold (reference line)"
+   },
+   {
+    "title": "CRE Concentration Gauge",
+    "chartType": "",
+    "detail": "Single gauge/donut showing current vs. target vs. regulatory reference point. Current: 4.5% of total loans · Target: 4.0% · Regulatory guidance threshold: 300% of capital (recharacterized as a % line if easier to plot alongside loan-book %)"
+   },
+   {
+    "title": "Office LTV Migration",
+    "chartType": "Grouped Bar Chart",
+    "detail": "Distribution of office-subset loans by LTV band, baseline vs. stressed. Bands: <60% / 60–70% / 70–80% / 80%+ · Two series: \"Current\" (weighted avg ~65%) vs. \"Stressed\" (~75–80%) · Value in $ per band if loan-level data available, otherwise % of book"
+   },
+   {
+    "title": "Stress-Test Loss by Scenario",
+    "chartType": "Bar Chart",
+    "detail": "Base scenario loss ()⋅Adversescenarioloss() · Adverse scenario loss ( )⋅Adversescenarioloss() · Severely-adverse scenario loss (~$2.1B cumulative) — three bars, ideally with the CET1 buffer headroom (~180bps) annotated"
+   },
+   {
+    "title": "ECL Stage Migration Trend",
+    "chartType": "Stacked Area Chart, last 4–6 quarters",
+    "detail": "Loan balances by IFRS9/CECL stage (Stage 1 / Stage 2 / Stage 3) over time, showing the migration trend as CRE stress builds — this is the most \"tells a story\" chart since it shows deterioration happening, not just a snapshot"
+   }
+  ],
   "playbook": {
    "immediate": [
     {
@@ -5327,7 +5396,20 @@ const NA_A3 = {
    "Second-order risk: rating migration and regulatory scrutiny are highly likely; funding costs may rise if spreads widen",
    "Board attention needed: concentration limits, capital buffer sufficiency, and regulator engagement strategy"
   ],
-  "chatbot": []
+  "chatbot": [
+   {
+    "q": "If office valuations fall another 10%, what's the CET1 impact?",
+    "a": "A further 10% decline would push weighted-average office LTV past 85–90% and compound the ECL stage migration already underway. Estimated incremental CET1 impact: −3 to −5bps on top of the −4bps already modeled — bringing total impact toward −7 to −9bps, and buffer headroom down to ~170–175bps, closer to the 150bps internal threshold."
+   },
+   {
+    "q": "Which loans are most exposed to the maturity wall in the next 90 days?",
+    "a": "Pulling the live register now — the flagged population is any office/mixed-use loan maturing within 90 days, with individual review triggered above $50M. [Tool would return a ranked list here; this is a live-data query, not a static figure.]"
+   },
+   {
+    "q": "Should we pause buybacks before the regulator raises it, or wait?",
+    "a": "Recommend pausing pre-emptively. Current buffer headroom (~180bps) doesn't mandate a pause today, but a voluntary pause reads as discipline while a forced one reads as weakness — and preserves capital flexibility ahead of the CCAR/DFAST engagement in weeks 2–3."
+   }
+  ]
  },
  "ransom": {
   "trigger": "Ransomware attack on external vendor infrastructure",
@@ -5487,6 +5569,13 @@ const NA_A3 = {
   ],
   "escalation": [
    {
+    "stripe": "Overall event (cross-cutting)",
+    "severity": "Critical",
+    "escalateTo": "CRO & Board Risk Committee; CEO informed",
+    "timeframe": "Within 24 hours",
+    "criticality": "Immediate"
+   },
+   {
     "stripe": "Operational Risk — Resilience",
     "severity": "Critical",
     "escalateTo": "COO & Operational Resilience Committee",
@@ -5534,13 +5623,6 @@ const NA_A3 = {
     "escalateTo": "Head of Communications & Executive Committee",
     "timeframe": "Within 24 hours",
     "criticality": "Elevated"
-   },
-   {
-    "stripe": "Overall event (cross-cutting)",
-    "severity": "Critical",
-    "escalateTo": "CRO & Board Risk Committee; CEO informed",
-    "timeframe": "Within 24 hours",
-    "criticality": "Immediate"
    }
   ],
   "map": [
@@ -5755,6 +5837,33 @@ const NA_A3 = {
     "parent": "Limit breaches"
    }
   ],
+  "financial": [
+   {
+    "title": "Outage Timeline",
+    "chartType": "Gantt / Timeline Chart",
+    "detail": "Incident start → RTO commitment threshold (4 hours) marked as a line → actual recovery time → shaded region showing breach duration beyond RTO"
+   },
+   {
+    "title": "Unsettled Transaction Backlog",
+    "chartType": "Line Chart, hourly during outage",
+    "detail": "Backlog value ($) accumulating hour-by-hour, peaking at ~$340M — x-axis: hours since incident start, y-axis: $ unsettled"
+   },
+   {
+    "title": "Financial Impact Breakdown",
+    "chartType": "Stacked Bar or Waterfall",
+    "detail": "Direct operational loss ($8–12M) + SLA penalty exposure ($15–25M) + estimated churn-driven revenue impact → total estimated cost"
+   },
+   {
+    "title": "Vendor Concentration Gauge",
+    "chartType": "",
+    "detail": "Current: 65% of critical-vendor threshold · Target: 40% (post-diversification) — same gauge style as the CRE concentration chart for visual consistency across dashboards"
+   },
+   {
+    "title": "Customer Complaint Volume",
+    "chartType": "Bar Chart, daily, before/during/after",
+    "detail": "Baseline daily complaint volume → outage-day spike (+40%) → recovery trend over following days"
+   }
+  ],
   "playbook": {
    "immediate": [
     {
@@ -5817,7 +5926,24 @@ const NA_A3 = {
    "Second-order: rising credit exposure from unsettled transactions; regulatory notification highly likely",
    "Board attention needed: vendor concentration limits, SLA enforcement, notification timeline"
   ],
-  "chatbot": []
+  "chatbot": [
+   {
+    "q": "How much of our transaction volume runs through this processor vs. our backup?",
+    "a": "~100% of card authorization/settlement volume currently routes through the affected processor — the secondary processor isn't yet at capacity (0%→100% build-out is an Ongoing-phase action). This is the exact concentration gap flagged in escalation: usage is effectively at the internal vendor concentration threshold."
+   },
+   {
+    "q": "Have we breached our regulatory notification window yet?",
+    "a": "Not yet, but it's close. The interagency rule requires notification within 36 hours of a confirmed incident. Confirm filing before that window closes — there's no \"still assessing\" defense once it runs out."
+   },
+   {
+    "q": "What's our current unsettled transaction exposure in dollars?",
+    "a": "~$340M unsettled as of the initial assessment, and still climbing as the backlog persists. Scored High under Credit Risk — CCR pending full reconciliation."
+   },
+   {
+    "q": "What did we pay in SLA penalties the last time a vendor breached this badly?",
+    "a": "Closest matched register event (2022 regional card-processor ransomware outage, 88% similarity) carried SLA penalties of approximately $6–9M. Given this incident's longer downtime, current estimate under equivalent contract terms is $15–25M."
+   }
+  ]
  },
  "infra": {
   "trigger": "Infrastructure Outage",
@@ -6200,6 +6326,33 @@ const NA_A3 = {
     "parent": "Limit breaches"
    }
   ],
+  "financial": [
+   {
+    "title": "Service Availability Timeline",
+    "chartType": "Multi-line Chart",
+    "detail": "Availability % over the outage window, one line per affected service: banking app, payment portal, trading/data feed — shows 0% dropping simultaneously, then staggered recovery"
+   },
+   {
+    "title": "Downtime & Cost Impact",
+    "chartType": "Combo Chart",
+    "detail": "Bar: outage duration (5.5 hours) · Bar or secondary axis: estimated direct cost range ($12–20M) — side-by-side for quick \"how bad, how much\" read"
+   },
+   {
+    "title": "Vendor Concentration Reduction Roadmap",
+    "chartType": "Line Chart, current → 12-month target",
+    "detail": "Current: 100% single-provider dependency per critical service → Target: ≤50% — plotted as a declining trend line over the 12-month remediation period"
+   },
+   {
+    "title": "Financial Impact Breakdown",
+    "chartType": "Waterfall",
+    "detail": "Gross direct cost ($12–20M) − SLA breach cost recoverable from vendor ($5–8M) = Net cost to the bank"
+   },
+   {
+    "title": "Correlated Outage Impact Map",
+    "chartType": "Network/Bubble Chart",
+    "detail": "Nodes representing affected entities sharing the same upstream provider (your bank, a ratings agency, a crypto exchange, thousands of other services) — this is the \"systemic risk, not just us\" visual that makes the fourth-party concentration point land with a board audience"
+   }
+  ],
   "playbook": {
    "immediate": [
     {
@@ -6308,11 +6461,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Sanctions screening failure rate (%)",
-      "impact": "Direct violation of binding regulations exposes the bank to fines, reputational damage and regulatory scrutiny"
+      "impact": "Failure rate could spike as newly designated entities outpace system updates, directly breaching binding regulations"
      },
      {
       "metric": "Wind-down authorisations granted vs. requested",
-      "impact": "Direct violation of binding regulations exposes the bank to fines, reputational damage and regulatory scrutiny"
+      "impact": "Authorisations granted could lag requested volume, leaving exposure unresolved past the compliance deadline"
      }
     ]
    },
@@ -6322,11 +6475,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Client portfolio value exposed to LNG/energy restrictions",
-      "impact": "New energy-sector restrictions stall revenue-generating deals and force costly renegotiations"
+      "impact": "Portfolio value exposed could reach into the hundreds of millions, stalling revenue-generating deals"
      },
      {
       "metric": "Contract renegotiation volume",
-      "impact": "New energy-sector restrictions stall revenue-generating deals and force costly renegotiations"
+      "impact": "Renegotiation volume climbs sharply as existing energy-finance deals require restructuring under the new restrictions"
      }
     ]
    },
@@ -6336,11 +6489,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "EU crypto clients re-certified under ownership ban (%)",
-      "impact": "Missing the re-certification deadline could invalidate the digital-assets control framework entirely"
+      "impact": "Re-certification could fall short of 100% by deadline, invalidating the control framework for any client missed"
      },
      {
       "metric": "Volume with targeted-jurisdiction platforms",
-      "impact": "Missing the re-certification deadline could invalidate the digital-assets control framework entirely"
+      "impact": "Transaction volume with targeted-jurisdiction platforms (UAE, Georgia, Panama, etc.) becomes an immediate screening priority"
      }
     ]
    },
@@ -6350,11 +6503,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Active legal proceedings in sanctioning-country courts",
-      "impact": "Bank faces permanent, high-cost defensive litigation, with unenforceable foreign judgments a live risk"
+      "impact": "Proceedings could rise as counterparties contest frozen assets and blocked payments"
      },
      {
       "metric": "Litigation provisions allocated ($)",
-      "impact": "Bank faces permanent, high-cost defensive litigation, with unenforceable foreign judgments a live risk"
+      "impact": "Provisions could climb into the tens of millions as cross-jurisdictional defence costs accumulate"
      }
     ]
    },
@@ -6364,11 +6517,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Screening coverage efficacy (%)",
-      "impact": "Coverage gaps are the most direct path to a severe regulatory breach as list volumes surge"
+      "impact": "Coverage efficacy could fall below target as list volumes surge faster than screening systems can process"
      },
      {
       "metric": "False-negative rate post-screening",
-      "impact": "Coverage gaps are the most direct path to a severe regulatory breach as list volumes surge"
+      "impact": "False-negative rate rises as manual overrides increase under time pressure, raising the odds of a missed match"
      }
     ]
    },
@@ -6378,11 +6531,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Credit exposure to sanctioned entities ($)",
-      "impact": "Payment prohibitions force write-downs on loans and trade finance to now-sanctioned entities"
+      "impact": "Exposure to now-sanctioned entities could run into the hundreds of millions, becoming unrecoverable via normal channels"
      },
      {
       "metric": "Exposure exited/written down (%)",
-      "impact": "Payment prohibitions force write-downs on loans and trade finance to now-sanctioned entities"
+      "impact": "Exposure successfully exited or written down lags as legal prohibitions block standard collection routes"
      }
     ]
    }
@@ -6394,11 +6547,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Client attrition rate in high-risk adjacent sectors/geographies (%)",
-      "impact": "Bank may proactively exit profitable markets or client segments seen as high sanctions risk, forgoing revenue"
+      "impact": "Attrition could rise as the bank pre-emptively exits relationships seen as sanctions-adjacent"
      },
      {
-      "metric": "Revenue at risk from market exit ($)",
-      "impact": "Bank may proactively exit profitable markets or client segments seen as high sanctions risk, forgoing revenue"
+      "metric": "Revenue at risk from market exit",
+      "impact": "Revenue at risk climbs as profitable but higher-risk market segments are proactively wound down"
      }
     ]
    },
@@ -6408,11 +6561,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Employee turnover in Compliance/Legal/Ops (%)",
-      "impact": "Constant rule changes drive compliance fatigue and burnout in critical functions, raising human-error risk"
+      "impact": "Turnover could rise as constant rule changes drive compliance fatigue and burnout in critical functions"
      },
      {
       "metric": "Sanctions-related error rate in screening overrides (%)",
-      "impact": "Constant rule changes drive compliance fatigue and burnout in critical functions, raising human-error risk"
+      "impact": "Error rate in manual screening overrides increases as staff operate under sustained time pressure"
      }
     ]
    },
@@ -6422,11 +6575,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Increase in Operational RWA",
-      "impact": "Regulators view rising complexity and legal exposure as an elevated institutional risk profile"
+      "impact": "Operational RWA could rise as regulators view mounting complexity and legal exposure as an elevated risk profile"
      },
      {
       "metric": "Number of ad-hoc inquiries from primary regulators",
-      "impact": "Regulators view rising complexity and legal exposure as an elevated institutional risk profile"
+      "impact": "Ad-hoc inquiries increase as supervisors seek real-time assurance on sanctions compliance"
      }
     ]
    },
@@ -6436,11 +6589,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Concentration risk score for critical compliance vendors",
-      "impact": "New rules cascade to the vendor ecosystem — data providers, correspondent banks, and software firms"
+      "impact": "Score rises as new rules cascade to data providers, correspondent banks, and software firms"
      },
      {
       "metric": "Vendor re-certification lag (days)",
-      "impact": "New rules cascade to the vendor ecosystem — data providers, correspondent banks, and software firms"
+      "impact": "Lag lengthens as vendors themselves struggle to keep pace with expanded designation criteria"
      }
     ]
    },
@@ -6450,11 +6603,11 @@ const NA_A3 = {
     "items": [
      {
       "metric": "Negative media mentions (#)",
-      "impact": "Public perception of a sanctions failure risks rapid, severe trust erosion — more costly than direct fines"
+      "impact": "Mentions spike as public perception of a sanctions failure risks rapid, severe trust erosion"
      },
      {
       "metric": "Client churn rate (%)",
-      "impact": "Public perception of a sanctions failure risks rapid, severe trust erosion — more costly than direct fines"
+      "impact": "Churn rises as clients react to perceived compliance failure — a cost that can outlast any direct fine"
      }
     ]
    }
@@ -6678,6 +6831,33 @@ const NA_A3 = {
     "parent": "Limit breaches"
    }
   ],
+  "financial": [
+   {
+    "title": "Exposure Wind-Down Progress",
+    "chartType": "Progress Bar / Gauge, tracked against the 30-day window",
+    "detail": "Total exposure to wind down: $180M · % exited/written down so far vs. days remaining in the authorization window — ideally an animated/updating progress bar for the demo"
+   },
+   {
+    "title": "Screening Coverage Efficacy Gauge",
+    "chartType": "",
+    "detail": "Current coverage efficacy % vs. Target: 100% — same gauge style as the other three dashboards for visual consistency"
+   },
+   {
+    "title": "Exposure by Business Line",
+    "chartType": "Horizontal Bar Chart",
+    "detail": "Credit exposure to sanctioned entities: $180M · Trade finance/LNG portfolio exposure: $310M · (add other lines if available) — shows where the dollar risk actually concentrates"
+   },
+   {
+    "title": "Legal Proceedings & Litigation Cost Tracker",
+    "chartType": "Bar Chart over time",
+    "detail": "Number of active legal proceedings (starting at 4) · Litigation provisions allocated ($) — tracked monthly to show whether legal exposure is escalating or stabilizing"
+   },
+   {
+    "title": "Compliance Strain Trend",
+    "chartType": "Dual-axis Line Chart",
+    "detail": "Employee turnover in Compliance/Legal/Ops (%) plotted against Number of ad-hoc regulatory inquiries — shows the compounding risk that fatigue and regulatory scrutiny are rising together, which is the second-order story this event is really about"
+   }
+  ],
   "playbook": {
    "immediate": [
     {
@@ -6783,6 +6963,157 @@ const NA_A3 = {
 
 
 
+
+
+
+// Financial Impact Dashboard helpers — pick an icon for the chart type and
+// highlight the money/percent/bps figures inside the descriptive text.
+function naFinIcon(t) {
+  const s = (t || '').toLowerCase();
+  if (s.includes('waterfall')) return 'fa-chart-column';
+  if (s.includes('gauge') || s.includes('donut')) return 'fa-gauge-high';
+  if (s.includes('area')) return 'fa-chart-area';
+  if (s.includes('line')) return 'fa-chart-line';
+  if (s.includes('bar')) return 'fa-chart-bar';
+  if (s.includes('gantt') || s.includes('timeline')) return 'fa-timeline';
+  if (s.includes('network') || s.includes('bubble') || s.includes('map')) return 'fa-diagram-project';
+  if (s.includes('progress')) return 'fa-bars-progress';
+  return 'fa-chart-simple';
+}
+// Pull the figures out of a chart description: 'Label: value' pairs (for stat
+// tiles) and any standalone money/%/bps/hours figures (fallback chips).
+function naFinViz(detail) {
+  const str = String(detail || '');
+  const valTok = '(~?≈?[−-]?\\$?\\s?\\d[\\d.,]*(?:\\s?[–-]\\s?\\$?\\d[\\d.,]*)?\\s?(?:bn|billion|b|m|million|k|%|bps|hours?|hrs?|days?)?)';
+  const pairRe = new RegExp('([A-Za-z][A-Za-z0-9 /&()+-]{1,38}?):\\s*' + valTok, 'gi');
+  const pairs = []; let m;
+  const clean = (s) => s.replace(/\s+/g, ' ').trim();
+  while ((m = pairRe.exec(str)) !== null) {
+    const label = clean(m[1]); const raw = clean(m[2]);
+    const num = parseFloat(raw.replace(/[^0-9.]/g, ''));
+    const unit = (raw.match(/%|bps|\$|hours?|hrs?|days?|bn|billion|b|m|million|k/i) || [''])[0].toLowerCase();
+    if (raw && /\d/.test(raw)) pairs.push({ label, raw, num: isNaN(num) ? 0 : Math.abs(num), unit });
+  }
+  const figRe = /(~?≈?[−-]?\$\s?\d[\d.,]*(?:\s?[–-]\s?\$?\d[\d.,]*)?\s?(?:bn|billion|b|m|million|k)?|\d[\d.,]*\s?%|[−-]?\d[\d.,]*\s?bps|\d+\s?(?:hours?|hrs?|days?))/gi;
+  const seen = new Set(); const figures = [];
+  while ((m = figRe.exec(str)) !== null) { if (m[0] === '') { figRe.lastIndex++; continue; } const r = m[0].trim(); const k = r.toLowerCase(); if (!seen.has(k)) { seen.add(k); figures.push(r); } }
+  return { pairs, figures };
+}
+function naFinNum(raw) { const m = String(raw).match(/[\d.]+/g); if (!m) return 0; const ns = m.map(Number).filter(x => !isNaN(x)); return ns.length ? ns.reduce((a, b) => a + b, 0) / ns.length : 0; }
+function naShort(s) { s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > 16 ? s.split(' ').slice(0, 2).join(' ').slice(0, 16) : s; }
+
+// Financial mini-charts (SVG) — gauge, bars, trend
+function FinGauge({ value, target, unit, valueRaw, max }) {
+  const cx = 130, cy = 108, r = 80, thick = 16;
+  const pt = (deg) => { const rad = Math.PI * (180 - deg) / 180; return [cx + r * Math.cos(rad), cy - r * Math.sin(rad)]; };
+  const arc = (a, b) => { const [x1, y1] = pt(a), [x2, y2] = pt(b); return `M ${x1.toFixed(1)} ${y1.toFixed(1)} A ${r} ${r} 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}`; };
+  const f = Math.max(0, Math.min(1, value / max));
+  const tf = target != null ? Math.max(0, Math.min(1, target / max)) : null;
+  const tp = tf != null ? pt(180 * tf) : null;
+  return (
+    <svg viewBox="0 0 260 132" width="100%" style={{ display: 'block' }}>
+      <path d={arc(0, 180)} fill="none" stroke="rgba(0,0,0,0.08)" strokeWidth={thick} strokeLinecap="round" />
+      <path d={arc(0, Math.max(1, 180 * f))} fill="none" stroke="var(--primary)" strokeWidth={thick} strokeLinecap="round" />
+      {tp && <circle cx={tp[0]} cy={tp[1]} r={5} fill="#0F172A" />}
+      <text x={cx} y={cy - 6} textAnchor="middle" fontSize={27} fontWeight="800" fill="var(--text)">{valueRaw}</text>
+      {target != null && <text x={cx} y={cy + 16} textAnchor="middle" fontSize={11} fontWeight="700" fill="var(--text-3)">Target {target}{/%|bps/.test(unit) ? unit : ''}</text>}
+    </svg>
+  );
+}
+function FinBars({ data }) {
+  const W = 260, H = 132, padTop = 26, padBot = 28, n = data.length;
+  const max = Math.max(...data.map(d => d.num), 1), gap = 14;
+  const bw = Math.min(46, (W - 28 - gap * (n - 1)) / n), totalW = n * bw + (n - 1) * gap, x0 = (W - totalW) / 2, chartH = H - padTop - padBot;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }}>
+      <defs><linearGradient id="finbar" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--primary)" /><stop offset="100%" stopColor="#f4cf7a" /></linearGradient></defs>
+      <line x1={12} y1={padTop + chartH} x2={W - 12} y2={padTop + chartH} stroke="rgba(0,0,0,0.1)" strokeWidth={1} />
+      {data.map((d, i) => { const bh = Math.max(4, (d.num / max) * chartH); const x = x0 + i * (bw + gap); const y = padTop + chartH - bh; return (
+        <g key={i}>
+          <rect x={x} y={y} width={bw} height={bh} rx={4} fill="url(#finbar)" />
+          {d.raw && <text x={x + bw / 2} y={y - 7} textAnchor="middle" fontSize={11.5} fontWeight="800" fill="var(--primary)">{d.raw}</text>}
+          {d.label && <text x={x + bw / 2} y={H - 9} textAnchor="middle" fontSize={9.5} fontWeight="600" fill="var(--text-3)">{d.label}</text>}
+        </g>
+      ); })}
+    </svg>
+  );
+}
+function FinTrend({ peak, shape }) {
+  const W = 260, H = 132, padX = 16, padTop = 24, padBot = 20;
+  const ys = shape || [0.12, 0.28, 0.42, 0.6, 0.75, 0.9, 1], n = ys.length;
+  const chartW = W - padX * 2, chartH = H - padTop - padBot;
+  const pts = ys.map((v, i) => [padX + (i / (n - 1)) * chartW, padTop + chartH - v * chartH]);
+  const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const area = line + ` L ${(padX + chartW).toFixed(1)} ${padTop + chartH} L ${padX} ${padTop + chartH} Z`;
+  const [px, py] = pts[n - 1];
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }}>
+      <defs><linearGradient id="fintrend" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--primary)" stopOpacity="0.35" /><stop offset="100%" stopColor="var(--primary)" stopOpacity="0" /></linearGradient></defs>
+      <path d={area} fill="url(#fintrend)" />
+      <path d={line} fill="none" stroke="var(--primary)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={px} cy={py} r={4.5} fill="var(--primary)" />
+      {peak && <text x={px - 4} y={py - 8} textAnchor="end" fontSize={12.5} fontWeight="800" fill="var(--primary)">{peak}</text>}
+    </svg>
+  );
+}
+// Legend labelling every data point beneath the chart.
+function FinLegend({ viz }) {
+  const items = viz.pairs.length
+    ? viz.pairs.map(p => ({ k: p.label, v: p.raw }))
+    : viz.figures.map(r => ({ k: '', v: r }));
+  if (!items.length) return null;
+  return (
+    <div className="na-fin-legend">
+      {items.slice(0, 6).map((it, i) => (
+        <span key={i} className="na-fin-leg-item">{it.k && <span className="na-fin-leg-k">{it.k}</span>}<span className="na-fin-leg-v">{it.v}</span></span>
+      ))}
+    </div>
+  );
+}
+function naFinSummary(detail) {
+  const s = String(detail || '').replace(/\s+/g, ' ').trim();
+  if (!s) return '';
+  const first = s.split(/(?<=\.)\s/)[0] || s;
+  return first.length > 155 ? first.slice(0, 152).trimEnd() + '…' : first;
+}
+function FinChart({ item }) {
+  const viz = naFinViz(item.detail);
+  const s = ((item.chartType || '') + ' ' + (item.title || '')).toLowerCase();
+  const pr = viz.pairs;
+  const gaugeType = /gauge|donut|progress|efficacy/.test(s) && (pr.length || viz.figures.length);
+  // A bar chart is only worth drawing when the values are labelled, share a unit,
+  // and are comparable in magnitude (so no "$2.1B vs 180bps" nonsense).
+  const sameUnit = pr.length >= 2 && pr.every(p => p.unit && p.unit === pr[0].unit && p.num > 0);
+  const ratio = sameUnit ? Math.max(...pr.map(p => p.num)) / Math.min(...pr.map(p => p.num)) : Infinity;
+  const barsOk = sameUnit && ratio <= 25 && !gaugeType;
+  const summary = naFinSummary(item.detail);
+
+  if (gaugeType) {
+    let value, target = null, unit = '%', valueRaw;
+    if (pr.length) { value = pr[0].num; unit = pr[0].unit || '%'; valueRaw = pr[0].raw; if (pr[1]) target = pr[1].num; }
+    else { value = naFinNum(viz.figures[0]); valueRaw = viz.figures[0]; unit = (viz.figures[0].match(/%|bps/) || ['%'])[0]; }
+    const max = Math.max(value, target || 0) * 1.5 || 100;
+    return <><FinGauge value={value} target={target} unit={unit} valueRaw={valueRaw} max={max} /><FinLegend viz={viz} /></>;
+  }
+  if (barsOk) {
+    return <><FinBars data={pr.slice(0, 5).map(p => ({ label: naShort(p.label), raw: p.raw, num: p.num }))} /><FinLegend viz={viz} /></>;
+  }
+  // Otherwise: a clean summary — headline figures + a one-line takeaway.
+  return (
+    <div className="na-fin-summary">
+      {pr.length ? (
+        <div className="na-fin-stats">
+          {pr.slice(0, 4).map((p, j) => (
+            <div key={j} className="na-fin-stat"><div className="na-fin-stat-val">{p.raw}</div><div className="na-fin-stat-lbl" title={p.label}>{p.label}</div></div>
+          ))}
+        </div>
+      ) : viz.figures.length ? (
+        <div className="na-fin-chips">{viz.figures.slice(0, 6).map((fg, j) => <span key={j} className="na-fin-chip-num">{fg}</span>)}</div>
+      ) : null}
+      {summary && <div className="na-fin-sumtext">{summary}</div>}
+    </div>
+  );
+}
 
 // Risk Transmission Map — CME-Exchange-style tiered SVG built from the Excel map
 // data: left row labels, dark amber boxes, red L1–L3 bracket, full-width
@@ -6984,7 +7315,7 @@ function NewsAssessment({ onBack }) {
   const [runId,      setRunId]      = React.useState(null);   // event being assessed
   const [stepIdx,     setStepIdx]     = React.useState(0);    // step index within the active agent
   const [activeAgent, setActiveAgent] = React.useState(0);    // current agent tab (0–3)
-  const [agentStatus, setAgentStatus] = React.useState(['locked','locked','locked','locked']); // locked | processing | ready | done
+  const [agentStatus, setAgentStatus] = React.useState(['locked','locked','locked','locked','locked']); // locked | processing | ready | done
   const [actionTab,  setActionTab]  = React.useState('immediate');
   const [openAct,    setOpenAct]    = React.useState(null);
   const [openFlow,   setOpenFlow]   = React.useState(null);
@@ -7014,20 +7345,23 @@ function NewsAssessment({ onBack }) {
     setActiveAgent(i);
     setStepIdx(0);
     setAgentStatus(prev => prev.map((s, idx) => idx === i ? 'processing' : s));
-    const nSteps = NA_AGENTS[i].steps.length;
+    const steps = NA_AGENTS[i].steps;
+    const nSteps = steps.length;
+    // How long step `k` is shown before advancing — a per-step `ms` override wins,
+    // otherwise a randomised duration (occasionally slower, for a "live" feel).
+    const stepMs = (k) => (steps[k] && steps[k].ms) ? steps[k].ms
+      : 700 + Math.random() * 600 + (Math.random() < 0.3 ? 700 + Math.random() * 900 : 0);
     let s = 0;
     const tick = () => {
       s += 1;
       setStepIdx(s);
       if (s < nSteps) {
-        const base = 700 + Math.random() * 600;
-        const slow = Math.random() < 0.3 ? 700 + Math.random() * 900 : 0;
-        setTimeout(tick, base + slow);
+        setTimeout(tick, stepMs(s));
       } else {
         setTimeout(() => setAgentStatus(prev => prev.map((st, idx) => idx === i ? 'done' : st)), 700);
       }
     };
-    setTimeout(tick, 500);
+    setTimeout(tick, (steps[0] && steps[0].ms) ? steps[0].ms : 500);
   };
   const genOutput    = (i) => setAgentStatus(prev => prev.map((st, idx) => idx === i ? 'done' : st));
   const continueNext = (i) => { if (i < NA_AGENTS.length - 1) startAgent(i + 1); };
@@ -7038,7 +7372,7 @@ function NewsAssessment({ onBack }) {
     setActionTab('immediate'); setOpenAct(null); setOpenFlow(null); setOpenQuant(null);
     setHitl(null); setHitlComment(''); setChat([]); setChatInput(''); setChatOpen(false);
     setMetricOff({}); setStripeOff({}); setCustomFO([]); setCustomSO([]); setAddForm(null); setImpactOpen({});
-    setAgentStatus(['locked','locked','locked','locked']);
+    setAgentStatus(['locked','locked','locked','locked','locked']);
     startAgent(0);
   };
 
@@ -7401,6 +7735,35 @@ function NewsAssessment({ onBack }) {
   const isLast = activeAgent === NA_AGENTS.length - 1;
   const ag = NA_AGENTS[activeAgent];
 
+  // Process-stepper node + connector (grouped so sub-agents like 3a/3b can be boxed)
+  const procNode = (i) => {
+    const a = NA_AGENTS[i]; const s = agentStatus[i]; const locked = s === 'locked';
+    return (
+      <div key={'n' + i} className={`na-proc-node status-${s} ${activeAgent === i ? 'active' : ''} ${locked ? 'locked' : ''}`}
+        onClick={() => { if (!locked) setActiveAgent(i); }}>
+        <div className="na-proc-circle">
+          {s === 'done' ? <i className="fa-solid fa-check"></i>
+            : s === 'processing' ? <i className="fa-solid fa-circle-notch fa-spin"></i>
+            : locked ? <i className="fa-solid fa-lock" style={{ fontSize: 13 }}></i>
+            : a.n}
+        </div>
+        <div className="na-proc-node-lbl">{a.short}</div>
+        <div className="na-proc-node-sub">Agent {a.n}</div>
+      </div>
+    );
+  };
+  const procConn = (leftIdx) => <div key={'c' + leftIdx} className={`na-proc-connector ${agentStatus[leftIdx] === 'done' ? 'done' : ''}`}></div>;
+  // Group consecutive sub-agents whose n is like '3a','3b' under one labelled box.
+  const procGroups = [];
+  NA_AGENTS.forEach((a, i) => {
+    const m = String(a.n).match(/^(\d+)[a-z]$/i);
+    const base = m ? m[1] : null;
+    const last = procGroups[procGroups.length - 1];
+    if (base && last && last.base === base) last.items.push(i);
+    else procGroups.push({ base, items: [i] });
+  });
+  const groupLabels = { '3': 'Impact Assessment & Prioritisation Agent' };
+
   return (
     <div className="page" style={{maxWidth:'none'}}>
       <div className="na-no-print" style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
@@ -7418,28 +7781,26 @@ function NewsAssessment({ onBack }) {
         <div className="page-sub" style={{maxWidth:'none',whiteSpace:'nowrap'}}>{ev.date} · {ev.type} · Source: {ev.source} · News Intelligence and Impact Assessment</div>
       </div>
 
-      {/* Agent process stepper — connected nodes, centered */}
+      {/* Agent process stepper — connected nodes; sub-agents (3a/3b) grouped in a box */}
       <div className="na-proc-nav">
-        {NA_AGENTS.map((a, i) => {
-          const s = agentStatus[i];
-          const locked = s === 'locked';
-          return (
-            <React.Fragment key={a.n}>
-              {i > 0 && <div className={`na-proc-connector ${agentStatus[i-1]==='done' ? 'done' : ''}`}></div>}
-              <div className={`na-proc-node status-${s} ${activeAgent===i?'active':''} ${locked?'locked':''}`}
-                onClick={() => { if (!locked) setActiveAgent(i); }}>
-                <div className="na-proc-circle">
-                  {s==='done' ? <i className="fa-solid fa-check"></i>
-                    : s==='processing' ? <i className="fa-solid fa-circle-notch fa-spin"></i>
-                    : locked ? <i className="fa-solid fa-lock" style={{fontSize:13}}></i>
-                    : a.n}
+        {procGroups.map((g, gi) => (
+          <React.Fragment key={'g' + gi}>
+            {gi > 0 && procConn(procGroups[gi - 1].items[procGroups[gi - 1].items.length - 1])}
+            {g.items.length > 1 ? (
+              <div className="na-proc-group">
+                <div className="na-proc-group-lbl">{groupLabels[g.base] || `Agent ${g.base}`}</div>
+                <div className="na-proc-group-row">
+                  {g.items.map((idx, k) => (
+                    <React.Fragment key={idx}>
+                      {k > 0 && procConn(g.items[k - 1])}
+                      {procNode(idx)}
+                    </React.Fragment>
+                  ))}
                 </div>
-                <div className="na-proc-node-lbl">{a.short}</div>
-                <div className="na-proc-node-sub">Agent {a.n}</div>
               </div>
-            </React.Fragment>
-          );
-        })}
+            ) : procNode(g.items[0])}
+          </React.Fragment>
+        ))}
       </div>
       </div>{/* /na-sticky-head */}
 
@@ -7634,8 +7995,13 @@ function NewsAssessment({ onBack }) {
           <div className="na-hitl-note reject"><i className="fa-solid fa-circle-xmark"></i>Mapping rejected — comments recorded for review.</div>
         )}
       </div>
+        </>
+      )}
 
-      {/* E — Scope and Exposure (Agent 3) */}
+      {/* ── Agent 3b — Financial Impact & Escalation (Scope → Financial Impact) ── */}
+      {(printAll || activeAgent === 3) && (
+        <>
+      {/* E — Scope and Exposure (Agent 3b) */}
       <div className="scenario-section-header">Scope and Exposure</div>
       <div className="scope-grid">
         {[
@@ -7684,12 +8050,30 @@ function NewsAssessment({ onBack }) {
           </table>
         </div>
       </div>
+
+      {/* Financial Impact Dashboard (Agent 3) — figures from Excel */}
+      {a3.financial && a3.financial.length > 0 && (
+        <>
+          <div className="scenario-section-header">Financial Impact Dashboard</div>
+          <div className="na-fin-grid">
+            {a3.financial.map((f, i) => (
+              <div key={i} className="na-fin-card">
+                <div className="na-fin-head">
+                  <span className="na-fin-ic"><i className={`fa-solid ${naFinIcon(f.chartType)}`}></i></span>
+                  <span className="na-fin-title">{f.title}</span>
+                </div>
+                <div className="na-fin-viz"><FinChart item={f} /></div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
         </>
       )}
 
-      {(printAll || activeAgent === 3) && (
+      {(printAll || activeAgent === 4) && (
         <>
-      {/* J — Regulatory Notifications (Agent 3/4) */}
+      {/* J — Regulatory Notifications (Agent 4) */}
       <div className="scenario-section-header">Regulatory Notification Requirements</div>
       <div className="reg-grid" style={{marginBottom:12}}>
         {d.regulatory.map((r, i) => (
@@ -7781,10 +8165,10 @@ function NewsAssessment({ onBack }) {
         <div className="na-continue-wrap">
           {agentStatus[activeAgent + 1] === 'locked'
             ? <button className="btn-primary" style={{fontSize:14,padding:'10px 22px'}} onClick={() => continueNext(activeAgent)}>
-                Continue to Agent {activeAgent + 2} — {NA_AGENTS[activeAgent + 1].short} <i className="fa-solid fa-arrow-right-long" style={{marginLeft:6}}></i>
+                Continue to Agent {NA_AGENTS[activeAgent + 1].n} — {NA_AGENTS[activeAgent + 1].short} <i className="fa-solid fa-arrow-right-long" style={{marginLeft:6}}></i>
               </button>
             : <button className="btn-outline" style={{fontSize:14,padding:'10px 22px'}} onClick={() => setActiveAgent(activeAgent + 1)}>
-                Next: Agent {activeAgent + 2} — {NA_AGENTS[activeAgent + 1].short} <i className="fa-solid fa-arrow-right-long" style={{marginLeft:6}}></i>
+                Next: Agent {NA_AGENTS[activeAgent + 1].n} — {NA_AGENTS[activeAgent + 1].short} <i className="fa-solid fa-arrow-right-long" style={{marginLeft:6}}></i>
               </button>}
         </div>
       )}
@@ -7792,8 +8176,8 @@ function NewsAssessment({ onBack }) {
         </div>
       )}
 
-      {/* Floating Intelligence Chatbot — available once Agent 4 is complete */}
-      {agentStatus[3] === 'done' && (
+      {/* Floating Intelligence Chatbot — available once the final agent is complete */}
+      {agentStatus[NA_AGENTS.length - 1] === 'done' && (
       <>
       {chatOpen && (
         <div className="na-chatwin">
