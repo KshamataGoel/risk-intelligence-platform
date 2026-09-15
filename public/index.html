@@ -4713,7 +4713,7 @@ const NA_HOME = [
   "severity": "High",
   "primaryRisk": "Technology & cyber risk",
   "impact": "Client-facing channel outage drives immediate reputational and operational-loss exposure",
-  "article": "Cloudflare's network began experiencing significant failures to deliver core network traffic. This showed up to Internet users trying to access our customers' sites as an error page indicating a failure within Cloudflare's network.\nHTTP error page displayed during the incident\nThe issue was not caused, directly or indirectly, by a cyber attack or malicious activity of any kind. Instead, it was triggered by a change to one of our database systems' permissions which caused the database to output multiple entries into a “feature file” used by our Bot Management system. That feature file, in turn, doubled in size. The larger-than-expected feature file was then propagated to all the machines that make up our network.\nThe software running on these machines to route traffic across our network reads this feature file to keep our Bot Management system up to date with ever changing threats. The software had a limit on the size of the feature file that was below its doubled size. That caused the software to fail.\nAfter we initially wrongly suspected the symptoms we were seeing were caused by a hyper-scale DDoS attack, we correctly identified the core issue and were able to stop the propagation of the larger-than-expected feature file and replace it with an earlier version of the file. Core traffic was largely flowing as normal by 14:30. We worked over the next few hours to mitigate increased load on various parts of our network as traffic rushed back online. As of 17:06 all systems at Cloudflare were functioning as normal.\nWe are sorry for the impact to our customers and to the Internet in general. Given Cloudflare's importance in the Internet ecosystem any outage of any of our systems is unacceptable. That there was a period of time where our network was not able to route traffic is deeply painful to every member of our team. We know we let you down today.\nThis post is an in-depth recount of exactly what happened and what systems and processes failed. It is also the beginning, though not the end, of what we plan to do in order to make sure an outage like this will not happen again.\nCopy linkThe outage\nThe chart below shows the volume of 5xx error HTTP status codes served by the Cloudflare network. Normally this should be very low, and it was right up until the start of the outage."
+  "article": "Cloudflare's network began experiencing significant failures to deliver core network traffic. This showed up to Internet users trying to access our customers' sites as an error page indicating a failure within Cloudflare's network.\nHTTP error page displayed during the incident\nThe issue was not caused, directly or indirectly, by a cyber attack or malicious activity of any kind. Instead, it was triggered by a change to one of our database systems' permissions which caused the database to output multiple entries into a “feature file” used by our Bot Management system. That feature file, in turn, doubled in size. The larger-than-expected feature file was then propagated to all the machines that make up our network.\nThe software running on these machines to route traffic across our network reads this feature file to keep our Bot Management system up to date with ever changing threats. The software had a limit on the size of the feature file that was below its doubled size. That caused the software to fail.\nAfter we initially wrongly suspected the symptoms we were seeing were caused by a hyper-scale DDoS attack, we correctly identified the core issue and were able to stop the propagation of the larger-than-expected feature file and replace it with an earlier version of the file. Core traffic was largely flowing as normal by 14:30. We worked over the next few hours to mitigate increased load on various parts of our network as traffic rushed back online. As of 17:06 all systems at Cloudflare were functioning as normal.\nWe are sorry for the impact to our customers and to the Internet in general. Given Cloudflare's importance in the Internet ecosystem any outage of any of our systems is unacceptable. That there was a period of time where our network was not able to route traffic is deeply painful to every member of our team. We know we let you down today.\nThis post is an in-depth recount of exactly what happened and what systems and processes failed. It is also the beginning, though not the end, of what we plan to do in order to make sure an outage like this will not happen again."
  },
  {
   "title": "Sanctions package expands, requiring exposure re-screening",
@@ -4901,6 +4901,8 @@ const NA_HOME = [
  }
 ];
 /* NA_HOME_END */
+
+
 
 
 
@@ -8166,23 +8168,29 @@ function FinRevBubble({ c }) {
 
 // Chart 5 — VaR loss histogram with percentile reference lines
 function FinRevHistogram({ c }) {
-  const W = 330, H = 172, padL = 26, padR = 8, padT = 18, padB = 26;
+  const W = 420, H = 178, padL = 28, padR = 10, padT = 30, padB = 26;
   // Keep only real loss bands (a $ range with a probability in 0–1); drop stray
   // percentile rows like "P50 | $28M · P90" that some sheets append inline.
   const bands = c.rows.map(r => ({ band: r[0], p: frNum(r[1]) })).filter(b => b.band && /\$|\d/.test(b.band) && !/^p\d/i.test(b.band) && b.p != null && b.p > 0 && b.p <= 1);
-  const refs = (c.refRows || []).map(r => ({ tag: (String(r[0]).match(/^P\d+/i) || [r[0]])[0], full: r[0], raw: r[1], valM: (frNum(r[1]) || 0) * (/b/i.test(r[1]) ? 1000 : 1) }));
   const pMax = Math.ceil(Math.max(0.2, ...bands.map(b => b.p)) / 0.05) * 0.05;
   const cw = W - padL - padR, ch = H - padT - padB, n = bands.length, bw = cw / n;
   const uppers = bands.map(b => { const nums = (b.band.match(/\d+/g) || []).map(Number); return nums.length ? Math.max(...nums) : 0; });
-  const bounds = uppers.slice(0, -1);                       // grid boundaries between bars
-  const xForVal = (v) => { let k = -1; for (let i = 0; i < bounds.length; i++) if (bounds[i] <= v) k = i; return padL + (k + 1) * bw; };
-  // X-axis labels: the loss-band ranges straight from Excel (<$500M, $500–1000M, … $3000M+).
+  const step = (uppers.length > 1 ? uppers[1] - uppers[0] : uppers[0]) || 500;   // band width for the open tail band
+  // Percentiles computed from the loss distribution itself (P50/P90/P99), NOT Excel.
+  const cross = (pct) => {                                     // → { frac position, $M value }
+    const t = Math.max(0, Math.min(1, pct / 100)); let cum = 0;
+    for (let i = 0; i < n; i++) { const prev = cum; cum += bands[i].p; if (cum >= t) { const frac = bands[i].p > 0 ? Math.max(0, Math.min(1, (t - prev) / bands[i].p)) : 0; const low = i === 0 ? 0 : uppers[i - 1]; const w = (uppers[i] - low) || step; return { xi: i + frac, valM: low + frac * w }; } }
+    return { xi: n, valM: (uppers[n - 1] || 0) + step };
+  };
+  const fmtB = (m) => m >= 1000 ? '$' + parseFloat((m / 1000).toFixed(2)) + 'B' : '$' + Math.round(m) + 'M';
+  const refs = [{ tag: 'P50', pct: 50, desc: 'P50 (median)' }, { tag: 'P90', pct: 90, desc: 'P90 (VaR)' }, { tag: 'P99', pct: 99, desc: 'P99 (tail)' }]
+    .map(r => { const c2 = cross(r.pct); return { ...r, x: padL + c2.xi * bw, val: fmtB(c2.valM) }; });
   const shortBand = (i) => String(bands[i].band).replace(/\s+/g, '');
   const gy = []; for (let g = 0; g <= pMax + 0.001; g += 0.05) gy.push(Math.round(g * 100) / 100);
   return (
     <div>
       <div className="na-fin-pctls">
-        {refs.map((rf, i) => <div key={i} className="na-fin-pctl"><div className="na-fin-pctl-v">{rf.raw}</div><div className="na-fin-pctl-k">{rf.full}</div></div>)}
+        {refs.map((rf, i) => <div key={i} className="na-fin-pctl"><div className="na-fin-pctl-v">{rf.val}</div><div className="na-fin-pctl-k">{rf.desc}</div></div>)}
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }}>
         {gy.map((g, i) => { const y = padT + ch - (g / pMax) * ch; return <g key={i}><line x1={padL} y1={y} x2={W - padR} y2={y} stroke="rgba(0,0,0,0.06)" /><text x={padL - 4} y={y + 3} textAnchor="end" fontSize={8} fill="var(--text-3)">{Math.round(g * 100)}%</text></g>; })}
@@ -8190,9 +8198,10 @@ function FinRevHistogram({ c }) {
           <rect x={x} y={y} width={bw - 5} height={bh} rx={1.5} fill="var(--primary)" />
           <text x={x + (bw - 5) / 2} y={H - padB + 11} textAnchor="middle" fontSize={6} fill="var(--text-3)">{shortBand(i)}</text>
         </g>; })}
-        {refs.map((rf, i) => { const x = xForVal(rf.valM); return <g key={i}>
-          <line x1={x} y1={padT - 3} x2={x} y2={padT + ch} stroke="#DC2626" strokeWidth={1.2} strokeDasharray="3 3" />
-          <text x={x + 2} y={padT + 4} fontSize={8} fontWeight="800" fill="#DC2626">{rf.tag}</text>
+        {refs.map((rf, i) => { const near = rf.x > W - padR - 24, ax = near ? rf.x - 2 : rf.x + 2, an = near ? 'end' : 'start'; return <g key={i}>
+          <line x1={rf.x} y1={padT - 12} x2={rf.x} y2={padT + ch} stroke="#DC2626" strokeWidth={1.2} strokeDasharray="3 3" />
+          <text x={ax} y={padT - 14} textAnchor={an} fontSize={8.5} fontWeight="800" fill="#DC2626">{rf.val}</text>
+          <text x={ax} y={padT - 4} textAnchor={an} fontSize={7.5} fontWeight="700" fill="#DC2626">{rf.tag}</text>
         </g>; })}
       </svg>
     </div>
