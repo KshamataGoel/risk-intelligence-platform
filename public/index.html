@@ -8049,6 +8049,7 @@ function FinRevLine({ c }) {
   const ratio = mx <= 1.5;
   const fmt = (v) => ratio ? (v * 100).toFixed(1) + '%' : (Math.abs(v) >= 1000 ? '$' + (v / 1000).toFixed(1) + 'B' : '$' + (Math.round(v * 10) / 10) + 'M');
   const X = (xi) => padL + (xi / xMax) * cw, Y = (v) => padT + ch - ((v - mn) / (mx - mn || 1)) * ch;
+  const lineMaxX = Math.max(...built.map(b => b.pts.length ? b.pts[b.pts.length - 1][0] : -1));
   const cols = [FR_C.neutral, FR_C.green, FR_C.red, FR_C.primary], dash = [null, '5 4', '5 4', '2 3'];
   return (
     <div>
@@ -8059,9 +8060,11 @@ function FinRevLine({ c }) {
           if (s.pts.length < 1) return null;
           const d = s.pts.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join(' ');
           const last = s.pts[s.pts.length - 1], lx = X(last[0]), ly = Y(last[1]), near = lx > W - padR - 28;
-          // The Actual series ends at the fork point where the other lines diverge to the
-          // right; anchor its label up-and-left so it clears those overlapping lines.
-          const isFork = hasArrows && si === 0;
+          // A series that ends before the chart's rightmost point is a fork/junction (e.g.
+          // the Actual line where the projection scenarios diverge). Whether the data is
+          // arrow-packed or a table with nulls, drop its label below the point so it clears
+          // the overlapping lines.
+          const isFork = last[0] < lineMaxX;
           return <g key={si}>
             {s.pts.length > 1 && <path d={d} fill="none" stroke={cols[si % cols.length]} strokeWidth={2.2} strokeDasharray={dash[si % dash.length] || 'none'} strokeLinecap="round" strokeLinejoin="round" />}
             <circle cx={lx} cy={ly} r={3} fill={cols[si % cols.length]} />
