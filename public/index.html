@@ -8065,7 +8065,7 @@ function FinRevLine({ c }) {
           return <g key={si}>
             {s.pts.length > 1 && <path d={d} fill="none" stroke={cols[si % cols.length]} strokeWidth={2.2} strokeDasharray={dash[si % dash.length] || 'none'} strokeLinecap="round" strokeLinejoin="round" />}
             <circle cx={lx} cy={ly} r={3} fill={cols[si % cols.length]} />
-            <text x={isFork ? lx - 6 : (near ? lx - 5 : lx + 5)} y={isFork ? ly - 8 : ly - 4} textAnchor={isFork || near ? 'end' : 'start'} fontSize={8.5} fontWeight="800" fill={cols[si % cols.length]}>{fmt(last[1])}</text>
+            <text x={isFork ? lx : (near ? lx - 5 : lx + 5)} y={isFork ? ly + 13 : ly - 4} textAnchor={isFork ? 'middle' : (near ? 'end' : 'start')} fontSize={8.5} fontWeight="800" fill={cols[si % cols.length]} stroke="#fff" strokeWidth={2.6} paintOrder="stroke" strokeLinejoin="round">{fmt(last[1])}</text>
           </g>;
         })}
       </svg>
