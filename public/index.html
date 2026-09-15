@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRCO Cockpit</title>
+  <title>CRO Cockpit</title>
 
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -2960,7 +2960,7 @@ function Sidebar({ page, setPage }) {
       <div className="sidebar-brand">
         <div className="sidebar-brand-icon"><img src="/Genpactlogo.png" alt="logo" /></div>
         <div className="sidebar-brand-text">
-          <div className="sidebar-brand-title">CRCO Cockpit</div>
+          <div className="sidebar-brand-title">CRO Cockpit</div>
         </div>
       </div>
 
@@ -2979,7 +2979,7 @@ function Sidebar({ page, setPage }) {
       </nav>
 
       <div className="sidebar-footer">
-        <div className="sidebar-footer-label">v1.0 · CRCO Cockpit</div>
+        <div className="sidebar-footer-label">v1.0 · CRO Cockpit</div>
       </div>
     </div>
   );
@@ -3102,7 +3102,7 @@ function HomePage({ setPage }) {
       {/* Hero */}
       <div className="home-hero-wrap">
         <div className="home-eyebrow">Chief Risk &amp; Compliance Officer</div>
-        <h1 className="home-title">CRCO <span>Cockpit</span></h1>
+        <h1 className="home-title">CRO <span>Cockpit</span></h1>
         <p className="home-sub">Unified risk insights, knowledge management, advanced analytics, and scenario analysis — in one platform.</p>
       </div>
 
@@ -3133,7 +3133,7 @@ function HomePage({ setPage }) {
       </div>
 
       <footer className="home-footer">
-        <span>v1.0 · CRCO Cockpit</span>
+        <span>v1.0 · CRO Cockpit</span>
         <span>Internal Use Only · Not for External Distribution</span>
       </footer>
     </div>
@@ -3151,7 +3151,7 @@ function TopNav({ page, setPage }) {
         </div>
         <div className="topnav-divider"></div>
         <div className="topnav-cockpit">
-          CRCO Cockpit
+          CRO Cockpit
         </div>
       </div>
       <nav className="topnav-nav">
@@ -4223,7 +4223,7 @@ const NA_DATA = {
       affectedStripes:[`Credit Risk`,`Market Risk`,`Capital & Liquidity Risk`,`Regulatory Risk`,`Reputational Risk`],
       velocity:`Slow-onset (structural), slow-resolving (quarters/years)`,
       extracted:[
-        { k:'Direction', v:'Deterioration / Adverse' }, { k:'Geography', v:'United States (West Coast)' },
+        { k:'Direction', v:'Deterioration / Adverse' }, { k:'Geography', v:'United Kingdom' },
         { k:'Primary L1', v:'CR — Credit Risk' }, { k:'Time Horizon', v:'2–4 quarters' },
       ],
     },
@@ -4697,7 +4697,7 @@ const NA_HOME = [
   "severity": "High",
   "primaryRisk": "Credit risk",
   "impact": "Signals sector-wide CRE provisioning risk — clients with office/CRE concentration should reassess loss coverage",
-  "article": "By Arno Schuetze\nMarch 12, 2026 at 10:49 AM GMT\nBank X said its exposure to US commercial real estate remains a “key risk” that could force it to raise provisions for credit losses, as the asset class struggles with refinancings and a stabilization of prices remains uncertain, particularly in the US.\n“Significant impairment risk remains depending on property types and regions,” Germany’s largest bank said in its annual report on Thursday, highlighting US office space on the West Coast. That “could result in Bank X experiencing loan loss provisions higher than expected.”"
+  "article": "By Arno Schuetze\nBank X said its exposure to US commercial real estate remains a “key risk” that could force it to raise provisions for credit losses, as the asset class struggles with refinancings and a stabilization of prices remains uncertain, particularly in the US.\n“Significant impairment risk remains depending on property types and regions,” Germany’s largest bank said in its annual report on Thursday, highlighting US office space on the West Coast. That “could result in Bank X experiencing loan loss provisions higher than expected.”"
  },
  {
   "title": "Ransomware disrupts a payments processor, halting clearing for hours",
@@ -4713,7 +4713,7 @@ const NA_HOME = [
   "severity": "High",
   "primaryRisk": "Technology & cyber risk",
   "impact": "Client-facing channel outage drives immediate reputational and operational-loss exposure",
-  "article": "On 18 November 2025 at 11:20 UTC (all times in this blog are UTC), Cloud X's network began experiencing significant failures to deliver core network traffic. This showed up to Internet users trying to access our customers' sites as an error page indicating a failure within X's network.\nHTTP error page displayed during the incident\nThe issue was not caused, directly or indirectly, by a cyber attack or malicious activity of any kind. Instead, it was triggered by a change to one of our database systems' permissions which caused the database to output multiple entries into a “feature file” used by our Bot Management system. That feature file, in turn, doubled in size. The larger-than-expected feature file was then propagated to all the machines that make up our network.\nThe software running on these machines to route traffic across our network reads this feature file to keep our Bot Management system up to date with ever changing threats. The software had a limit on the size of the feature file that was below its doubled size. That caused the software to fail.\nAfter we initially wrongly suspected the symptoms we were seeing were caused by a hyper-scale DDoS attack, we correctly identified the core issue and were able to stop the propagation of the larger-than-expected feature file and replace it with an earlier version of the file. Core traffic was largely flowing as normal by 14:30. We worked over the next few hours to mitigate increased load on various parts of our network as traffic rushed back online. As of 17:06 all systems at Cloudflare were functioning as normal.\nWe are sorry for the impact to our customers and to the Internet in general. Given X's importance in the Internet ecosystem any outage of any of our systems is unacceptable. That there was a period of time where our network was not able to route traffic is deeply painful to every member of our team. We know we let you down today.\nThis post is an in-depth recount of exactly what happened and what systems and processes failed. It is also the beginning, though not the end, of what we plan to do in order to make sure an outage like this will not happen again."
+  "article": "Cloud X's network began experiencing significant failures to deliver core network traffic. This showed up to Internet users trying to access our customers' sites as an error page indicating a failure within X's network.\nHTTP error page displayed during the incident\nThe issue was not caused, directly or indirectly, by a cyber attack or malicious activity of any kind. Instead, it was triggered by a change to one of our database systems' permissions which caused the database to output multiple entries into a “feature file” used by our Bot Management system. That feature file, in turn, doubled in size. The larger-than-expected feature file was then propagated to all the machines that make up our network.\nThe software running on these machines to route traffic across our network reads this feature file to keep our Bot Management system up to date with ever changing threats. The software had a limit on the size of the feature file that was below its doubled size. That caused the software to fail.\nAfter we initially wrongly suspected the symptoms we were seeing were caused by a hyper-scale DDoS attack, we correctly identified the core issue and were able to stop the propagation of the larger-than-expected feature file and replace it with an earlier version of the file. Core traffic was largely flowing as normal by 14:30. We worked over the next few hours to mitigate increased load on various parts of our network as traffic rushed back online. As of 17:06 all systems at Cloudflare were functioning as normal.\nWe are sorry for the impact to our customers and to the Internet in general. Given X's importance in the Internet ecosystem any outage of any of our systems is unacceptable. That there was a period of time where our network was not able to route traffic is deeply painful to every member of our team. We know we let you down today.\nThis post is an in-depth recount of exactly what happened and what systems and processes failed. It is also the beginning, though not the end, of what we plan to do in order to make sure an outage like this will not happen again."
  },
  {
   "title": "Sanctions package expands, requiring exposure re-screening",
@@ -4901,6 +4901,8 @@ const NA_HOME = [
  }
 ];
 /* NA_HOME_END */
+
+
 
 
 
@@ -8155,7 +8157,7 @@ function FinRevBubble({ c }) {
         })}
         <text x={padL + cw / 2} y={H - 6} textAnchor="middle" fontSize={9} fontWeight="700" fill="var(--text-3)">Likelihood →</text>
       </svg>
-      <div className="na-fin-legend">{pts.map((p, i) => <span key={i} className="na-fin-leg-item"><span className="na-fin-leg-k">{naShort(p.label)}</span>{hasSize && p.sizeRaw ? <span className="na-fin-leg-v">{p.sizeRaw}</span> : null}</span>)}</div>
+      <div className="na-fin-legend">{pts.map((p, i) => <span key={i} className="na-fin-leg-item"><span className="na-fin-leg-k">{p.label}</span>{hasSize && p.sizeRaw ? <span className="na-fin-leg-v">{p.sizeRaw}</span> : null}</span>)}</div>
     </div>
   );
 }
@@ -8720,8 +8722,6 @@ function NewsAssessment({ onBack }) {
                       <span>{ev.source}</span>
                       <span className="na-sr-dot">·</span>
                       <span><i className="fa-solid fa-location-dot" style={{fontSize:10,marginRight:4}}></i>{ev.area}</span>
-                      <span className="na-sr-dot">·</span>
-                      <span><i className="fa-regular fa-calendar" style={{fontSize:10,marginRight:4}}></i>{ev.date}</span>
                     </div>
                     <div className="na-sr-title">{hl(ev.title)}</div>
                     <div className="na-sr-snippet">{ev.synopsis}</div>
@@ -8925,7 +8925,7 @@ function NewsAssessment({ onBack }) {
       <div className="na-sticky-head">
       <div className="page-header" style={{marginBottom:16}}>
         <div className="page-title">{ev.title}</div>
-        <div className="page-sub" style={{maxWidth:'none',whiteSpace:'nowrap'}}>{ev.date} · {ev.type} · Source: {ev.source} · News Intelligence and Impact Assessment</div>
+        <div className="page-sub" style={{maxWidth:'none',whiteSpace:'nowrap'}}>{ev.type} · Source: {ev.source} · News Intelligence and Impact Assessment</div>
       </div>
 
       {/* Agent process stepper — connected nodes; sub-agents (3a/3b) grouped in a box */}
