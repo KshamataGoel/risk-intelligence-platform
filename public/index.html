@@ -8150,10 +8150,14 @@ function FinRevBubble({ c }) {
   const hasSize = si >= 0;
   const pts = c.rows.map(r => ({ label: r[0], x: frNum(r[li]) || 0, y: frNum(r[yi]) || 0, yRaw: r[yi], size: hasSize ? (frNum(r[si]) || 0) : 0, sizeRaw: hasSize ? r[si] : '' }));
   const ymax = Math.max(...pts.map(p => p.y), 1) * 1.15;
-  const smax = Math.max(...pts.map(p => p.size), 1);
+  // Size the bubble by the same impact value shown on it (and in the legend), so a
+  // larger $ impact always reads as a larger bubble — the exposure column is not used
+  // for sizing, which previously made a low-impact / high-exposure stripe look biggest.
+  const rMax = Math.max(...pts.map(p => p.y), 1);
+  const varies = pts.some(p => p.y !== pts[0].y);
   const cw = W - padL - padR, ch = H - padT - padB;
   const X = (v) => padL + v * cw, Y = (v) => padT + ch - (v / ymax) * ch;
-  const R = (v) => hasSize ? 7 + Math.sqrt(v / smax) * 15 : 13;
+  const R = (v) => varies ? 8 + Math.sqrt(Math.max(0, v) / rMax) * 15 : 13;
   return (
     <div>
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }}>
@@ -8163,13 +8167,13 @@ function FinRevBubble({ c }) {
           const score = 0.5 * Math.min(1, p.x) + 0.5 * (p.y / ymax);   // priority = likelihood × impact
           const col = frHeat(score);                                   // green → amber → red for higher priority
           return <g key={i}>
-            <circle cx={X(p.x)} cy={Y(p.y)} r={R(p.size)} fill={col} fillOpacity={0.85} stroke={col} strokeWidth={1.6} />
+            <circle cx={X(p.x)} cy={Y(p.y)} r={R(p.y)} fill={col} fillOpacity={0.85} stroke={col} strokeWidth={1.6} />
             <text x={X(p.x)} y={Y(p.y) + 3} textAnchor="middle" fontSize={8.5} fontWeight="800" fill="#fff">{p.yRaw || ('$' + p.y + 'M')}</text>
           </g>;
         })}
         <text x={padL + cw / 2} y={H - 6} textAnchor="middle" fontSize={9} fontWeight="700" fill="var(--text-3)">Likelihood →</text>
       </svg>
-      <div className="na-fin-legend">{pts.map((p, i) => <span key={i} className="na-fin-leg-item"><span className="na-fin-leg-k">{p.label}</span><span className="na-fin-leg-v">{hasSize && p.sizeRaw ? p.sizeRaw : p.yRaw}</span></span>)}</div>
+      <div className="na-fin-legend">{pts.map((p, i) => <span key={i} className="na-fin-leg-item"><span className="na-fin-leg-k">{p.label}</span><span className="na-fin-leg-v">{p.yRaw || ('$' + p.y + 'M')}</span></span>)}</div>
     </div>
   );
 }
