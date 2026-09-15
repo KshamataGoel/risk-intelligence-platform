@@ -8187,10 +8187,12 @@ function finCaption(caption, c) {
   const L = finLossPct(c);
   if (!caption || !L.n) return caption;
   const p50 = L.fmtB(L.cross(50).valM), p90 = L.fmtB(L.cross(90).valM), p99 = L.fmtB(L.cross(99).valM);
+  // Use function replacements so a value like "$136M" is inserted literally — a
+  // string replacement would re-read its leading "$1" as a backreference.
   return String(caption)
-    .replace(/(median\b[^$]*?)\$\s?[\d.,]+\s*[MB]\b/i, '$1' + p50)
-    .replace(/(10\s*%[^$]*?exceed[^$]*?)\$\s?[\d.,]+\s*[MB]\b/i, '$1' + p90)
-    .replace(/(\b1\s*%[^$]*?exceed[^$]*?)\$\s?[\d.,]+\s*[MB]\b/i, '$1' + p99);
+    .replace(/(median\b[^$]*?)\$\s?[\d.,]+\s*[MB]\b/i, (m, g1) => g1 + p50)
+    .replace(/(10\s*%[^$]*?exceed[^$]*?)\$\s?[\d.,]+\s*[MB]\b/i, (m, g1) => g1 + p90)
+    .replace(/(\b1\s*%[^$]*?exceed[^$]*?)\$\s?[\d.,]+\s*[MB]\b/i, (m, g1) => g1 + p99);
 }
 function FinRevHistogram({ c }) {
   const W = 420, H = 178, padL = 28, padR = 10, padT = 30, padB = 26;
