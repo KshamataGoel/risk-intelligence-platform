@@ -8059,10 +8059,13 @@ function FinRevLine({ c }) {
           if (s.pts.length < 1) return null;
           const d = s.pts.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join(' ');
           const last = s.pts[s.pts.length - 1], lx = X(last[0]), ly = Y(last[1]), near = lx > W - padR - 28;
+          // The Actual series ends at the fork point where the other lines diverge to the
+          // right; anchor its label up-and-left so it clears those overlapping lines.
+          const isFork = hasArrows && si === 0;
           return <g key={si}>
             {s.pts.length > 1 && <path d={d} fill="none" stroke={cols[si % cols.length]} strokeWidth={2.2} strokeDasharray={dash[si % dash.length] || 'none'} strokeLinecap="round" strokeLinejoin="round" />}
             <circle cx={lx} cy={ly} r={3} fill={cols[si % cols.length]} />
-            <text x={near ? lx - 5 : lx + 5} y={ly - 4} textAnchor={near ? 'end' : 'start'} fontSize={8.5} fontWeight="800" fill={cols[si % cols.length]}>{fmt(last[1])}</text>
+            <text x={isFork ? lx - 6 : (near ? lx - 5 : lx + 5)} y={isFork ? ly - 8 : ly - 4} textAnchor={isFork || near ? 'end' : 'start'} fontSize={8.5} fontWeight="800" fill={cols[si % cols.length]}>{fmt(last[1])}</text>
           </g>;
         })}
       </svg>
@@ -8088,18 +8091,20 @@ function FinRevDonut({ c }) {
     const large = (a1 - a0) > Math.PI ? 1 : 0;
     return `M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} L ${x2} ${y2} A ${ir} ${ir} 0 ${large} 0 ${x3} ${y3} Z`;
   };
-  const short = (s) => { s = String(s || ''); return s.length > 15 ? s.slice(0, 14) + '…' : s; };
   return (
     <div>
-      <svg viewBox="0 0 360 184" width="100%" style={{ display: 'block' }}>
+      <svg viewBox="0 0 152 184" width="60%" style={{ display: 'block', margin: '0 auto' }}>
         {segs.map((s, i) => { const a0 = ang, a1 = ang + s.share * Math.PI * 2; ang = a1; const fill = s.hi ? 'var(--primary)' : grays[gi++ % grays.length]; return <path key={i} d={arc(a0, a1)} fill={fill} />; })}
         {totalVal && <text x={cx} y={cy - 2} textAnchor="middle" fontSize={17} fontWeight="800" fill="var(--text)">{totalVal}</text>}
         <text x={cx} y={cy + 13} textAnchor="middle" fontSize={9} fontWeight="600" fill="var(--text-3)">Total</text>
-        {segs.map((s, i) => <g key={i} transform={`translate(154 ${30 + i * 26})`}>
-          <rect x={0} y={-9} width={11} height={11} rx={2} fill={s.hi ? 'var(--primary)' : grays[i % grays.length]} />
-          <text x={16} y={0} fontSize={10.5} fontWeight={s.hi ? 800 : 600} fill={s.hi ? 'var(--text)' : 'var(--text-2)'}>{short(s.label)} · {s.value} · {Math.round(s.share * 100)}%</text>
-        </g>)}
       </svg>
+      <div className="na-fin-legend">
+        {segs.map((s, i) => <span key={i} className="na-fin-leg-item">
+          <span className="na-fin-leg-dot" style={{ background: s.hi ? 'var(--primary)' : grays[i % grays.length] }} />
+          <span className="na-fin-leg-k" style={{ fontWeight: s.hi ? 800 : 600 }}>{s.label}</span>
+          <span className="na-fin-leg-v">{s.value} · {Math.round(s.share * 100)}%</span>
+        </span>)}
+      </div>
     </div>
   );
 }
@@ -8161,12 +8166,32 @@ function FinRevBubble({ c }) {
         })}
         <text x={padL + cw / 2} y={H - 6} textAnchor="middle" fontSize={9} fontWeight="700" fill="var(--text-3)">Likelihood →</text>
       </svg>
-      <div className="na-fin-legend">{pts.map((p, i) => <span key={i} className="na-fin-leg-item"><span className="na-fin-leg-k">{p.label}</span>{hasSize && p.sizeRaw ? <span className="na-fin-leg-v">{p.sizeRaw}</span> : null}</span>)}</div>
+      <div className="na-fin-legend">{pts.map((p, i) => <span key={i} className="na-fin-leg-item"><span className="na-fin-leg-k">{p.label}</span><span className="na-fin-leg-v">{hasSize && p.sizeRaw ? p.sizeRaw : p.yRaw}</span></span>)}</div>
     </div>
   );
 }
 
 // Chart 5 — VaR loss histogram with percentile reference lines
+// Percentiles computed from a loss-distribution chart's own probabilities.
+function finLossPct(c) {
+  const bands = (c && c.rows || []).map(r => ({ band: r[0], p: frNum(r[1]) })).filter(b => b.band && /\$|\d/.test(b.band) && !/^p\d/i.test(b.band) && b.p != null && b.p > 0 && b.p <= 1);
+  const n = bands.length;
+  const uppers = bands.map(b => { const nums = (String(b.band).match(/\d+/g) || []).map(Number); return nums.length ? Math.max(...nums) : 0; });
+  const step = (uppers.length > 1 ? uppers[1] - uppers[0] : uppers[0]) || 500;
+  const fmtB = (m) => m >= 1000 ? '$' + parseFloat((m / 1000).toFixed(2)) + 'B' : '$' + Math.round(m) + 'M';
+  const cross = (pct) => { const t = Math.max(0, Math.min(1, pct / 100)); let cum = 0; for (let i = 0; i < n; i++) { const prev = cum; cum += bands[i].p; if (cum >= t) { const frac = bands[i].p > 0 ? Math.max(0, Math.min(1, (t - prev) / bands[i].p)) : 0; const low = i === 0 ? 0 : uppers[i - 1]; const w = (uppers[i] - low) || step; return { xi: i + frac, valM: low + frac * w }; } } return { xi: n, valM: (uppers[n - 1] || 0) + step }; };
+  return { bands, n, uppers, step, fmtB, cross };
+}
+// Rewrite a loss-distribution caption's median / 10%-exceed / 1%-exceed figures with the computed P50/P90/P99.
+function finCaption(caption, c) {
+  const L = finLossPct(c);
+  if (!caption || !L.n) return caption;
+  const p50 = L.fmtB(L.cross(50).valM), p90 = L.fmtB(L.cross(90).valM), p99 = L.fmtB(L.cross(99).valM);
+  return String(caption)
+    .replace(/(median\b[^$]*?)\$\s?[\d.,]+\s*[MB]\b/i, '$1' + p50)
+    .replace(/(10\s*%[^$]*?exceed[^$]*?)\$\s?[\d.,]+\s*[MB]\b/i, '$1' + p90)
+    .replace(/(\b1\s*%[^$]*?exceed[^$]*?)\$\s?[\d.,]+\s*[MB]\b/i, '$1' + p99);
+}
 function FinRevHistogram({ c }) {
   const W = 420, H = 178, padL = 28, padR = 10, padT = 30, padB = 26;
   // Keep only real loss bands (a $ range with a probability in 0–1); drop stray
@@ -9362,7 +9387,7 @@ function NewsAssessment({ onBack }) {
             </div>
             <div className="na-fin-modal-chart"><FinRevChart c={finZoom} /></div>
             {finZoom.purpose && <div className="na-fin-purpose">{finZoom.purpose}</div>}
-            {finZoom.caption && <div className="na-fin-modal-cap"><i className="fa-solid fa-quote-left" style={{marginRight:6,opacity:0.4}}></i>{finZoom.caption}</div>}
+            {finZoom.caption && <div className="na-fin-modal-cap"><i className="fa-solid fa-quote-left" style={{marginRight:6,opacity:0.4}}></i>{finCaption(finZoom.caption, finZoom)}</div>}
           </div>
         </div>
       )}
